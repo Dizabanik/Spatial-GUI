@@ -27,12 +27,20 @@ import net.minecraft.client.renderer.state.GameRenderState;
 public class GameRendererMixin {
     @Final @Shadow private GameRenderState gameRenderState;
 
+    @Inject(method = "render", at = @At("HEAD"))
+    private void spatialGUI$prepareTargetEarly(CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            renderer.prepareTarget();
+        }
+    }
+
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render()V"))
     private void spatialGUI$beforeGuiRender(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
 
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            renderer.prepareTarget();
+            //renderer.prepareTarget();
             renderer.clearTarget();
 
             SpatialGUIRenderer.skipWindowOverride = true;
