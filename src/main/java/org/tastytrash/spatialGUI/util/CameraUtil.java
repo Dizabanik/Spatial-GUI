@@ -37,7 +37,11 @@ public class CameraUtil {
     public static float calculateFovMultiplier() {
         if (!SpatialGUI.config.autoScaleByFov) return 1.0f;
 
-        float currentFov = Minecraft.getInstance().gameRenderer.mainCamera().getFov();
+        //? if >26.2 {
+        /*float currentFov = Minecraft.getInstance().gameRenderer.mainCamera().getFov();
+        *///?} else {
+        float currentFov = (float) (int) Minecraft.getInstance().options.fov().get();
+        //?}
         float baselineFov = (float) SpatialGUI.config.autoFovTuning.autoScaleBaselineFov;
 
         return currentFov / baselineFov;

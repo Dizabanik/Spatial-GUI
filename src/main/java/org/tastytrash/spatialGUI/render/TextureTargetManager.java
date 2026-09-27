@@ -3,12 +3,10 @@ package org.tastytrash.spatialGUI.render;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import org.joml.Vector4f;
-//? > 26.2 {
+//? if >26.2 {
 /*import com.mojang.renderpearl.api.GpuFormat;
-*///? } else {
-import com.mojang.blaze3d.GpuFormat;
-//? }
+import org.joml.Vector4f;
+*///?}
 
 public class TextureTargetManager {
     private TextureTarget inventoryTarget;
@@ -26,11 +24,18 @@ public class TextureTargetManager {
         }
 
         var encoder = RenderSystem.getDevice().createCommandEncoder();
-        encoder.clearColorTexture(colorTexture, new Vector4f(0.0F, 0.0F, 0.0F, 0.0F));
-
+        //? if >26.2 {
+        /*encoder.clearColorTexture(colorTexture, new Vector4f(0.0F, 0.0F, 0.0F, 0.0F));
         if (depthTexture != null) {
             encoder.clearDepthTexture(depthTexture, 1.0);
         }
+        *///?} else {
+        if (depthTexture != null) {
+            encoder.clearColorAndDepthTextures(colorTexture, 0, depthTexture, 1.0);
+        } else {
+            encoder.clearColorTexture(colorTexture, 0);
+        }
+        //?}
     }
 
     public void prepareTarget() {
@@ -51,8 +56,7 @@ public class TextureTargetManager {
                     /*GpuFormat.RGBA8_UNORM,
                     GpuFormat.D16_UNORM
                     *///?} else {
-                    true,
-                    GpuFormat.RGBA8_UNORM
+                    true
                     //?}
             );
             return;

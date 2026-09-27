@@ -6,11 +6,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.StagedVertexBuffer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import org.joml.Matrix4f;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
-//? > 26.2 {
+//? if >26.2 {
 /*import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
 import com.mojang.renderpearl.api.textures.GpuTextureView;
 import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
@@ -18,15 +17,20 @@ import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import com.mojang.renderpearl.api.textures.AddressMode;
 import com.mojang.renderpearl.api.textures.FilterMode;
 import com.mojang.renderpearl.api.vertex.VertexFormat;
-*///? } else {
-import com.mojang.blaze3d.PrimitiveTopology;
+import net.minecraft.client.renderer.StagedVertexBuffer;
+*///?} else {
+import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.textures.AddressMode;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
-//? }
+//?}
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.util.AnimationUtil;
@@ -34,10 +38,12 @@ import org.tastytrash.spatialGUI.util.RenderUtil;
 
 public class InventoryRenderer {
     private static final RenderPipeline INVENTORY_PIPELINE = RenderPipelines.GUI_TEXTURED;
-    private static final StagedVertexBuffer INVENTORY_BUFFER = new StagedVertexBuffer(
+    //? if >26.2 {
+    /*private static final StagedVertexBuffer INVENTORY_BUFFER = new StagedVertexBuffer(
             () -> "Spatial GUI Inventory Buffer",
             RenderType.SMALL_BUFFER_SIZE
     );
+    *///?}
 
     private final TextureTargetManager targetManager;
     private QuadBasis quadBasis;
@@ -61,7 +67,8 @@ public class InventoryRenderer {
         isRecipeBookOpen = open;
     }
 
-    public void renderInWorld(PoseStack matrices) {
+    //? if >26.2 {
+    /*public void renderInWorld(PoseStack matrices) {
         Minecraft client = Minecraft.getInstance();
 
         if (targetManager.getInventoryTarget() == null || !SpatialGUIClient.renderer().shouldCapture() || client.player == null) {
@@ -158,25 +165,129 @@ public class InventoryRenderer {
                 null,
                 java.util.OptionalDouble.empty()
         )) {
-            //? if >26.2 {
-            /*renderPass.setPipeline(RenderSystem.getCompiledPipeline(pipeline));
-            *///?} else {
-            renderPass.setPipeline(InventoryRenderer.INVENTORY_PIPELINE);
-             //?}
+            renderPass.setPipeline(RenderSystem.getCompiledPipeline(INVENTORY_PIPELINE));
             RenderSystem.bindDefaultUniforms(renderPass);
             renderPass.setUniform("DynamicTransforms", dynamicTransforms);
-            //? if >26.2 {
-            /*renderPass.setUniform
-                    *///?} else {
-                    renderPass.bindTexture
-                     //?}
-                    ("Sampler0", texture, RenderSystem.getSamplerCache().getSampler(
-                            AddressMode.CLAMP_TO_EDGE, AddressMode.CLAMP_TO_EDGE,
-                            filterMode, filterMode, SpatialGUI.config.useAnisotropicFiltering
-                    ));
+            renderPass.setUniform("Sampler0", texture, RenderSystem.getSamplerCache().getSampler(
+                    AddressMode.CLAMP_TO_EDGE, AddressMode.CLAMP_TO_EDGE,
+                    filterMode, filterMode, SpatialGUI.config.useAnisotropicFiltering
+            ));
             renderPass.setVertexBuffer(0, info.vertexBuffer().slice());
             renderPass.setIndexBuffer(info.indexBuffer(), info.indexType());
             renderPass.drawIndexed(info.indexCount(), 1, info.firstIndex(), info.baseVertex(), 0);
         }
     }
+    *///?} else {
+    public void renderInWorld(PoseStack matrices) {
+        Minecraft client = Minecraft.getInstance();
+
+        if (targetManager.getInventoryTarget() == null || !SpatialGUIClient.renderer().shouldCapture() || client.player == null) {
+            return;
+        }
+
+        var texture = targetManager.getInventoryTarget().getColorTextureView();
+        if (texture == null) {
+            return;
+        }
+
+        matrices.pushPose();
+
+        var player = client.player;
+        boolean isFirstPerson = SpatialGUIClient.getEffectiveFirstPersonMode();
+        float yaw = player.getYRot();
+        float pitch = isFirstPerson ? player.getXRot() : 0;
+        float pitchClamp = (float) SpatialGUI.config.firstPersonPitchClamp;
+        pitch = Math.clamp(pitch, -pitchClamp, pitchClamp);
+        float yawRadians = (float) Math.toRadians(yaw);
+        float pitchRadians = (float) Math.toRadians(pitch);
+
+        RenderUtil.ScreenTransformConfig config = RenderUtil.getScreenTransformConfig(isFirstPerson);
+
+        double lookX = -Math.sin(yawRadians) * Math.cos(pitchRadians);
+        double lookY = -Math.sin(pitchRadians);
+        double lookZ = Math.cos(yawRadians) * Math.cos(pitchRadians);
+
+        RenderUtil.applyScreenTransform(matrices, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
+
+        float scale = AnimationUtil.calculateAnimatedScale(config.scale(), screenOpenTime, isRecipeBookOpen, recipeBookCloseDelay);
+        recipeBookCloseDelay = isRecipeBookOpen ? -2 : Math.min(0, recipeBookCloseDelay + 1);
+        matrices.scale(scale, scale, scale);
+
+        Matrix4f pose = matrices.last().pose();
+
+        ByteBufferBuilder byteBufferBuilder = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
+        BufferBuilder buffer = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+
+        float aspect = (float) targetManager.getInventoryTarget().width / (float) targetManager.getInventoryTarget().height;
+        RenderUtil.addScreenQuad(buffer, pose, aspect);
+
+        MeshData meshData = buffer.build();
+
+        PoseStack worldMatrices = new PoseStack();
+        RenderUtil.applyScreenTransform(worldMatrices, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
+        worldMatrices.scale(scale, scale, scale);
+        Matrix4f worldPose = worldMatrices.last().pose();
+
+        quadBasis = RenderUtil.computeQuadBasis(worldPose, aspect, scale);
+
+        matrices.popPose();
+
+        if (meshData != null) {
+            try {
+                drawInventory(meshData, texture);
+            } finally {
+                meshData.close();
+                byteBufferBuilder.close();
+            }
+        }
+    }
+
+    private void drawInventory(MeshData meshData, GpuTextureView texture) {
+        Minecraft client = Minecraft.getInstance();
+        RenderTarget mainTarget = client.getMainRenderTarget();
+        var output = mainTarget.getColorTextureView();
+        if (output == null) {
+            return;
+        }
+
+        float fadeAlpha = SpatialGUI.config.enableFadeAnimation
+                ? Math.min(1.0F, (System.currentTimeMillis() - screenOpenTime) / (float) SpatialGUI.config.fadeDurationMs)
+                : 1.0F;
+        GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms().writeTransform(
+                RenderSystem.getModelViewMatrix(),
+                new org.joml.Vector4f(fadeAlpha, fadeAlpha, fadeAlpha, fadeAlpha),
+                new org.joml.Vector3f(),
+                new Matrix4f()
+        );
+
+        FilterMode filterMode = SpatialGUI.config.useLinearFiltering ? FilterMode.LINEAR : FilterMode.NEAREST;
+
+        var sequentialBuffer = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
+        GpuBuffer indexBuffer = sequentialBuffer.getBuffer(6);
+        VertexFormat.IndexType indexType = sequentialBuffer.type();
+
+        try (GpuBuffer vertexBuffer = RenderSystem.getDevice().createBuffer(
+                () -> "Spatial GUI Quad",
+                GpuBuffer.USAGE_VERTEX,
+                meshData.vertexBuffer()
+        )) {
+            try (var renderPass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+                    () -> "Spatial GUI",
+                    output,
+                    java.util.OptionalInt.empty()
+            )) {
+                renderPass.setPipeline(InventoryRenderer.INVENTORY_PIPELINE);
+                RenderSystem.bindDefaultUniforms(renderPass);
+                renderPass.setUniform("DynamicTransforms", dynamicTransforms);
+                renderPass.bindTexture("Sampler0", texture, RenderSystem.getSamplerCache().getSampler(
+                        AddressMode.CLAMP_TO_EDGE, AddressMode.CLAMP_TO_EDGE,
+                        filterMode, filterMode, SpatialGUI.config.useAnisotropicFiltering
+                ));
+                renderPass.setVertexBuffer(0, vertexBuffer);
+                renderPass.setIndexBuffer(indexBuffer, indexType);
+                renderPass.drawIndexed(0, 0, 6, 1);
+            }
+        }
+    }
+    //?}
 }

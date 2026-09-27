@@ -40,7 +40,7 @@ public class HandRendererMixin {
 @Mixin(ItemInHandRenderer.class)
 public class HandRendererMixin {
 
-    @Inject(method = "submitArmWithItem", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "renderArmWithItem", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$hideShield(AbstractClientPlayer player, float frameInterp, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
         if (itemStack.getItem() == Items.SHIELD) {
             var renderer = SpatialGUIClient.renderer();
