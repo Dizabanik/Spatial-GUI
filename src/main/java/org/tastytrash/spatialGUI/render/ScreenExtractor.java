@@ -1,16 +1,21 @@
 package org.tastytrash.spatialGUI.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.render.pip.*;
+//? if >26.2 {
+/*import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
+*///?} else {
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.render.state.GuiRenderState;
+//?}
 import org.joml.Vector2d;
 import org.tastytrash.spatialGUI.util.RenderUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 
-//? if neoforge {
+//? if neoforge && >26.2 {
 /*import net.neoforged.neoforge.client.gui.PictureInPictureRendererRegistration;
 import net.minecraft.client.renderer.state.gui.pip.*;
 *///? }
@@ -25,10 +30,10 @@ public class ScreenExtractor {
         if (screenGuiRenderer == null) {
             Minecraft mc = Minecraft.getInstance();
             screenRenderState = new GuiRenderState();
-            screenGuiRenderer = new GuiRenderer(
+            //? if fabric && >26.2 {
+            /*screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.gameRenderer.featureRenderDispatcher(),
-                    //? if fabric {
                     List.of(
                             new GuiEntityRenderer(mc.getEntityRenderDispatcher()),
                             new GuiSkinRenderer(),
@@ -36,16 +41,35 @@ public class ScreenExtractor {
                             new GuiBannerResultRenderer(mc.getAtlasManager()),
                             new GuiProfilerChartRenderer()
                     )
-                    //? } else if neoforge {
-                    /*List.of(
+            );
+            *///?} else if neoforge && >26.2 {
+            /*screenGuiRenderer = new GuiRenderer(
+                    screenRenderState,
+                    mc.gameRenderer.featureRenderDispatcher(),
+                    List.of(
                             new PictureInPictureRendererRegistration<>(GuiEntityRenderState.class, () -> new GuiEntityRenderer(mc.getEntityRenderDispatcher())),
                             new PictureInPictureRendererRegistration<>(GuiSkinRenderState.class, GuiSkinRenderer::new),
                             new PictureInPictureRendererRegistration<>(GuiBookModelRenderState.class, GuiBookModelRenderer::new),
                             new PictureInPictureRendererRegistration<>(GuiBannerResultRenderState.class, () -> new GuiBannerResultRenderer(mc.getAtlasManager())),
                             new PictureInPictureRendererRegistration<>(GuiProfilerChartRenderState.class, GuiProfilerChartRenderer::new)
                     )
-                    *///? }
             );
+            *///?} else {
+            screenGuiRenderer = new GuiRenderer(
+                    screenRenderState,
+                    mc.renderBuffers().bufferSource(),
+                    mc.gameRenderer.getSubmitNodeStorage(),
+                    mc.gameRenderer.getFeatureRenderDispatcher(),
+                    List.of(
+                            new GuiEntityRenderer(mc.renderBuffers().bufferSource(), mc.getEntityRenderDispatcher()),
+                            new GuiSkinRenderer(mc.renderBuffers().bufferSource()),
+                            new GuiBookModelRenderer(mc.renderBuffers().bufferSource()),
+                            new GuiBannerResultRenderer(mc.renderBuffers().bufferSource(), mc.getAtlasManager()),
+                            new GuiSignRenderer(mc.renderBuffers().bufferSource(), mc.getAtlasManager()),
+                            new GuiProfilerChartRenderer(mc.renderBuffers().bufferSource())
+                    )
+            );
+            //?}
         }
     }
 
@@ -82,8 +106,13 @@ public class ScreenExtractor {
         }
 
         SpatialGUIRenderer.isExtractingScreen = true;
-        GuiGraphicsExtractor graphics = new GuiGraphicsExtractor(mc, screenRenderState, mouseX, mouseY);
+        //? if >26.2 {
+        /*GuiGraphicsExtractor graphics = new GuiGraphicsExtractor(mc, screenRenderState, mouseX, mouseY);
         screen.extractRenderStateWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
+        *///?} else {
+        GuiGraphics graphics = new GuiGraphics(mc, screenRenderState, mouseX, mouseY);
+        screen.renderWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
+        //?}
         SpatialGUIRenderer.isExtractingScreen = false;
     }
 }

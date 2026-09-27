@@ -63,9 +63,13 @@ public class SpatialGUIRenderer {
             : SpatialGUI.config.firstPersonModeContainers) || SpatialGUIClient.getSwitchedToFirstPersonDueToBlock();
         SpatialGUIClient.setEffectiveFirstPersonMode(isFirstPerson);
 
-        //? if fabric {
-        ScreenEvents.afterExtract(screen).register((_, _, _, _, _) -> prepareTarget());
+        //? if fabric && >26.2 {
+        /*ScreenEvents.afterExtract(screen).register((screenArg, extractor, mouseX, mouseY, tickDelta) -> prepareTarget());
+        *///?} else if fabric {
+        ScreenEvents.afterRender(screen).register((screenArg, graphics, mouseX, mouseY, tickDelta) -> prepareTarget());
+        //?}
 
+        //? if fabric {
         ScreenEvents.remove(screen).register(removedScreen -> {
             if (hookedScreen == removedScreen) {
                 onScreenRemoved();
@@ -74,7 +78,6 @@ public class SpatialGUIRenderer {
         //? } else if neoforge {
         /*NeoForge.EVENT_BUS.addListener(this::onScreenRenderPre);
         NeoForge.EVENT_BUS.addListener(this::onScreenClosing);
-
         *///? }
     }
 
@@ -107,8 +110,13 @@ public class SpatialGUIRenderer {
 
         if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.keepFirstPersonCameraAngle) {
             var mc = Minecraft.getInstance();
-            float cameraYaw = mc.gameRenderer.mainCamera().yRot();
+            //? if >26.2 {
+            /*float cameraYaw = mc.gameRenderer.mainCamera().yRot();
             float cameraPitch = mc.gameRenderer.mainCamera().xRot();
+            *///?} else {
+            float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
+            float cameraPitch = mc.gameRenderer.getMainCamera().xRot();
+            //?}
             if (player != null) {
                 player.setYRot(cameraYaw);
                 player.setXRot(cameraPitch);
@@ -134,7 +142,11 @@ public class SpatialGUIRenderer {
 
     public boolean shouldCapture() {
         Minecraft client = Minecraft.getInstance();
-        boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.gui.screen() && SpatialGUI.config.enabled;
+        //? if >26.2 {
+        /*boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.gui.screen() && SpatialGUI.config.enabled;
+        *///?} else {
+        boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.screen && SpatialGUI.config.enabled;
+        //?}
         if (!bool) {
             wasTrue = false;
             return false;
@@ -142,8 +154,13 @@ public class SpatialGUIRenderer {
 
         if (!wasTrue) {
             var mc = Minecraft.getInstance();
-            cameraStartPos = mc.gameRenderer.mainCamera().position();
+            //? if >26.2 {
+            /*cameraStartPos = mc.gameRenderer.mainCamera().position();
             cameraStartYRot = mc.gameRenderer.mainCamera().yRot();
+            *///?} else {
+            cameraStartPos = mc.gameRenderer.getMainCamera().position();
+            cameraStartYRot = mc.gameRenderer.getMainCamera().yRot();
+            //?}
             wasTrue = true;
         }
 

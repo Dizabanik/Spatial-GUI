@@ -26,7 +26,11 @@ public class MouseHandlerMixin {
     @Unique
     private static boolean shouldApplyMouseOverride() {
         Minecraft client = Minecraft.getInstance();
-        Screen screen = client.gui.screen();
+        //? if >26.2 {
+        /*Screen screen = client.gui.screen();
+        *///?} else {
+        Screen screen = client.screen;
+        //?}
         return screen instanceof AbstractContainerScreen<?> && org.tastytrash.spatialGUI.SpatialGUI.config.enabled;
     }
 

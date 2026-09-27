@@ -1,6 +1,7 @@
 package org.tastytrash.spatialGUI.mixin.client;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+//? if >26.2 {
+/*import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import org.spongepowered.asm.mixin.Final;
@@ -23,3 +24,28 @@ public class AbstractRecipeBookScreenMixin {
         }
     }
 }
+*///?} else {
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
+import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.tastytrash.spatialGUI.client.SpatialGUIClient;
+
+@Mixin(AbstractRecipeBookScreen.class)
+public class AbstractRecipeBookScreenMixin {
+    @Shadow @Final private RecipeBookComponent<?> recipeBookComponent;
+
+    @Inject(method = "render", at = @At("HEAD"))
+    private void diegeticInventory$updateIsRecipeBookOpen(GuiGraphics graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer != null) {
+            renderer.getInventoryRenderer().setRecipeBookOpen(this.recipeBookComponent.isVisible());
+        }
+    }
+}
+//?}
