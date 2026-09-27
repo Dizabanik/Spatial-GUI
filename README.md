@@ -46,4 +46,5 @@ This mod is mainly visual and tries not provide any gameplay advantages.
 
 *Special thanks to:*
 Dizabanik for 1.21.11 support
+BUILDLCS for the Brazilian Portuguese translation
 22SSendo for awesome feature suggestions
