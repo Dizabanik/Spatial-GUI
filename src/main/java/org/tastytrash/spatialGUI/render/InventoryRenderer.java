@@ -28,18 +28,18 @@ import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.StagedVertexBuffer;
 *///?} else {
-//import com.mojang.blaze3d.buffers.GpuBuffer;
-//import com.mojang.blaze3d.buffers.GpuBufferSlice;
-//import com.mojang.blaze3d.pipeline.RenderPipeline;
-//import com.mojang.blaze3d.textures.AddressMode;
-//import com.mojang.blaze3d.textures.FilterMode;
-//import com.mojang.blaze3d.textures.GpuTextureView;
-//import com.mojang.blaze3d.vertex.BufferBuilder;
-//import com.mojang.blaze3d.vertex.ByteBufferBuilder;
-//import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-//import com.mojang.blaze3d.vertex.MeshData;
-//import com.mojang.blaze3d.vertex.VertexFormat;
-//?}
+/*import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.textures.AddressMode;
+import com.mojang.blaze3d.textures.FilterMode;
+import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.VertexFormat;
+*///?}
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.util.AnimationUtil;

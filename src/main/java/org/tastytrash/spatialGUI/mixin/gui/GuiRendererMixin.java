@@ -15,9 +15,12 @@ public class GuiRendererMixin {
             method = "draw", at = @At(value = "INVOKE",
                     //? if > 26.2 {
                     target = "Lnet/minecraft/client/gui/render/GuiRenderer;executeDrawRange(Ljava/util/function/Supplier;Lcom/mojang/blaze3d/pipeline/RenderTarget;Lcom/mojang/renderpearl/api/buffers/GpuBufferSlice;II)V"
-                    //? } else {
+                    //? } else if 26.2 {
+                    /*target = "Lnet/minecraft/client/gui/render/GuiRenderer;executeDrawRange(Ljava/util/function/Supplier;Lcom/mojang/blaze3d/pipeline/RenderTarget;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;II)V"
+                    *///? } else {
                     /*target = "Lnet/minecraft/client/gui/render/GuiRenderer;executeDrawRange(Ljava/util/function/Supplier;Lcom/mojang/blaze3d/pipeline/RenderTarget;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lcom/mojang/blaze3d/buffers/GpuBuffer;Lcom/mojang/blaze3d/vertex/VertexFormat$IndexType;II)V"
-                    *///? }
+                    *///?}
+
             ), index = 1)
     private RenderTarget diegeticInventory$redirectRenderTarget(RenderTarget original) {
         // makes Minecraft render to the framebuffer instead of the normal GUI

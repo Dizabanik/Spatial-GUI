@@ -16,9 +16,9 @@ import org.tastytrash.spatialGUI.util.RenderUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 
 //? if neoforge && >=26.2 {
-/*import net.neoforged.neoforge.client.gui.PictureInPictureRendererRegistration;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererRegistration;
 import net.minecraft.client.renderer.state.gui.pip.*;
-*///? } else if neoforge {
+//? } else if neoforge {
 /*import net.neoforged.neoforge.client.gui.PictureInPictureRendererRegistration;
 import net.minecraft.client.gui.render.state.pip.*;
 *///?}
@@ -34,7 +34,7 @@ public class ScreenExtractor {
             Minecraft mc = Minecraft.getInstance();
             screenRenderState = new GuiRenderState();
             //? if fabric && >=26.2 {
-            screenGuiRenderer = new GuiRenderer(
+            /*screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.gameRenderer.featureRenderDispatcher(),
                     List.of(
@@ -45,8 +45,8 @@ public class ScreenExtractor {
                             new GuiProfilerChartRenderer()
                     )
             );
-            //?} else if neoforge && >=26.2 {
-            /*screenGuiRenderer = new GuiRenderer(
+            *///?} else if neoforge && >=26.2 {
+            screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.gameRenderer.featureRenderDispatcher(),
                     List.of(
@@ -57,7 +57,7 @@ public class ScreenExtractor {
                             new PictureInPictureRendererRegistration<>(GuiProfilerChartRenderState.class, GuiProfilerChartRenderer::new)
                     )
             );
-            *///?} else if fabric {
+            //?} else if fabric {
             /*screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.renderBuffers().bufferSource(),

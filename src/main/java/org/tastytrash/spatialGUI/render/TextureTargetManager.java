@@ -60,7 +60,7 @@ public class TextureTargetManager {
                     GpuFormat.D16_UNORM
                     //?} else if 26.2 {
                     /*true,
-                    GpuFormat.D16_UNORM
+                    GpuFormat.RGBA8_UNORM
                     *///?} else {
                     /*true
                     *///?}

@@ -55,7 +55,7 @@ public final class RenderUtil {
     private static float calculateFovScaleMultiplier(boolean autoScaleByFov) {
         if (!autoScaleByFov) return 1.0f;
         
-        //? if >26.2 {
+        //? if >=26.2 {
         float currentFov = Minecraft.getInstance().gameRenderer.mainCamera().getFov();
         //?} else {
         /*float currentFov = (float) (int) Minecraft.getInstance().options.fov().get();
@@ -141,7 +141,7 @@ public final class RenderUtil {
         Vector3f right = new Vector3f(forward).cross(worldUp).normalize();
         Vector3f up = new Vector3f(right).cross(forward).normalize();
 
-        //? if >26.2 {
+        //? if >=26.2 {
         float fovDegrees = camera.getFov();
         //?} else {
         /*float fovDegrees = (float) (int) mc.options.fov().get();
