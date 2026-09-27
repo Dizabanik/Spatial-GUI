@@ -4,8 +4,11 @@ import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 //? if >26.2 {
-/*import com.mojang.renderpearl.api.GpuFormat;
+import com.mojang.renderpearl.api.GpuFormat;
 import org.joml.Vector4f;
+//?} else if 26.2 {
+/*import org.joml.Vector4f;
+import com.mojang.blaze3d.GpuFormat;
 *///?}
 
 public class TextureTargetManager {
@@ -24,18 +27,18 @@ public class TextureTargetManager {
         }
 
         var encoder = RenderSystem.getDevice().createCommandEncoder();
-        //? if >26.2 {
-        /*encoder.clearColorTexture(colorTexture, new Vector4f(0.0F, 0.0F, 0.0F, 0.0F));
+        //? if >=26.2 {
+        encoder.clearColorTexture(colorTexture, new Vector4f(0.0F, 0.0F, 0.0F, 0.0F));
         if (depthTexture != null) {
             encoder.clearDepthTexture(depthTexture, 1.0);
         }
-        *///?} else {
-        if (depthTexture != null) {
+        //?} else {
+        /*if (depthTexture != null) {
             encoder.clearColorAndDepthTextures(colorTexture, 0, depthTexture, 1.0);
         } else {
             encoder.clearColorTexture(colorTexture, 0);
         }
-        //?}
+        *///?}
     }
 
     public void prepareTarget() {
@@ -53,11 +56,14 @@ public class TextureTargetManager {
                     width,
                     height,
                     //? if >26.2 {
-                    /*GpuFormat.RGBA8_UNORM,
+                    GpuFormat.RGBA8_UNORM,
+                    GpuFormat.D16_UNORM
+                    //?} else if 26.2 {
+                    /*true,
                     GpuFormat.D16_UNORM
                     *///?} else {
-                    true
-                    //?}
+                    /*true
+                    *///?}
             );
             return;
         }

@@ -41,13 +41,13 @@ public abstract class CameraMixin {
     @Unique private static double lastMouseX, lastMouseY;
     @Unique private static float freeLookYaw = 0f, freeLookPitch = 0f;
 
-    //? if >26.2 {
-    /*@Inject(method = "alignWithEntity", at = @At("TAIL"))
+    //? if >=26.2 {
+    @Inject(method = "alignWithEntity", at = @At("TAIL"))
     private void diegeticInventory$modifyCamera(float partialTicks, CallbackInfo ci) {
-    *///?} else {
-    @Inject(method = "setup", at = @At("TAIL"))
+    //?} else {
+    /*@Inject(method = "setup", at = @At("TAIL"))
     private void diegeticInventory$modifyCamera(net.minecraft.world.level.Level level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTicks, CallbackInfo ci) {
-    //?}
+    *///?}
         var renderer = SpatialGUIClient.renderer();
         boolean isCapturing = renderer.shouldCapture();
 
@@ -77,10 +77,10 @@ public abstract class CameraMixin {
                 CameraUtil.checkBlockCollision(this.entity);
             }
 
-            CameraTransform transform = this.calculateCameraTransform(isFirstPerson, partialTicks);
-            Vec3 newTargetPos = transform.position;
-            float newTargetYRot = transform.yaw;
-            float newTargetXRot = transform.pitch;
+            Object[] transform = this.calculateCameraTransform(isFirstPerson, partialTicks);
+            Vec3 newTargetPos = (Vec3) transform[0];
+            float newTargetYRot = (Float) transform[1];
+            float newTargetXRot = (Float) transform[2];
 
             if (!wasCapturing || !isTransitioning) {
                 this.startTransition(renderer, newTargetYRot, newTargetXRot, isFirstPerson);
@@ -96,7 +96,7 @@ public abstract class CameraMixin {
 
 
     @Unique
-    private CameraTransform calculateCameraTransform(boolean isFirstPerson, float partialTicks) {
+    private Object[] calculateCameraTransform(boolean isFirstPerson, float partialTicks) {
         float distance = CameraUtil.calculateAutoFovDistance((float) SpatialGUI.config.cameraDistance, isFirstPerson);
         float sideOffset = CameraUtil.calculateAutoFovSideOffset((float) SpatialGUI.config.cameraSideOffset, isFirstPerson);
         float heightOffset = isFirstPerson ? entity.getEyeHeight() : Math.clamp((float) SpatialGUI.config.cameraHeightOffset, -4, 4);
@@ -125,17 +125,17 @@ public abstract class CameraMixin {
             } else if (SpatialGUIRenderer.isCrosshairModeActive()) {
                 double deltaX, deltaY;
                 //? if >26.2 {
-                /*double[] rel = MouseHandlerUtil.resetFreeLookDelta();
+                double[] rel = MouseHandlerUtil.resetFreeLookDelta();
                 deltaX = rel[0];
                 deltaY = rel[1];
-                *///?} else {
-                double curX = client.mouseHandler.xpos();
+                //?} else {
+                /*double curX = client.mouseHandler.xpos();
                 double curY = client.mouseHandler.ypos();
                 deltaX = curX - lastMouseX;
                 deltaY = curY - lastMouseY;
                 lastMouseX = curX;
                 lastMouseY = curY;
-                //?}
+                *///?}
 
                 double sens = CameraUtil.calculateMouseSensitivity();
                 double xOffset = deltaX * sens * (client.options.invertMouseX().get() ? -1 : 1);
@@ -176,7 +176,7 @@ public abstract class CameraMixin {
         double camY = entityPos.y + heightOffset;
         double camZ = entityPos.z - Math.cos(yawRadians) * distance + Math.sin(yawRadians) * sideOffset;
 
-        return new CameraTransform(new Vec3(camX, camY, camZ), yaw, pitch);
+        return new Object[]{new Vec3(camX, camY, camZ), yaw, pitch};
     }
 
     @Unique
@@ -233,6 +233,4 @@ public abstract class CameraMixin {
         SpatialGUIClient.setEffectiveFirstPersonMode(false);
         MouseHandlerUtil.updateMouseGrabForFirstPerson(false);
     }
-
-    @Unique private record CameraTransform(Vec3 position, float yaw, float pitch) {}
 }

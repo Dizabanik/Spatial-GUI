@@ -1,7 +1,7 @@
 package org.tastytrash.spatialGUI.mixin.client;
 
-//? if >26.2 {
-/*import net.minecraft.client.gui.GuiGraphicsExtractor;
+//? if >=26.2 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import org.spongepowered.asm.mixin.Final;
@@ -24,8 +24,8 @@ public class AbstractRecipeBookScreenMixin {
         }
     }
 }
-*///?} else {
-import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import org.spongepowered.asm.mixin.Final;
@@ -48,4 +48,4 @@ public class AbstractRecipeBookScreenMixin {
         }
     }
 }
-//?}
+*///?}

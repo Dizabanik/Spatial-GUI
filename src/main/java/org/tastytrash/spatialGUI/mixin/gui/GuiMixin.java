@@ -4,7 +4,7 @@ import net.minecraft.client.gui.Gui;
 import org.spongepowered.asm.mixin.Mixin;
 
 //? if >26.2 {
-/*import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import org.spongepowered.asm.mixin.injection.At;
@@ -42,8 +42,8 @@ public class GuiMixin {
         }
     }
 }
-*///?} else {
-@Mixin(Gui.class)
+//?} else {
+/*@Mixin(Gui.class)
 public class GuiMixin {
 }
-//?}
+*///?}

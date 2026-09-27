@@ -51,11 +51,11 @@ public class WindowMixin {
         Minecraft mc = Minecraft.getInstance();
         if (mc.gui == null) return false;
         if (SpatialGUIRenderer.skipWindowOverride) return false;
-        //? if >26.2 {
-        /*Screen screen = mc.gui.screen();
-        *///?} else {
-        Screen screen = mc.screen;
-        //?}
+        //? if >=26.2 {
+        Screen screen = mc.gui.screen();
+        //?} else {
+        /*Screen screen = mc.screen;
+        *///?}
         return screen instanceof AbstractContainerScreen<?> && SpatialGUI.config.enabled;
     }
 }

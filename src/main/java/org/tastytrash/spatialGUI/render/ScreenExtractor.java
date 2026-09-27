@@ -4,21 +4,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.render.pip.*;
-//? if >26.2 {
-/*import net.minecraft.client.gui.GuiGraphicsExtractor;
+//? if >=26.2 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
-*///?} else {
-import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.render.state.GuiRenderState;
-//?}
+*///?}
 import org.joml.Vector2d;
 import org.tastytrash.spatialGUI.util.RenderUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 
-//? if neoforge && >26.2 {
+//? if neoforge && >=26.2 {
 /*import net.neoforged.neoforge.client.gui.PictureInPictureRendererRegistration;
 import net.minecraft.client.renderer.state.gui.pip.*;
-*///? }
+*///? } else if neoforge {
+/*import net.neoforged.neoforge.client.gui.PictureInPictureRendererRegistration;
+import net.minecraft.client.gui.render.state.pip.*;
+*///?}
 
 import java.util.List;
 
@@ -30,8 +33,8 @@ public class ScreenExtractor {
         if (screenGuiRenderer == null) {
             Minecraft mc = Minecraft.getInstance();
             screenRenderState = new GuiRenderState();
-            //? if fabric && >26.2 {
-            /*screenGuiRenderer = new GuiRenderer(
+            //? if fabric && >=26.2 {
+            screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.gameRenderer.featureRenderDispatcher(),
                     List.of(
@@ -42,7 +45,7 @@ public class ScreenExtractor {
                             new GuiProfilerChartRenderer()
                     )
             );
-            *///?} else if neoforge && >26.2 {
+            //?} else if neoforge && >=26.2 {
             /*screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.gameRenderer.featureRenderDispatcher(),
@@ -54,8 +57,8 @@ public class ScreenExtractor {
                             new PictureInPictureRendererRegistration<>(GuiProfilerChartRenderState.class, GuiProfilerChartRenderer::new)
                     )
             );
-            *///?} else {
-            screenGuiRenderer = new GuiRenderer(
+            *///?} else if fabric {
+            /*screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.renderBuffers().bufferSource(),
                     mc.gameRenderer.getSubmitNodeStorage(),
@@ -69,7 +72,21 @@ public class ScreenExtractor {
                             new GuiProfilerChartRenderer(mc.renderBuffers().bufferSource())
                     )
             );
-            //?}
+            *///?} else if neoforge {
+            /*screenGuiRenderer = new GuiRenderer(
+                    screenRenderState,
+                    mc.renderBuffers().bufferSource(),
+                    mc.gameRenderer.getSubmitNodeStorage(),
+                    mc.gameRenderer.getFeatureRenderDispatcher(),
+                    List.of(
+                            new PictureInPictureRendererRegistration<>(GuiEntityRenderState.class, bufferSource -> new GuiEntityRenderer(bufferSource, mc.getEntityRenderDispatcher())),
+                            new PictureInPictureRendererRegistration<>(GuiSkinRenderState.class, GuiSkinRenderer::new),
+                            new PictureInPictureRendererRegistration<>(GuiBookModelRenderState.class, GuiBookModelRenderer::new),
+                            new PictureInPictureRendererRegistration<>(GuiBannerResultRenderState.class, bufferSource -> new GuiBannerResultRenderer(bufferSource, mc.getAtlasManager())),
+                            new PictureInPictureRendererRegistration<>(GuiProfilerChartRenderState.class, GuiProfilerChartRenderer::new)
+                    )
+            );
+            *///?}
         }
     }
 
@@ -106,13 +123,13 @@ public class ScreenExtractor {
         }
 
         SpatialGUIRenderer.isExtractingScreen = true;
-        //? if >26.2 {
-        /*GuiGraphicsExtractor graphics = new GuiGraphicsExtractor(mc, screenRenderState, mouseX, mouseY);
+        //? if >=26.2 {
+        GuiGraphicsExtractor graphics = new GuiGraphicsExtractor(mc, screenRenderState, mouseX, mouseY);
         screen.extractRenderStateWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
-        *///?} else {
-        GuiGraphics graphics = new GuiGraphics(mc, screenRenderState, mouseX, mouseY);
+        //?} else {
+        /*GuiGraphics graphics = new GuiGraphics(mc, screenRenderState, mouseX, mouseY);
         screen.renderWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
-        //?}
+        *///?}
         SpatialGUIRenderer.isExtractingScreen = false;
     }
 }

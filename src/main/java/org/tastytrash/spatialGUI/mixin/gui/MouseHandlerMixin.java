@@ -26,11 +26,11 @@ public class MouseHandlerMixin {
     @Unique
     private static boolean shouldApplyMouseOverride() {
         Minecraft client = Minecraft.getInstance();
-        //? if >26.2 {
-        /*Screen screen = client.gui.screen();
-        *///?} else {
-        Screen screen = client.screen;
-        //?}
+        //? if >=26.2 {
+        Screen screen = client.gui.screen();
+        //?} else {
+        /*Screen screen = client.screen;
+        *///?}
         return screen instanceof AbstractContainerScreen<?> && org.tastytrash.spatialGUI.SpatialGUI.config.enabled;
     }
 
@@ -90,11 +90,11 @@ public class MouseHandlerMixin {
     }
 
     //? if >26.2 {
-    /*@Inject(method = "onMove(JDDDD)V", at = @At("HEAD"))
+    @Inject(method = "onMove(JDDDD)V", at = @At("HEAD"))
     private void spatialGUI$captureMouseMotion(long handle, double xpos, double ypos, double xrel, double yrel, CallbackInfo ci) {
         if (SpatialGUIRenderer.isCrosshairModeActive()) {
             MouseHandlerUtil.addFreeLookDelta(xrel, yrel);
         }
     }
-    *///?}
+    //?}
 }

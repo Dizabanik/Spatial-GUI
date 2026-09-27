@@ -8,20 +8,20 @@ import org.tastytrash.spatialGUI.mixin.gui.MouseHandlerAccessor;
 public class MouseHandlerUtil {
     private static boolean weGrabbedMouse = false;
     //? if >26.2 {
-//    private static double freeLookDeltaX = 0;
-//    private static double freeLookDeltaY = 0;
+    private static double freeLookDeltaX = 0;
+    private static double freeLookDeltaY = 0;
 
-//    public static void addFreeLookDelta(double xrel, double yrel) {
-//        freeLookDeltaX += xrel;
-//        freeLookDeltaY += yrel;
-//    }
-//
-//    public static double[] resetFreeLookDelta() {
-//        double[] result = {freeLookDeltaX, freeLookDeltaY};
-//        freeLookDeltaX = 0;
-//        freeLookDeltaY = 0;
-//        return result;
-//    }
+    public static void addFreeLookDelta(double xrel, double yrel) {
+        freeLookDeltaX += xrel;
+        freeLookDeltaY += yrel;
+    }
+
+    public static double[] resetFreeLookDelta() {
+        double[] result = {freeLookDeltaX, freeLookDeltaY};
+        freeLookDeltaX = 0;
+        freeLookDeltaY = 0;
+        return result;
+    }
     //? }
 
     public static void grabMouseForFirstPerson() {
@@ -32,10 +32,10 @@ public class MouseHandlerUtil {
             double centerX = mc.getWindow().getScreenWidth() / 2.0;
             double centerY = mc.getWindow().getScreenHeight() / 2.0;
             //? if >26.2 {
-            /*InputConstants.grabMouse(mc.getWindow(), centerX, centerY);
-            *///?} else {
-             InputConstants.grabOrReleaseMouse(mc.getWindow(), InputConstants.CURSOR_DISABLED, centerX, centerY);
-            //?}
+            InputConstants.grabMouse(mc.getWindow(), centerX, centerY);
+            //?} else {
+             /*InputConstants.grabOrReleaseMouse(mc.getWindow(), InputConstants.CURSOR_DISABLED, centerX, centerY);
+            *///?}
             mc.mouseHandler.setIgnoreFirstMove();
         }
         weGrabbedMouse = true;
@@ -50,10 +50,10 @@ public class MouseHandlerUtil {
             double centerX = mc.getWindow().getScreenWidth() / 2.0;
             double centerY = mc.getWindow().getScreenHeight() / 2.0;
             //? if >26.2 {
-            /*InputConstants.releaseMouse(mc.getWindow(), centerX, centerY);
-            *///?} else {
-             InputConstants.grabOrReleaseMouse(mc.getWindow(), InputConstants.CURSOR_NORMAL, centerX, centerY);
-            //?}
+            InputConstants.releaseMouse(mc.getWindow(), centerX, centerY);
+            //?} else {
+             /*InputConstants.grabOrReleaseMouse(mc.getWindow(), InputConstants.CURSOR_NORMAL, centerX, centerY);
+            *///?}
         }
         weGrabbedMouse = false;
     }

@@ -30,6 +30,6 @@ side="CLIENT"
 [[dependencies.spatial_gui]]
 modId="cloth_config"
 type="required"
-versionRange="[26.0.0,)"
+versionRange="[15.0.0,)"
 ordering="NONE"
 side="CLIENT"

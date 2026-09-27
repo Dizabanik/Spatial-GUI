@@ -63,11 +63,11 @@ public class SpatialGUIRenderer {
             : SpatialGUI.config.firstPersonModeContainers) || SpatialGUIClient.getSwitchedToFirstPersonDueToBlock();
         SpatialGUIClient.setEffectiveFirstPersonMode(isFirstPerson);
 
-        //? if fabric && >26.2 {
-        /*ScreenEvents.afterExtract(screen).register((screenArg, extractor, mouseX, mouseY, tickDelta) -> prepareTarget());
-        *///?} else if fabric {
-        ScreenEvents.afterRender(screen).register((screenArg, graphics, mouseX, mouseY, tickDelta) -> prepareTarget());
-        //?}
+        //? if fabric && >=26.2 {
+        ScreenEvents.afterExtract(screen).register((screenArg, extractor, mouseX, mouseY, tickDelta) -> prepareTarget());
+        //?} else if fabric {
+        /*ScreenEvents.afterRender(screen).register((screenArg, graphics, mouseX, mouseY, tickDelta) -> prepareTarget());
+        *///?}
 
         //? if fabric {
         ScreenEvents.remove(screen).register(removedScreen -> {
@@ -85,9 +85,9 @@ public class SpatialGUIRenderer {
     /*private void onScreenRenderPre(ScreenEvent.Render.Pre event) {
         if (event.getScreen() == hookedScreen) {
             event.setCanceled(true);
-            SpatialGUIRenderer.suppressWindowOverride = false;
+            SpatialGUIRenderer.skipWindowOverride = false;
             screenExtractor.extractIsolatedScreen(hookedScreen, event.getPartialTick(), null, targetManager);
-            SpatialGUIRenderer.suppressWindowOverride = true;
+            SpatialGUIRenderer.skipWindowOverride = true;
         }
     }
 
@@ -110,13 +110,13 @@ public class SpatialGUIRenderer {
 
         if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.keepFirstPersonCameraAngle) {
             var mc = Minecraft.getInstance();
-            //? if >26.2 {
-            /*float cameraYaw = mc.gameRenderer.mainCamera().yRot();
+            //? if >=26.2 {
+            float cameraYaw = mc.gameRenderer.mainCamera().yRot();
             float cameraPitch = mc.gameRenderer.mainCamera().xRot();
-            *///?} else {
-            float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
+            //?} else {
+            /*float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
             float cameraPitch = mc.gameRenderer.getMainCamera().xRot();
-            //?}
+            *///?}
             if (player != null) {
                 player.setYRot(cameraYaw);
                 player.setXRot(cameraPitch);
@@ -142,11 +142,11 @@ public class SpatialGUIRenderer {
 
     public boolean shouldCapture() {
         Minecraft client = Minecraft.getInstance();
-        //? if >26.2 {
-        /*boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.gui.screen() && SpatialGUI.config.enabled;
-        *///?} else {
-        boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.screen && SpatialGUI.config.enabled;
-        //?}
+        //? if >=26.2 {
+        boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.gui.screen() && SpatialGUI.config.enabled;
+        //?} else {
+        /*boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.screen && SpatialGUI.config.enabled;
+        *///?}
         if (!bool) {
             wasTrue = false;
             return false;
@@ -154,13 +154,13 @@ public class SpatialGUIRenderer {
 
         if (!wasTrue) {
             var mc = Minecraft.getInstance();
-            //? if >26.2 {
-            /*cameraStartPos = mc.gameRenderer.mainCamera().position();
+            //? if >=26.2 {
+            cameraStartPos = mc.gameRenderer.mainCamera().position();
             cameraStartYRot = mc.gameRenderer.mainCamera().yRot();
-            *///?} else {
-            cameraStartPos = mc.gameRenderer.getMainCamera().position();
+            //?} else {
+            /*cameraStartPos = mc.gameRenderer.getMainCamera().position();
             cameraStartYRot = mc.gameRenderer.getMainCamera().yRot();
-            //?}
+            *///?}
             wasTrue = true;
         }
 

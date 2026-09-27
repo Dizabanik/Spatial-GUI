@@ -56,10 +56,10 @@ public final class RenderUtil {
         if (!autoScaleByFov) return 1.0f;
         
         //? if >26.2 {
-        /*float currentFov = Minecraft.getInstance().gameRenderer.mainCamera().getFov();
-        *///?} else {
-        float currentFov = (float) (int) Minecraft.getInstance().options.fov().get();
-        //?}
+        float currentFov = Minecraft.getInstance().gameRenderer.mainCamera().getFov();
+        //?} else {
+        /*float currentFov = (float) (int) Minecraft.getInstance().options.fov().get();
+        *///?}
         float baselineFov = (float) SpatialGUI.config.autoFovTuning.autoScaleBaselineFov;
         float power = (float) SpatialGUI.config.autoFovTuning.autoScaleScreenPower;
 
@@ -121,15 +121,15 @@ public final class RenderUtil {
         double ndcX = (screenX / width) * 2.0 - 1.0;
         double ndcY = 1.0 - (screenY / height) * 2.0;
 
-        //? if >26.2 {
-        /*var camera = mc.gameRenderer.mainCamera();
+        //? if >=26.2 {
+        var camera = mc.gameRenderer.mainCamera();
         float yawRadians = (float) Math.toRadians(camera.yRot());
         float pitchRadians = (float) Math.toRadians(camera.xRot());
-        *///?} else {
-        var camera = mc.gameRenderer.getMainCamera();
+        //?} else {
+        /*var camera = mc.gameRenderer.getMainCamera();
         float yawRadians = (float) Math.toRadians(camera.yRot());
         float pitchRadians = (float) Math.toRadians(camera.xRot());
-        //?}
+        *///?}
 
         Vector3f forward = new Vector3f(
                 (float) (-Math.sin(yawRadians) * Math.cos(pitchRadians)),
@@ -142,10 +142,10 @@ public final class RenderUtil {
         Vector3f up = new Vector3f(right).cross(forward).normalize();
 
         //? if >26.2 {
-        /*float fovDegrees = camera.getFov();
-        *///?} else {
-        float fovDegrees = (float) (int) mc.options.fov().get();
-        //?}
+        float fovDegrees = camera.getFov();
+        //?} else {
+        /*float fovDegrees = (float) (int) mc.options.fov().get();
+        *///?}
         float aspect = (float) width / (float) height;
         float tanHalfFovY = (float) Math.tan(Math.toRadians(fovDegrees / 2.0));
         float tanHalfFovX = tanHalfFovY * aspect;

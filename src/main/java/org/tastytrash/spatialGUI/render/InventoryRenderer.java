@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import org.joml.Matrix4f;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 //? if >26.2 {
-/*import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
+import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
 import com.mojang.renderpearl.api.textures.GpuTextureView;
 import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
@@ -18,18 +18,27 @@ import com.mojang.renderpearl.api.textures.AddressMode;
 import com.mojang.renderpearl.api.textures.FilterMode;
 import com.mojang.renderpearl.api.vertex.VertexFormat;
 import net.minecraft.client.renderer.StagedVertexBuffer;
-*///?} else {
-import com.mojang.blaze3d.buffers.GpuBuffer;
-import com.mojang.blaze3d.buffers.GpuBufferSlice;
+//?} else if 26.2 {
+/*import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.textures.AddressMode;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.StagedVertexBuffer;
+*///?} else {
+//import com.mojang.blaze3d.buffers.GpuBuffer;
+//import com.mojang.blaze3d.buffers.GpuBufferSlice;
+//import com.mojang.blaze3d.pipeline.RenderPipeline;
+//import com.mojang.blaze3d.textures.AddressMode;
+//import com.mojang.blaze3d.textures.FilterMode;
+//import com.mojang.blaze3d.textures.GpuTextureView;
+//import com.mojang.blaze3d.vertex.BufferBuilder;
+//import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+//import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+//import com.mojang.blaze3d.vertex.MeshData;
+//import com.mojang.blaze3d.vertex.VertexFormat;
 //?}
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
@@ -38,12 +47,12 @@ import org.tastytrash.spatialGUI.util.RenderUtil;
 
 public class InventoryRenderer {
     private static final RenderPipeline INVENTORY_PIPELINE = RenderPipelines.GUI_TEXTURED;
-    //? if >26.2 {
-    /*private static final StagedVertexBuffer INVENTORY_BUFFER = new StagedVertexBuffer(
+    //? if >=26.2 {
+    private static final StagedVertexBuffer INVENTORY_BUFFER = new StagedVertexBuffer(
             () -> "Spatial GUI Inventory Buffer",
             RenderType.SMALL_BUFFER_SIZE
     );
-    *///?}
+    //?}
 
     private final TextureTargetManager targetManager;
     private QuadBasis quadBasis;
@@ -67,8 +76,8 @@ public class InventoryRenderer {
         isRecipeBookOpen = open;
     }
 
-    //? if >26.2 {
-    /*public void renderInWorld(PoseStack matrices) {
+    //? if >=26.2 {
+    public void renderInWorld(PoseStack matrices) {
         Minecraft client = Minecraft.getInstance();
 
         if (targetManager.getInventoryTarget() == null || !SpatialGUIClient.renderer().shouldCapture() || client.player == null) {
@@ -165,20 +174,29 @@ public class InventoryRenderer {
                 null,
                 java.util.OptionalDouble.empty()
         )) {
+            //? if >26.2 {
             renderPass.setPipeline(RenderSystem.getCompiledPipeline(INVENTORY_PIPELINE));
+             //?} else {
+            /*renderPass.setPipeline(InventoryRenderer.INVENTORY_PIPELINE);
+            *///?}
             RenderSystem.bindDefaultUniforms(renderPass);
             renderPass.setUniform("DynamicTransforms", dynamicTransforms);
-            renderPass.setUniform("Sampler0", texture, RenderSystem.getSamplerCache().getSampler(
-                    AddressMode.CLAMP_TO_EDGE, AddressMode.CLAMP_TO_EDGE,
-                    filterMode, filterMode, SpatialGUI.config.useAnisotropicFiltering
-            ));
+            //? if >26.2 {
+            renderPass.setUniform
+             //?} else {
+            /*renderPass.bindTexture
+                    *///?}
+                            ("Sampler0", texture, RenderSystem.getSamplerCache().getSampler(
+                                    AddressMode.CLAMP_TO_EDGE, AddressMode.CLAMP_TO_EDGE,
+                                    filterMode, filterMode, SpatialGUI.config.useAnisotropicFiltering
+                            ));
             renderPass.setVertexBuffer(0, info.vertexBuffer().slice());
             renderPass.setIndexBuffer(info.indexBuffer(), info.indexType());
             renderPass.drawIndexed(info.indexCount(), 1, info.firstIndex(), info.baseVertex(), 0);
         }
     }
-    *///?} else {
-    public void renderInWorld(PoseStack matrices) {
+    //?} else {
+    /*public void renderInWorld(PoseStack matrices) {
         Minecraft client = Minecraft.getInstance();
 
         if (targetManager.getInventoryTarget() == null || !SpatialGUIClient.renderer().shouldCapture() || client.player == null) {
@@ -289,5 +307,5 @@ public class InventoryRenderer {
             }
         }
     }
-    //?}
+    *///?}
 }

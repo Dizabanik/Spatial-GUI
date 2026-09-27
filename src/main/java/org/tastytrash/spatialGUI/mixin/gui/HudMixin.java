@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 
-//? if >26.2 {
-/*import net.minecraft.client.gui.GuiGraphicsExtractor;
+//? if >=26.2 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Hud;
 
 @Mixin(Hud.class)
@@ -25,8 +25,8 @@ public class HudMixin {
         }
     }
 }
-*///?} else {
-import net.minecraft.client.gui.Gui;
+//?} else {
+/*import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 
 @Mixin(Gui.class)
@@ -42,4 +42,4 @@ public class HudMixin {
         }
     }
 }
-//?}
+*///?}
