@@ -30,7 +30,7 @@ public class SpatialGUIClient {
     public void onInitializeClient() {
         renderer = new SpatialGUIRenderer();
 
-        ScreenEvents.BEFORE_INIT.register((_, screen, _, _) -> {
+        ScreenEvents.BEFORE_INIT.register((clientArg, screen, scaledWidth, scaledHeight) -> {
             if (screen instanceof AbstractContainerScreen<?> && org.tastytrash.spatialGUI.SpatialGUI.config.enabled) {
                 renderer.hookScreen(screen);
             }

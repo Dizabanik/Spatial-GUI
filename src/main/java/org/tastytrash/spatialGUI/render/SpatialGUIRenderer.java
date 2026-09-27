@@ -64,7 +64,7 @@ public class SpatialGUIRenderer {
         SpatialGUIClient.setEffectiveFirstPersonMode(isFirstPerson);
 
         //? if fabric {
-        ScreenEvents.afterExtract(screen).register((_, _, _, _, _) -> prepareTarget());
+        ScreenEvents.afterExtract(screen).register((screenArg, extractor, mouseX, mouseY, tickDelta) -> prepareTarget());
 
         ScreenEvents.remove(screen).register(removedScreen -> {
             if (hookedScreen == removedScreen) {
