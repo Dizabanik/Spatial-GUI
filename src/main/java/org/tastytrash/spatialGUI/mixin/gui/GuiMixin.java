@@ -17,12 +17,12 @@ public class GuiMixin {
 
     @Inject(method = "extractRenderState", at = @At("HEAD"))
     private void spatialGUI$beginExtract(net.minecraft.client.DeltaTracker deltaTracker, boolean shouldRenderLevel, boolean resourcesLoaded, org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
-        SpatialGUIRenderer.suppressWindowOverride = true;
+        SpatialGUIRenderer.skipWindowOverride = true;
     }
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
     private void spatialGUI$endExtract(net.minecraft.client.DeltaTracker deltaTracker, boolean shouldRenderLevel, boolean resourcesLoaded, org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
-        SpatialGUIRenderer.suppressWindowOverride = false;
+        SpatialGUIRenderer.skipWindowOverride = false;
     }
     //? if fabric {
         @Redirect(method = "extractRenderState", at = @At(
@@ -32,9 +32,9 @@ public class GuiMixin {
     private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
         if (SpatialGUI.config.enabled && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
-            SpatialGUIRenderer.suppressWindowOverride = false;
+            SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
-            SpatialGUIRenderer.suppressWindowOverride = true;
+            SpatialGUIRenderer.skipWindowOverride = true;
         } else {
             screen.extractRenderStateWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
         }

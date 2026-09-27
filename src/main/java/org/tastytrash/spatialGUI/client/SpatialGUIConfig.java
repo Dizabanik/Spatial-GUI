@@ -54,15 +54,10 @@ public class SpatialGUIConfig implements ConfigData {
     }
 
     public int calculateAutoGuiScale(int windowHeight) {
-        if (windowHeight > 800) {
-            return 4;
-        } else if (windowHeight >= 650) {
-            return 3;
-        } else if (windowHeight >= 430) {
-            return 2;
-        } else {
-            return 1;
-        }
+        if (windowHeight > 800) return 4;
+        if (windowHeight >= 650) return 3;
+        if (windowHeight >= 430) return 2;
+        return 1;
     }
 
     // rendering

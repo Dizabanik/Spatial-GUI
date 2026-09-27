@@ -50,7 +50,7 @@ public class WindowMixin {
     private static boolean shouldOverride() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.gui == null) return false;
-        if (SpatialGUIRenderer.suppressWindowOverride) return false;
+        if (SpatialGUIRenderer.skipWindowOverride) return false;
         Screen screen = mc.gui.screen();
         return screen instanceof AbstractContainerScreen<?> && SpatialGUI.config.enabled;
     }

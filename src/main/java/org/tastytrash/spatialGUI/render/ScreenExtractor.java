@@ -20,8 +20,6 @@ import java.util.List;
 public class ScreenExtractor {
     private GuiRenderState screenRenderState;
     private GuiRenderer screenGuiRenderer;
-    private static int lastMouseX = -1;
-    private static int lastMouseY = -1;
 
     public void ensureScreenGuiRenderer() {
         if (screenGuiRenderer == null) {
@@ -69,29 +67,23 @@ public class ScreenExtractor {
             srcY = mc.mouseHandler.ypos();
         }
 
-        Vector2d mapped = null;
-        if (quadBasis != null) {
-            mapped = RenderUtil.getInventoryMousePositionRay(srcX, srcY, quadBasis, targetManager.getInventoryTarget());
-        }
+        Vector2d mapped = quadBasis != null
+            ? RenderUtil.getInventoryMousePositionRay(srcX, srcY, quadBasis, targetManager.getInventoryTarget())
+            : null;
+        
         int mouseX, mouseY;
         if (mapped != null) {
             double guiScale = mc.getWindow().getGuiScale();
             mouseX = (int) (mapped.x / guiScale);
             mouseY = (int) (mapped.y / guiScale);
-            lastMouseX = mouseX;
-            lastMouseY = mouseY;
         } else {
             mouseX = (int) mc.mouseHandler.getScaledXPos(mc.getWindow());
             mouseY = (int) mc.mouseHandler.getScaledYPos(mc.getWindow());
-            if (lastMouseX == -1) {
-                lastMouseX = mouseX;
-                lastMouseY = mouseY;
-            }
         }
 
-        SpatialGUIRenderer.isExtractingIsolatedScreen = true;
+        SpatialGUIRenderer.isExtractingScreen = true;
         GuiGraphicsExtractor graphics = new GuiGraphicsExtractor(mc, screenRenderState, mouseX, mouseY);
         screen.extractRenderStateWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
-        SpatialGUIRenderer.isExtractingIsolatedScreen = false;
+        SpatialGUIRenderer.isExtractingScreen = false;
     }
 }

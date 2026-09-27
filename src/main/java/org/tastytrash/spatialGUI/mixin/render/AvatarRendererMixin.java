@@ -22,10 +22,7 @@ public class AvatarRendererMixin {
     @Unique private static final float MAX_PITCH_OFFSET = 25f;
     @Unique private static final float SMOOTHING = 0.15f;
 
-    @Inject(
-            method = "extractRenderState(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;F)V",
-            at = @At("TAIL")
-    )
+    @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;F)V", at = @At("TAIL"))
     private void diegeticInventory$overrideHeadLook(Avatar entity, AvatarRenderState state, float partialTicks, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         var renderer = SpatialGUIClient.renderer();
@@ -37,18 +34,18 @@ public class AvatarRendererMixin {
 
         boolean justOpened = !renderer.headLockInitialized;
 
-        double mx = client.mouseHandler.xpos();
-        double my = client.mouseHandler.ypos();
-        int w = client.getWindow().getScreenWidth();
-        int h = client.getWindow().getScreenHeight();
+        double mouseX = client.mouseHandler.xpos();
+        double mouseY = client.mouseHandler.ypos();
+        int width = client.getWindow().getScreenWidth();
+        int height = client.getWindow().getScreenHeight();
 
-        float nx = (float) (mx / w) * 2f - 1f;
-        float ny = (float) (my / h) * 2f - 1f;
+        float normX = (float) (mouseX / width) * 2f - 1f;
+        float normY = (float) (mouseY / height) * 2f - 1f;
 
         state.bodyRot = client.player.getYRot() + (float) SpatialGUI.config.avatarBodyRotationOffset;
 
-        float targetYaw = nx * MAX_YAW_OFFSET + (float) SpatialGUI.config.avatarBaseYawOffset;
-        float targetPitch = Mth.clamp(ny * MAX_PITCH_OFFSET, -60f, 60f);
+        float targetYaw = normX * MAX_YAW_OFFSET + (float) SpatialGUI.config.avatarBaseYawOffset;
+        float targetPitch = Mth.clamp(normY * MAX_PITCH_OFFSET, -60f, 60f);
 
         if (justOpened) {
             smoothedHeadYaw = targetYaw;

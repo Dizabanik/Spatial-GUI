@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
+import org.tastytrash.spatialGUI.util.AnimationUtil;
 import org.tastytrash.spatialGUI.util.MathUtil;
 import org.tastytrash.spatialGUI.util.MouseHandlerUtil;
 import org.tastytrash.spatialGUI.util.CameraUtil;
@@ -29,15 +30,15 @@ public abstract class CameraMixin {
     @Final @Shadow private Quaternionf rotation;
 
     @Unique private static Vec3 startPos;
-    @Unique private static float startYRot, targetYRot;
+    @Unique private static float startYRot;
     @Unique private static long transitionStartTime, TRANSITION_DURATION_MS = 1;
     @Unique private static boolean wasCapturing, isTransitioning;
-    @Unique private static final float MAX_YAW_OFFSET = 90f, MAX_PITCH_OFFSET = 180f;
+    @Unique private static final float MAX_YAW_OFFSET = 90f;
     @Unique private static float smoothedCameraYaw, smoothedCameraPitch;
     @Unique private static double initialMouseX, initialMouseY;
     @Unique private static boolean hasMouseMovedSinceScreenOpen = false;
 
-    @Unique private static double lastGrabMouseX, lastGrabMouseY;
+    @Unique private static double lastMouseX, lastMouseY;
     @Unique private static float freeLookYaw = 0f, freeLookPitch = 0f;
 
     @Inject(method = "alignWithEntity", at = @At("TAIL"))
@@ -47,19 +48,21 @@ public abstract class CameraMixin {
 
         if (isCapturing && this.entity != null && SpatialGUI.config.enabled) {
             TRANSITION_DURATION_MS = SpatialGUI.config.transitionDurationMs;
-            boolean isFirstPerson = (SpatialGUIRenderer.isInventoryScreen() ? SpatialGUI.config.firstPersonModeInventory : SpatialGUI.config.firstPersonModeContainers)
-                    || SpatialGUIClient.getSwitchedToFirstPersonDueToBlock();
+            boolean isFirstPerson = (SpatialGUIRenderer.isInventoryScreen()
+                ? SpatialGUI.config.firstPersonModeInventory
+                : SpatialGUI.config.firstPersonModeContainers) || SpatialGUIClient.getSwitchedToFirstPersonDueToBlock();
             SpatialGUIClient.setEffectiveFirstPersonMode(isFirstPerson);
             MouseHandlerUtil.updateMouseGrabForFirstPerson(isFirstPerson);
 
             if (!wasCapturing) {
-                initialMouseX = Minecraft.getInstance().mouseHandler.xpos();
-                initialMouseY = Minecraft.getInstance().mouseHandler.ypos();
+                var mc = Minecraft.getInstance();
+                initialMouseX = mc.mouseHandler.xpos();
+                initialMouseY = mc.mouseHandler.ypos();
                 hasMouseMovedSinceScreenOpen = false;
 
                 if (SpatialGUIRenderer.isCrosshairModeActive()) {
-                    lastGrabMouseX = Minecraft.getInstance().mouseHandler.xpos();
-                    lastGrabMouseY = Minecraft.getInstance().mouseHandler.ypos();
+                    lastMouseX = mc.mouseHandler.xpos();
+                    lastMouseY = mc.mouseHandler.ypos();
                     freeLookYaw = 0f;
                     freeLookPitch = 0f;
                 }
@@ -73,8 +76,6 @@ public abstract class CameraMixin {
             Vec3 newTargetPos = transform.position;
             float newTargetYRot = transform.yaw;
             float newTargetXRot = transform.pitch;
-
-            targetYRot = newTargetYRot;
 
             if (!wasCapturing || !isTransitioning) {
                 this.startTransition(renderer, newTargetYRot, newTargetXRot, isFirstPerson);
@@ -91,79 +92,61 @@ public abstract class CameraMixin {
 
     @Unique
     private CameraTransform calculateCameraTransform(boolean isFirstPerson, float partialTicks) {
-        float fovMultiplier = CameraUtil.calculateFovMultiplier();
-        float sideOffsetMultiplier = (float) SpatialGUI.config.autoFovTuning.autoScaleSideOffsetMultiplier;
-        float distanceMultiplier = (float) SpatialGUI.config.autoFovTuning.autoScaleDistanceMultiplier;
-
-        float fovAdjustment = (1.0f / fovMultiplier) - 1.0f;
-        float distanceFovAdjustment = fovAdjustment * distanceMultiplier;
-        float sideOffsetFovAdjustment = fovAdjustment * sideOffsetMultiplier;
-        
-        float distance = isFirstPerson ? 0.0f : Math.clamp((float) SpatialGUI.config.cameraDistance * (1.0f + distanceFovAdjustment), -4, 4);
-        float sideOffset = isFirstPerson ? 0.0f : Math.clamp((float) SpatialGUI.config.cameraSideOffset * (1.0f + sideOffsetFovAdjustment), -4, 4);
+        float distance = CameraUtil.calculateAutoFovDistance((float) SpatialGUI.config.cameraDistance, isFirstPerson);
+        float sideOffset = CameraUtil.calculateAutoFovSideOffset((float) SpatialGUI.config.cameraSideOffset, isFirstPerson);
         float heightOffset = isFirstPerson ? entity.getEyeHeight() : Math.clamp((float) SpatialGUI.config.cameraHeightOffset, -4, 4);
 
         float yaw, pitch;
         float positionYaw;
 
         Minecraft client = Minecraft.getInstance();
-        
+
         if (!hasMouseMovedSinceScreenOpen) {
             double mouseDeltaX = Math.abs(client.mouseHandler.xpos() - initialMouseX);
             double mouseDeltaY = Math.abs(client.mouseHandler.ypos() - initialMouseY);
             hasMouseMovedSinceScreenOpen = mouseDeltaX > 1.0 || mouseDeltaY > 1.0;
         }
-        
-        float nx = hasMouseMovedSinceScreenOpen ? (float) (client.mouseHandler.xpos() / client.getWindow().getScreenWidth()) * 2f - 1f : 0f;
-        float ny = hasMouseMovedSinceScreenOpen ? (float) (client.mouseHandler.ypos() / client.getWindow().getScreenHeight()) * 2f - 1f : 0f;
+
+        float normX = hasMouseMovedSinceScreenOpen ? (float) (client.mouseHandler.xpos() / client.getWindow().getScreenWidth()) * 2f - 1f : 0f;
+        float normY = hasMouseMovedSinceScreenOpen ? (float) (client.mouseHandler.ypos() / client.getWindow().getScreenHeight()) * 2f - 1f : 0f;
 
         if (isFirstPerson) {
             float maxPitch = 90;
+            float entityXRot = entity.getXRot();
 
             if (SpatialGUI.config.disableFirstPersonParallax) {
                 smoothedCameraYaw = 0f;
-                smoothedCameraPitch = entity.getXRot();
+                smoothedCameraPitch = entityXRot;
             } else if (SpatialGUIRenderer.isCrosshairModeActive()) {
                 double deltaX, deltaY;
-                Minecraft mc2 = Minecraft.getInstance();
                 //? if >26.2 {
                 /*double[] rel = MouseHandlerUtil.resetFreeLookDelta();
                 deltaX = rel[0];
                 deltaY = rel[1];
                 *///?} else {
-                double curX = mc2.mouseHandler.xpos();
-                double curY = mc2.mouseHandler.ypos();
-                deltaX = curX - lastGrabMouseX;
-                deltaY = curY - lastGrabMouseY;
-                lastGrabMouseX = curX;
-                lastGrabMouseY = curY;
+                double curX = client.mouseHandler.xpos();
+                double curY = client.mouseHandler.ypos();
+                deltaX = curX - lastMouseX;
+                deltaY = curY - lastMouseY;
+                lastMouseX = curX;
+                lastMouseY = curY;
                 //?}
 
-                double ss = mc2.options.sensitivity().get() * 0.6 + 0.2;
-                double sens = (ss * ss * ss);
+                double sens = CameraUtil.calculateMouseSensitivity();
+                double xOffset = deltaX * sens * (client.options.invertMouseX().get() ? -1 : 1);
+                double yOffset = deltaY * sens * (client.options.invertMouseY().get() ? -1 : 1);
 
-                double xo = deltaX * sens;
-                double yo = deltaY * sens;
-                if (mc2.options.invertMouseX().get()) xo = -xo;
-                if (mc2.options.invertMouseY().get()) yo = -yo;
-
-                freeLookYaw += (float) xo;
-                freeLookYaw = Math.clamp(freeLookYaw, -MAX_YAW_OFFSET, MAX_YAW_OFFSET);
-
-                freeLookPitch += (float) yo;
-                float minAllowed = -maxPitch - entity.getXRot();
-                float maxAllowed = maxPitch - entity.getXRot();
-                freeLookPitch = Math.clamp(freeLookPitch, minAllowed, maxAllowed);
+                freeLookYaw = Math.clamp(freeLookYaw + (float) xOffset, -MAX_YAW_OFFSET, MAX_YAW_OFFSET);
+                freeLookPitch = Math.clamp(freeLookPitch + (float) yOffset, -maxPitch - entityXRot, maxPitch - entityXRot);
 
                 smoothedCameraYaw = freeLookYaw;
-                smoothedCameraPitch = entity.getXRot() + freeLookPitch;
+                smoothedCameraPitch = entityXRot + freeLookPitch;
             } else {
-                smoothedCameraYaw = nx * MAX_YAW_OFFSET * (float) SpatialGUI.config.firstPersonMouseSensitivityYaw;
-                smoothedCameraPitch = entity.getXRot() + ny * MAX_PITCH_OFFSET * (float) SpatialGUI.config.firstPersonMouseSensitivityPitch;
+                smoothedCameraYaw = normX * MAX_YAW_OFFSET * (float) SpatialGUI.config.firstPersonMouseSensitivityYaw;
+                smoothedCameraPitch = entityXRot + normY * 180f * (float) SpatialGUI.config.firstPersonMouseSensitivityPitch;
             }
 
             smoothedCameraPitch = Math.clamp(smoothedCameraPitch, -maxPitch, maxPitch);
-
             yaw = entity.getYRot() + smoothedCameraYaw;
             pitch = smoothedCameraPitch;
             positionYaw = yaw;
@@ -172,8 +155,8 @@ public abstract class CameraMixin {
                 smoothedCameraYaw = 0f;
                 smoothedCameraPitch = 0f;
             } else {
-                smoothedCameraYaw = nx * MAX_YAW_OFFSET * (float) SpatialGUI.config.thirdPersonMouseSensitivityYaw;
-                smoothedCameraPitch = ny * MAX_PITCH_OFFSET * (float) SpatialGUI.config.thirdPersonMouseSensitivityPitch;
+                smoothedCameraYaw = normX * MAX_YAW_OFFSET * (float) SpatialGUI.config.thirdPersonMouseSensitivityYaw;
+                smoothedCameraPitch = normY * 180f * (float) SpatialGUI.config.thirdPersonMouseSensitivityPitch;
             }
 
             yaw = entity.getYRot() + smoothedCameraYaw;
@@ -182,13 +165,11 @@ public abstract class CameraMixin {
         }
 
         float yawRadians = (float) Math.toRadians(positionYaw);
-        double entityX = MathUtil.lerp(entity.xOld, entity.getX(), partialTicks);
-        double entityY = MathUtil.lerp(entity.yOld, entity.getY(), partialTicks);
-        double entityZ = MathUtil.lerp(entity.zOld, entity.getZ(), partialTicks);
+        Vec3 entityPos = MathUtil.lerpEntityPosition(entity, partialTicks);
 
-        double camX = entityX + Math.sin(yawRadians) * distance + Math.cos(yawRadians) * sideOffset;
-        double camY = entityY + heightOffset;
-        double camZ = entityZ - Math.cos(yawRadians) * distance + Math.sin(yawRadians) * sideOffset;
+        double camX = entityPos.x + Math.sin(yawRadians) * distance + Math.cos(yawRadians) * sideOffset;
+        double camY = entityPos.y + heightOffset;
+        double camZ = entityPos.z - Math.cos(yawRadians) * distance + Math.sin(yawRadians) * sideOffset;
 
         return new CameraTransform(new Vec3(camX, camY, camZ), yaw, pitch);
     }
@@ -203,7 +184,6 @@ public abstract class CameraMixin {
             startPos = new Vec3(position.x, position.y, position.z);
             startYRot = yRot;
         }
-        targetYRot = newTargetYRot;
         transitionStartTime = System.currentTimeMillis();
         isTransitioning = true;
 
@@ -226,16 +206,10 @@ public abstract class CameraMixin {
             float skipPercentage = SpatialGUI.config.transitionSkipPercentage / 100.0f;
             float adjustedElapsed = elapsed + (skipPercentage * TRANSITION_DURATION_MS);
             float progress = Math.min(adjustedElapsed / TRANSITION_DURATION_MS, 1.0f);
-            float easedProgress = MathUtil.easeOutCubic(progress);
+            float easedProgress = AnimationUtil.easeOutCubic(progress);
 
             position = new Vec3(MathUtil.lerp(startPos.x, newTargetPos.x, easedProgress), MathUtil.lerp(startPos.y, newTargetPos.y, easedProgress), MathUtil.lerp(startPos.z, newTargetPos.z, easedProgress));
-            targetYRot = newTargetYRot;
-
-            if (progress >= 1.0f) {
-                yRot = targetYRot;
-            } else {
-                yRot = MathUtil.lerp(startYRot, targetYRot, easedProgress);
-            }
+            yRot = progress >= 1.0f ? newTargetYRot : MathUtil.lerp(startYRot, newTargetYRot, easedProgress);
 
         }
         xRot = newTargetXRot;

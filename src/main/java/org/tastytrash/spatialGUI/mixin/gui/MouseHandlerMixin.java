@@ -72,11 +72,10 @@ public class MouseHandlerMixin {
             return isX ? lastPosX : lastPosY;
         }
 
-
         lastPosX = mouse.x / guiScale;
         lastPosY = mouse.y / guiScale;
 
-        return isX ? mouse.x / guiScale : mouse.y / guiScale;
+        return isX ? lastPosX : lastPosY;
     }
 
     @Inject(method = "turnPlayer", at = @At("HEAD"), cancellable = true)

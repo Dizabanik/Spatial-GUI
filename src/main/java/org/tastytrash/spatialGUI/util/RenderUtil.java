@@ -22,6 +22,9 @@ public final class RenderUtil {
     public static void applyScreenTransform(PoseStack matrices, boolean isFirstPerson,
             float yawRadians, float pitchRadians, ScreenTransformConfig config,
             double lookX, double lookY, double lookZ) {
+        float yawOffsetRad = (float) Math.toRadians(config.yawOffset);
+        float pitchOffsetRad = (float) Math.toRadians(config.pitchOffset);
+        
         if (isFirstPerson) {
             matrices.translate(
                     lookX * config.distance + Math.cos(yawRadians) * config.sideOffset,
@@ -29,8 +32,8 @@ public final class RenderUtil {
                     lookZ * config.distance + Math.sin(yawRadians) * config.sideOffset
             );
             matrices.mulPose(new Quaternionf()
-                    .rotateY(-yawRadians + (float) Math.toRadians(config.yawOffset))
-                    .rotateX(-pitchRadians + (float) Math.toRadians(config.pitchOffset))
+                    .rotateY(-yawRadians + yawOffsetRad)
+                    .rotateX(-pitchRadians + pitchOffsetRad)
                     .get(new Matrix4f())
             );
         } else {
@@ -40,8 +43,8 @@ public final class RenderUtil {
                     Mth.cos(yawRadians) * config.distance + Math.sin(yawRadians) * config.sideOffset
             );
             matrices.mulPose(new Quaternionf()
-                    .rotateY(-yawRadians + (float) Math.toRadians(config.yawOffset))
-                    .rotateX((float) Math.toRadians(config.pitchOffset))
+                    .rotateY(-yawRadians + yawOffsetRad)
+                    .rotateX(pitchOffsetRad)
                     .get(new Matrix4f())
             );
         }
@@ -97,7 +100,7 @@ public final class RenderUtil {
     public record QuadBasis(Vector3f centerOffset, Vector3f right, Vector3f up, Vector3f normal, float halfWidth, float halfHeight) {}
 
     public static QuadBasis computeQuadBasis(Matrix4f worldPose, float aspect, float scale) {
-        Vector3f centerOffset = worldPose.transformPosition(new Vector3f(0f, 0f, 0f), new Vector3f());
+        Vector3f centerOffset = worldPose.transformPosition(new Vector3f(), new Vector3f());
         Vector3f right = worldPose.transformDirection(new Vector3f(1f, 0f, 0f), new Vector3f()).normalize();
         Vector3f up = worldPose.transformDirection(new Vector3f(0f, 1f, 0f), new Vector3f()).normalize();
         Vector3f normal = new Vector3f(right).cross(up).normalize();
@@ -105,6 +108,7 @@ public final class RenderUtil {
         float halfHeight = 0.5f * scale;
         return new QuadBasis(centerOffset, right, up, normal, halfWidth, halfHeight);
     }
+
     public static Vector2d getInventoryMousePositionRay(double screenX, double screenY, QuadBasis basis, TextureTarget inventoryTarget) {
         Minecraft mc = Minecraft.getInstance();
         int width = mc.getWindow().getWidth();

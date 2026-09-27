@@ -25,7 +25,7 @@ public class GameRendererMixin {
             renderer.prepareTarget();
             renderer.clearTarget();
 
-            SpatialGUIRenderer.suppressWindowOverride = true;
+            SpatialGUIRenderer.skipWindowOverride = true;
             this.gameRenderState.windowRenderState.guiScale = Minecraft.getInstance().getWindow().getGuiScale();
         }
     }
@@ -34,15 +34,16 @@ public class GameRendererMixin {
     private void spatialGUI$renderIsolatedScreen(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            SpatialGUIRenderer.suppressWindowOverride = false;
+            SpatialGUIRenderer.skipWindowOverride = false;
             this.gameRenderState.windowRenderState.guiScale = Minecraft.getInstance().getWindow().getGuiScale();
 
             renderer.getScreenGuiRenderer().render();
             renderer.getScreenGuiRenderer().endFrame();
 
-            SpatialGUIRenderer.suppressWindowOverride = true;
+            SpatialGUIRenderer.skipWindowOverride = true;
         }
     }
+
     @Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$overrideHideHand(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();

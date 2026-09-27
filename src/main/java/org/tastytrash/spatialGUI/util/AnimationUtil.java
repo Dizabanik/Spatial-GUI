@@ -1,5 +1,6 @@
 package org.tastytrash.spatialGUI.util;
 
+import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIConfig;
 
 public final class AnimationUtil {
@@ -63,5 +64,21 @@ public final class AnimationUtil {
             case Quartic -> easeOutQuart(t);
             default -> easeOutCubic(t);
         };
+    }
+
+    public static float calculateAnimatedScale(float baseScale, long screenOpenTime, boolean isRecipeBookOpen, int recipeBookCloseDelay) {
+        int updatedDelay = isRecipeBookOpen ? -2 : Math.min(0, recipeBookCloseDelay + 1);
+        boolean shouldShrink = isRecipeBookOpen || updatedDelay < 0;
+        float scale = shouldShrink ? baseScale / (float) SpatialGUI.config.recipeBookShrinkFactor : baseScale;
+
+        if (SpatialGUI.config.enableScaleAnimation) {
+            long elapsed = System.currentTimeMillis() - screenOpenTime;
+            float animationProgress = Math.min(1.0F, (float) elapsed / (float) SpatialGUI.config.openAnimationDurationMs);
+            float easedProgress = applyEasing(SpatialGUI.config.animationEasing, animationProgress);
+            float startScalePercent = SpatialGUI.config.animationStartScalePercent / 100.0f;
+            float startScale = scale * startScalePercent;
+            scale = org.tastytrash.spatialGUI.util.MathUtil.lerp(startScale, scale, easedProgress);
+        }
+        return scale;
     }
 }

@@ -7,21 +7,22 @@ import org.tastytrash.spatialGUI.mixin.gui.MouseHandlerAccessor;
 
 public class MouseHandlerUtil {
     private static boolean weGrabbedMouse = false;
+    //? if >26.2 {
+//    private static double freeLookDeltaX = 0;
+//    private static double freeLookDeltaY = 0;
 
-    private static double freeLookDeltaX = 0;
-    private static double freeLookDeltaY = 0;
-
-    public static void addFreeLookDelta(double xrel, double yrel) {
-        freeLookDeltaX += xrel;
-        freeLookDeltaY += yrel;
-    }
-
-    public static double[] resetFreeLookDelta() {
-        double[] result = {freeLookDeltaX, freeLookDeltaY};
-        freeLookDeltaX = 0;
-        freeLookDeltaY = 0;
-        return result;
-    }
+//    public static void addFreeLookDelta(double xrel, double yrel) {
+//        freeLookDeltaX += xrel;
+//        freeLookDeltaY += yrel;
+//    }
+//
+//    public static double[] resetFreeLookDelta() {
+//        double[] result = {freeLookDeltaX, freeLookDeltaY};
+//        freeLookDeltaX = 0;
+//        freeLookDeltaY = 0;
+//        return result;
+//    }
+    //? }
 
     public static void grabMouseForFirstPerson() {
         Minecraft mc = Minecraft.getInstance();

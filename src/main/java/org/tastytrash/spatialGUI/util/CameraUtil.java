@@ -3,7 +3,6 @@ package org.tastytrash.spatialGUI.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -11,39 +10,6 @@ import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 
 public class CameraUtil {
-    public static void checkCameraCollision(Player player) {
-        float thirdPersonDistance = (float) SpatialGUI.config.cameraDistance;
-        float thirdPersonSideOffset = (float) SpatialGUI.config.cameraSideOffset;
-        float thirdPersonHeightOffset = (float) SpatialGUI.config.cameraHeightOffset;
-        float thirdPersonYaw = player.getYRot();
-        float thirdPersonYawRadians = (float) Math.toRadians(thirdPersonYaw);
-
-        double thirdPersonCamX = player.getX() + Math.sin(thirdPersonYawRadians) * thirdPersonDistance + Math.cos(thirdPersonYawRadians) * thirdPersonSideOffset;
-        double thirdPersonCamY = player.getY() + thirdPersonHeightOffset;
-        double thirdPersonCamZ = player.getZ() - Math.cos(thirdPersonYawRadians) * thirdPersonDistance + Math.sin(thirdPersonYawRadians) * thirdPersonSideOffset;
-
-        Vec3 playerEyePos = new Vec3(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
-        Vec3 targetCamPos = new Vec3(thirdPersonCamX, thirdPersonCamY, thirdPersonCamZ);
-
-        var blockState = Minecraft.getInstance().level.getBlockState(BlockPos.containing(thirdPersonCamX, thirdPersonCamY, thirdPersonCamZ));
-        var collisionShape = blockState.getCollisionShape(Minecraft.getInstance().level, BlockPos.containing(thirdPersonCamX, thirdPersonCamY, thirdPersonCamZ));
-        boolean isInsideBlock = !blockState.isAir() && !collisionShape.isEmpty() && collisionShape.bounds().move(BlockPos.containing(thirdPersonCamX, thirdPersonCamY, thirdPersonCamZ)).inflate(0.001).contains(targetCamPos);
-
-        var clipContext = new ClipContext(
-                playerEyePos,
-                targetCamPos,
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.NONE,
-                player
-        );
-        var raycastResult = Minecraft.getInstance().level.clip(clipContext);
-        boolean pathBlocked = raycastResult.getType() != HitResult.Type.MISS;
-
-        if (isInsideBlock || pathBlocked) {
-            SpatialGUIClient.setSwitchedToFirstPersonDueToBlock(true);
-        }
-    }
-
     public static void checkBlockCollision(Entity entity) {
         if (Minecraft.getInstance().level == null) return;
 
@@ -75,5 +41,32 @@ public class CameraUtil {
         float baselineFov = (float) SpatialGUI.config.autoFovTuning.autoScaleBaselineFov;
 
         return currentFov / baselineFov;
+    }
+
+    public static float calculateAutoFovDistance(float baseDistance, boolean isFirstPerson) {
+        if (isFirstPerson) return 0.0f;
+        
+        float fovMultiplier = calculateFovMultiplier();
+        float distanceMultiplier = (float) SpatialGUI.config.autoFovTuning.autoScaleDistanceMultiplier;
+        float fovAdjustment = (1.0f / fovMultiplier) - 1.0f;
+        float distanceFovAdjustment = fovAdjustment * distanceMultiplier;
+        
+        return Math.clamp(baseDistance * (1.0f + distanceFovAdjustment), -4, 4);
+    }
+
+    public static float calculateAutoFovSideOffset(float baseSideOffset, boolean isFirstPerson) {
+        if (isFirstPerson) return 0.0f;
+        
+        float fovMultiplier = calculateFovMultiplier();
+        float sideOffsetMultiplier = (float) SpatialGUI.config.autoFovTuning.autoScaleSideOffsetMultiplier;
+        float fovAdjustment = (1.0f / fovMultiplier) - 1.0f;
+        float sideOffsetFovAdjustment = fovAdjustment * sideOffsetMultiplier;
+        
+        return Math.clamp(baseSideOffset * (1.0f + sideOffsetFovAdjustment), -4, 4);
+    }
+
+    public static double calculateMouseSensitivity() {
+        double ss = Minecraft.getInstance().options.sensitivity().get() * 0.6 + 0.2;
+        return ss * ss * ss;
     }
 }

@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.StagedVertexBuffer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 //? > 26.2 {
 /*import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
@@ -28,11 +27,9 @@ import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.VertexFormat;
 //? }
-import org.joml.Vector2d;
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.util.AnimationUtil;
-import org.tastytrash.spatialGUI.util.MathUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil;
 
 public class InventoryRenderer {
@@ -72,20 +69,17 @@ public class InventoryRenderer {
         }
 
         var texture = targetManager.getInventoryTarget().getColorTextureView();
-        RenderPipeline pipeline = INVENTORY_PIPELINE;
-        VertexFormat format = pipeline.getVertexFormatBinding(0);
+        VertexFormat format = INVENTORY_PIPELINE.getVertexFormatBinding(0);
 
         if (texture == null || format == null) {
             return;
         }
 
-        PrimitiveTopology primitive = pipeline.getPrimitiveTopology();
+        PrimitiveTopology primitive = INVENTORY_PIPELINE.getPrimitiveTopology();
         StagedVertexBuffer.Draw draw = INVENTORY_BUFFER.appendDraw(
                 format,
                 primitive,
-                primitive == PrimitiveTopology.QUADS
-                        ? RenderSystem.getProjectionType().vertexSorting()
-                        : null
+                primitive == PrimitiveTopology.QUADS ? RenderSystem.getProjectionType().vertexSorting() : null
         );
 
         matrices.pushPose();
@@ -94,7 +88,8 @@ public class InventoryRenderer {
         boolean isFirstPerson = SpatialGUIClient.getEffectiveFirstPersonMode();
         float yaw = player.getYRot();
         float pitch = isFirstPerson ? player.getXRot() : 0;
-        pitch = Math.clamp(pitch, (float) -SpatialGUI.config.firstPersonPitchClamp, (float) SpatialGUI.config.firstPersonPitchClamp);
+        float pitchClamp = (float) SpatialGUI.config.firstPersonPitchClamp;
+        pitch = Math.clamp(pitch, -pitchClamp, pitchClamp);
         float yawRadians = (float) Math.toRadians(yaw);
         float pitchRadians = (float) Math.toRadians(pitch);
 
@@ -106,8 +101,8 @@ public class InventoryRenderer {
 
         RenderUtil.applyScreenTransform(matrices, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
 
-        float scale = config.scale();
-        scale = calculateAnimatedScale(scale);
+        float scale = AnimationUtil.calculateAnimatedScale(config.scale(), screenOpenTime, isRecipeBookOpen, recipeBookCloseDelay);
+        recipeBookCloseDelay = isRecipeBookOpen ? -2 : Math.min(0, recipeBookCloseDelay + 1);
         matrices.scale(scale, scale, scale);
 
         Matrix4f pose = matrices.last().pose();
@@ -132,11 +127,11 @@ public class InventoryRenderer {
             return;
         }
 
-        drawInventory(info, pipeline, texture);
+        drawInventory(info, texture);
         INVENTORY_BUFFER.endFrame();
     }
 
-    private void drawInventory(StagedVertexBuffer.ExecuteInfo info, RenderPipeline pipeline, GpuTextureView texture) {
+    private void drawInventory(StagedVertexBuffer.ExecuteInfo info, GpuTextureView texture) {
         Minecraft client = Minecraft.getInstance();
         RenderTarget mainTarget = client.gameRenderer.mainRenderTarget();
         var output = mainTarget.getColorTextureView();
@@ -166,7 +161,7 @@ public class InventoryRenderer {
             //? if >26.2 {
             /*renderPass.setPipeline(RenderSystem.getCompiledPipeline(pipeline));
             *///?} else {
-            renderPass.setPipeline(pipeline);
+            renderPass.setPipeline(InventoryRenderer.INVENTORY_PIPELINE);
              //?}
             RenderSystem.bindDefaultUniforms(renderPass);
             renderPass.setUniform("DynamicTransforms", dynamicTransforms);
@@ -183,20 +178,5 @@ public class InventoryRenderer {
             renderPass.setIndexBuffer(info.indexBuffer(), info.indexType());
             renderPass.drawIndexed(info.indexCount(), 1, info.firstIndex(), info.baseVertex(), 0);
         }
-    }
-
-    private float calculateAnimatedScale(float baseScale) {
-        recipeBookCloseDelay = isRecipeBookOpen ? -2 : Math.min(0, recipeBookCloseDelay + 1);
-        float scale = (isRecipeBookOpen || recipeBookCloseDelay < 0) ? baseScale / (float) SpatialGUI.config.recipeBookShrinkFactor : baseScale;
-
-        if (SpatialGUI.config.enableScaleAnimation) {
-            long elapsed = System.currentTimeMillis() - screenOpenTime;
-            float animationProgress = Math.min(1.0F, (float) elapsed / (float) SpatialGUI.config.openAnimationDurationMs);
-            float easedProgress = AnimationUtil.applyEasing(SpatialGUI.config.animationEasing, animationProgress);
-            float startScalePercent = SpatialGUI.config.animationStartScalePercent / 100.0f;
-            float startScale = scale * startScalePercent;
-            scale = MathUtil.lerp(startScale, scale, easedProgress);
-        }
-        return scale;
     }
 }
