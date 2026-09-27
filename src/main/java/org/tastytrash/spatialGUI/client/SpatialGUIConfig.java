@@ -33,6 +33,10 @@ public class SpatialGUIConfig implements ConfigData {
     public boolean autoScaleByFov = true;
 
     @ConfigEntry.Category("general")
+    @ConfigEntry.Gui.Tooltip
+    public boolean mirrorThirdPerson = false;
+
+    @ConfigEntry.Category("general")
     @ConfigEntry.Gui.CollapsibleObject
     public AutoFovTuning autoFovTuning = new AutoFovTuning();
 

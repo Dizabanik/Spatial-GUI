@@ -29,6 +29,9 @@
   "text.autoconfig.spatial-gui.option.autoScaleByFov": "Auto Scale by FOV",
   "text.autoconfig.spatial-gui.option.autoScaleByFov.@Tooltip": "Automatically adjust screen scale, distance, and side offset based on your FOV setting",
 
+  "text.autoconfig.spatial-gui.option.mirrorThirdPerson": "Mirror Third Person",
+  "text.autoconfig.spatial-gui.option.mirrorThirdPerson.@Tooltip": "Mirror the camera and screen position/rotation in third person mode",
+
   "text.autoconfig.spatial-gui.option.autoFovTuning": "Auto FOV Tuning",
   "text.autoconfig.spatial-gui.option.autoFovTuning.@Tooltip": "FOV auto-scaling tuning options",
 

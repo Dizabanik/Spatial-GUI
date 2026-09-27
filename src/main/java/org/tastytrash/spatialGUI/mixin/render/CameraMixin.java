@@ -37,6 +37,7 @@ public abstract class CameraMixin {
     @Unique private static float smoothedCameraYaw, smoothedCameraPitch;
     @Unique private static double initialMouseX, initialMouseY;
     @Unique private static boolean hasMouseMovedSinceScreenOpen = false;
+    @Unique private static float baseXRot;
 
     @Unique private static double lastMouseX, lastMouseY;
     @Unique private static float freeLookYaw = 0f, freeLookPitch = 0f;
@@ -64,6 +65,7 @@ public abstract class CameraMixin {
                 initialMouseX = mc.mouseHandler.xpos();
                 initialMouseY = mc.mouseHandler.ypos();
                 hasMouseMovedSinceScreenOpen = false;
+                baseXRot = Math.clamp(xRot, -SpatialGUI.config.firstPersonPitchClamp, SpatialGUI.config.firstPersonPitchClamp);
 
                 if (SpatialGUIRenderer.isCrosshairModeActive()) {
                     lastMouseX = mc.mouseHandler.xpos();
@@ -106,6 +108,10 @@ public abstract class CameraMixin {
 
         Minecraft client = Minecraft.getInstance();
 
+        if (!isFirstPerson && SpatialGUI.config.mirrorThirdPerson) {
+            sideOffset = -sideOffset;
+        }
+
         if (!hasMouseMovedSinceScreenOpen) {
             double mouseDeltaX = Math.abs(client.mouseHandler.xpos() - initialMouseX);
             double mouseDeltaY = Math.abs(client.mouseHandler.ypos() - initialMouseY);
@@ -119,10 +125,7 @@ public abstract class CameraMixin {
             float maxPitch = 90;
             float entityXRot = entity.getXRot();
 
-            if (SpatialGUI.config.disableFirstPersonParallax) {
-                smoothedCameraYaw = 0f;
-                smoothedCameraPitch = entityXRot;
-            } else if (SpatialGUIRenderer.isCrosshairModeActive()) {
+            if (SpatialGUIRenderer.isCrosshairModeActive()) {
                 double deltaX, deltaY;
                 //? if >26.2 {
                 double[] rel = MouseHandlerUtil.resetFreeLookDelta();
@@ -146,9 +149,12 @@ public abstract class CameraMixin {
 
                 smoothedCameraYaw = freeLookYaw;
                 smoothedCameraPitch = entityXRot + freeLookPitch;
+            } else if (SpatialGUI.config.disableFirstPersonParallax) {
+                smoothedCameraYaw = 0f;
+                smoothedCameraPitch = baseXRot;
             } else {
                 smoothedCameraYaw = normX * MAX_YAW_OFFSET * (float) SpatialGUI.config.firstPersonMouseSensitivityYaw;
-                smoothedCameraPitch = entityXRot + normY * 180f * (float) SpatialGUI.config.firstPersonMouseSensitivityPitch;
+                smoothedCameraPitch = baseXRot + normY * 180f * (float) SpatialGUI.config.firstPersonMouseSensitivityPitch;
             }
 
             smoothedCameraPitch = Math.clamp(smoothedCameraPitch, -maxPitch, maxPitch);
@@ -229,6 +235,7 @@ public abstract class CameraMixin {
         smoothedCameraPitch = 0f;
         freeLookYaw = 0f;
         freeLookPitch = 0f;
+        baseXRot = 0f;
         SpatialGUIClient.setSwitchedToFirstPersonDueToBlock(false);
         SpatialGUIClient.setEffectiveFirstPersonMode(false);
         MouseHandlerUtil.updateMouseGrabForFirstPerson(false);

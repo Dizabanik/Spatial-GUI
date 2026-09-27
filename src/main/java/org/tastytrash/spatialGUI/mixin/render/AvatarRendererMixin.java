@@ -42,9 +42,18 @@ public class AvatarRendererMixin {
         float normX = (float) (mouseX / width) * 2f - 1f;
         float normY = (float) (mouseY / height) * 2f - 1f;
 
-        state.bodyRot = client.player.getYRot() + (float) SpatialGUI.config.avatarBodyRotationOffset;
+        float bodyRotationOffset = (float) SpatialGUI.config.avatarBodyRotationOffset;
+        if (SpatialGUI.config.mirrorThirdPerson) {
+            bodyRotationOffset = -bodyRotationOffset;
+        }
+        state.bodyRot = client.player.getYRot() + bodyRotationOffset;
 
-        float targetYaw = normX * MAX_YAW_OFFSET + (float) SpatialGUI.config.avatarBaseYawOffset;
+        float baseYawOffset = (float) SpatialGUI.config.avatarBaseYawOffset;
+        if (SpatialGUI.config.mirrorThirdPerson) {
+            baseYawOffset = -baseYawOffset;
+        }
+
+        float targetYaw = normX * MAX_YAW_OFFSET + baseYawOffset;
         float targetPitch = Mth.clamp(normY * MAX_PITCH_OFFSET, -60f, 60f);
 
         if (justOpened) {

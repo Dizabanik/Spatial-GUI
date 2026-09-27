@@ -69,7 +69,7 @@ public final class RenderUtil {
 
     public static ScreenTransformConfig getScreenTransformConfig(boolean isFirstPerson) {
         float fovMultiplier = calculateFovScaleMultiplier(SpatialGUI.config.autoScaleByFov);
-        
+
         if (isFirstPerson) {
             return new ScreenTransformConfig(
                     (float) SpatialGUI.config.firstPersonScreenDistance,
@@ -82,11 +82,19 @@ public final class RenderUtil {
         }
 
         float thirdPersonFovMultiplier = 1.0f + (fovMultiplier - 1.0f) * (float) SpatialGUI.config.autoFovTuning.autoScaleThirdPersonScreenMultiplier;
+        float sideOffset = (float) SpatialGUI.config.screenSideOffset;
+        float yawOffset = (float) SpatialGUI.config.screenYawOffset;
+
+        if (SpatialGUI.config.mirrorThirdPerson) {
+            sideOffset = -sideOffset;
+            yawOffset = -yawOffset;
+        }
+
         return new ScreenTransformConfig(
                 (float) SpatialGUI.config.screenDistance,
-                (float) SpatialGUI.config.screenSideOffset,
+                sideOffset,
                 (float) SpatialGUI.config.screenHeightOffset,
-                (float) SpatialGUI.config.screenYawOffset,
+                yawOffset,
                 (float) SpatialGUI.config.screenPitchOffset,
                 (float) SpatialGUI.config.screenScale * thirdPersonFovMultiplier
         );

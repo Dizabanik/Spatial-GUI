@@ -20,6 +20,8 @@
   "text.autoconfig.spatial-gui.option.guiScale.@Tooltip": "Escala forçada da interface para telas de inventário (1–4)",
   "text.autoconfig.spatial-gui.option.autoScaleByFov": "Escala Automática pelo Campo de Visão",
   "text.autoconfig.spatial-gui.option.autoScaleByFov.@Tooltip": "Ajusta automaticamente a escala, a distância e o deslocamento lateral da tela com base no seu campo de visão",
+  "text.autoconfig.spatial-gui.option.mirrorThirdPerson": "Espelhar Terceira Pessoa",
+  "text.autoconfig.spatial-gui.option.mirrorThirdPerson.@Tooltip": "Espelha a posição e rotação da câmera e da tela no modo em terceira pessoa",
   "text.autoconfig.spatial-gui.option.autoFovTuning": "Ajuste Automático do Campo de Visão",
   "text.autoconfig.spatial-gui.option.autoFovTuning.@Tooltip": "Opções de ajuste da escala automática pelo campo de visão",
   "text.autoconfig.spatial-gui.option.autoFovTuning.autoScaleBaselineFov": "Campo de Visão Base da Escala Automática",

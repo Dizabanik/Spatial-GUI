@@ -14,9 +14,13 @@ public class CameraUtil {
         if (Minecraft.getInstance().level == null) return;
 
         float yawRadians = (float) Math.toRadians(entity.getYRot());
-        double camX = entity.getX() + Math.sin(yawRadians) * SpatialGUI.config.cameraDistance + Math.cos(yawRadians) * SpatialGUI.config.cameraSideOffset;
+        double sideOffset = SpatialGUI.config.cameraSideOffset;
+        if (SpatialGUI.config.mirrorThirdPerson) {
+            sideOffset = -sideOffset;
+        }
+        double camX = entity.getX() + Math.sin(yawRadians) * SpatialGUI.config.cameraDistance + Math.cos(yawRadians) * sideOffset;
         double camY = entity.getY() + SpatialGUI.config.cameraHeightOffset;
-        double camZ = entity.getZ() - Math.cos(yawRadians) * SpatialGUI.config.cameraDistance + Math.sin(yawRadians) * SpatialGUI.config.cameraSideOffset;
+        double camZ = entity.getZ() - Math.cos(yawRadians) * SpatialGUI.config.cameraDistance + Math.sin(yawRadians) * sideOffset;
 
         Vec3 playerEyePos = new Vec3(entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ());
         Vec3 targetCamPos = new Vec3(camX, camY, camZ);
