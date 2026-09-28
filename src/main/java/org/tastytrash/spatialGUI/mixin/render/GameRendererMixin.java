@@ -15,8 +15,8 @@ import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 
 //? if >1.21.1 {
-/*import net.minecraft.client.renderer.fog.FogRenderer;
- *///?}
+import net.minecraft.client.renderer.fog.FogRenderer;
+ //?}
 
 //? if <26.2 {
 import net.minecraft.client.gui.GuiGraphics;
@@ -61,7 +61,7 @@ public class GameRendererMixin {
             renderer.getScreenGuiRenderer().render();
             renderer.getScreenGuiRenderer().endFrame();
 
-            SpatialGUIRenderer.skipWindowOverride = true;
+            SpatialGUIRenderer.skipWindowOverride = false;
         }
     }
 
@@ -78,16 +78,23 @@ public class GameRendererMixin {
     }
 }
 *///?} else if >1.21.1 {
-/*@Mixin(GameRenderer.class)
+@Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Final @Shadow private FogRenderer fogRenderer;
+
+    @Inject(method = "render", at = @At("HEAD"))
+    private void spatialGUI$prepareTargetEarly(CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            renderer.prepareTarget();
+        }
+    }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V"))
     private void spatialGUI$beforeGuiRender(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
 
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            renderer.prepareTarget();
             renderer.clearTarget();
 
             SpatialGUIRenderer.skipWindowOverride = true;
@@ -109,7 +116,7 @@ public class GameRendererMixin {
         }
     }
     //?} else {
-    /^@Redirect(method = "render", at = @At(
+    /*@Redirect(method = "render", at = @At(
             value = "INVOKE",
             target = "Lnet/neoforged/neoforge/client/ClientHooks;drawScreen(Lnet/minecraft/client/gui/screens/Screen;Lnet/minecraft/client/gui/GuiGraphics;IIF)V"
     ))
@@ -123,7 +130,7 @@ public class GameRendererMixin {
             net.neoforged.neoforge.client.ClientHooks.drawScreen(screen, graphics, mouseX, mouseY, partialTick);
         }
     }
-    ^///?}
+    *///?}
 
     @Inject(method = "render", at = @At("TAIL"))
     private void spatialGUI$renderIsolatedScreen(CallbackInfo ci) {
@@ -134,7 +141,7 @@ public class GameRendererMixin {
             renderer.getScreenGuiRenderer().render(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
             renderer.getScreenGuiRenderer().incrementFrameNumber();
 
-            SpatialGUIRenderer.skipWindowOverride = true;
+            SpatialGUIRenderer.skipWindowOverride = false;
         }
     }
 
@@ -148,14 +155,14 @@ public class GameRendererMixin {
         }
     }
 }
-*///?} else {
-@Mixin(GameRenderer.class)
+//?} else {
+/*@Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Inject(method = "render", at = @At("HEAD"))
-    private void spatialGUI$beginRender(CallbackInfo ci) {
+    private void spatialGUI$prepareTargetEarly(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            SpatialGUIRenderer.skipWindowOverride = true;
+            renderer.prepareTarget();
         }
     }
 
@@ -175,7 +182,7 @@ public class GameRendererMixin {
         }
     }
     //?} else {
-    /*@Redirect(method = "render", at = @At(
+    /^@Redirect(method = "render", at = @At(
             value = "INVOKE",
             target = "Lnet/neoforged/neoforge/client/ClientHooks;drawScreen(Lnet/minecraft/client/gui/screens/Screen;Lnet/minecraft/client/gui/GuiGraphics;IIF)V"
     ))
@@ -189,13 +196,13 @@ public class GameRendererMixin {
             net.neoforged.neoforge.client.ClientHooks.drawScreen(screen, graphics, mouseX, mouseY, partialTick);
         }
     }
-    *///?}
+    ^///?}
 
     @Inject(method = "render", at = @At("TAIL"))
     private void spatialGUI$endRender(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            SpatialGUIRenderer.skipWindowOverride = true;
+            SpatialGUIRenderer.skipWindowOverride = false;
         }
     }
 
@@ -209,4 +216,4 @@ public class GameRendererMixin {
         }
     }
 }
-//?}
+*///?}

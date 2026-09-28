@@ -6,9 +6,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
+import org.tastytrash.spatialGUI.mixin.gui.MouseHandlerAccessor;
 
 //? if >1.21.1 {
-/*import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.entity.Avatar;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,13 +37,13 @@ public class AvatarRendererMixin {
 
         boolean justOpened = !renderer.headLockInitialized;
 
-        double mouseX = client.mouseHandler.xpos();
-        double mouseY = client.mouseHandler.ypos();
+        double mouseX = ((MouseHandlerAccessor) client.mouseHandler).getRawXpos();
+        double mouseY = ((MouseHandlerAccessor) client.mouseHandler).getRawYpos();
         int width = client.getWindow().getScreenWidth();
         int height = client.getWindow().getScreenHeight();
 
-        float normX = (float) (mouseX / width) * 2f - 1f;
-        float normY = (float) (mouseY / height) * 2f - 1f;
+        float normX = Math.clamp((float) (mouseX / width) * 2f - 1f, -1f, 1f);
+        float normY = Math.clamp((float) (mouseY / height) * 2f - 1f, -1f, 1f);
 
         float bodyRotationOffset = (float) SpatialGUI.config.avatarBodyRotationOffset;
         if (SpatialGUI.config.mirrorThirdPerson) {
@@ -71,8 +72,8 @@ public class AvatarRendererMixin {
         state.xRot = smoothedHeadPitch;
     }
 }
-*///?} else {
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+//?} else {
+/*import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -107,13 +108,13 @@ public class AvatarRendererMixin {
 
         boolean justOpened = !renderer.headLockInitialized;
 
-        double mouseX = client.mouseHandler.xpos();
-        double mouseY = client.mouseHandler.ypos();
+        double mouseX = ((MouseHandlerAccessor) client.mouseHandler).getRawXpos();
+        double mouseY = ((MouseHandlerAccessor) client.mouseHandler).getRawYpos();
         int width = client.getWindow().getScreenWidth();
         int height = client.getWindow().getScreenHeight();
 
-        float normX = (float) (mouseX / width) * 2f - 1f;
-        float normY = (float) (mouseY / height) * 2f - 1f;
+        float normX = Math.clamp((float) (mouseX / width) * 2f - 1f, -1f, 1f);
+        float normY = Math.clamp((float) (mouseY / height) * 2f - 1f, -1f, 1f);
 
         float bodyRotationOffset = (float) SpatialGUI.config.avatarBodyRotationOffset;
         if (SpatialGUI.config.mirrorThirdPerson) {
@@ -162,4 +163,4 @@ public class AvatarRendererMixin {
         }
     }
 }
-//?}
+*///?}

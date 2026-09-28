@@ -17,14 +17,14 @@ public class WindowMixin {
 
     @ModifyReturnValue(method = "getGuiScale", at = @At("RETURN"))
     //? if >1.21.1 {
-    /*private int spatialGUI$overrideGuiScale(int original) {
+    private int spatialGUI$overrideGuiScale(int original) {
         return shouldOverride() ? getGuiScale() : original;
     }
-    *///?} else {
-    private double spatialGUI$overrideGuiScale(double original) {
-        return shouldOverride() ? getGuiScale() : original;
+    //?} else {
+    /*private double spatialGUI$overrideGuiScale(double original) {
+        return shouldOverride() ? (double) getGuiScale() : original;
     }
-    //?}
+    *///?}
 
     @ModifyReturnValue(method = "getGuiScaledWidth", at = @At("RETURN"))
     private int spatialGUI$overrideScaledWidth(int original) {
@@ -45,23 +45,22 @@ public class WindowMixin {
 
     @Unique
     private int getGuiScale() {
-        if (SpatialGUI.config.autoCalculateGuiScale) {
-            Window self = (Window)(Object) this;
-            return SpatialGUI.config.calculateAutoGuiScale(self.getHeight());
-        }
-        return SpatialGUI.config.guiScale;
+        Window self = (Window)(Object) this;
+        return SpatialGUI.config.getEffectiveGuiScale(self.getHeight());
     }
 
     @Unique
     private static boolean shouldOverride() {
+        if (!SpatialGUI.config.enabled || SpatialGUIRenderer.skipWindowOverride) return false;
         Minecraft mc = Minecraft.getInstance();
         if (mc.gui == null) return false;
-        if (SpatialGUIRenderer.skipWindowOverride) return false;
         //? if >=26.2 {
         /*Screen screen = mc.gui.screen();
         *///?} else {
         Screen screen = mc.screen;
         //?}
-        return screen instanceof AbstractContainerScreen<?> && SpatialGUI.config.enabled;
+        if (screen instanceof AbstractContainerScreen<?>) return true;
+        var renderer = org.tastytrash.spatialGUI.client.SpatialGUIClient.renderer();
+        return renderer != null && renderer.getHookedScreen() instanceof AbstractContainerScreen<?>;
     }
 }

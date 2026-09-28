@@ -17,7 +17,7 @@
   "text.autoconfig.spatial-gui.option.autoCalculateGuiScale": "Calcular Escala da Interface Automaticamente",
   "text.autoconfig.spatial-gui.option.autoCalculateGuiScale.@Tooltip": "Calcula automaticamente a escala da interface com base na altura da janela",
   "text.autoconfig.spatial-gui.option.guiScale": "Escala da Interface",
-  "text.autoconfig.spatial-gui.option.guiScale.@Tooltip": "Escala forçada da interface para telas de inventário (1–4)",
+  "text.autoconfig.spatial-gui.option.guiScale.@Tooltip": "Escala manual da interface quando o cálculo automático estiver desativado (1 a 6)",
   "text.autoconfig.spatial-gui.option.autoScaleByFov": "Escala Automática pelo Campo de Visão",
   "text.autoconfig.spatial-gui.option.autoScaleByFov.@Tooltip": "Ajusta automaticamente a escala, a distância e o deslocamento lateral da tela com base no seu campo de visão",
   "text.autoconfig.spatial-gui.option.mirrorThirdPerson": "Espelhar Terceira Pessoa",

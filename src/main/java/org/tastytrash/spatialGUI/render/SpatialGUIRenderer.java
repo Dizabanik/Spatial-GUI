@@ -47,6 +47,7 @@ public class SpatialGUIRenderer {
             return;
         }
 
+        skipWindowOverride = false;
         hookedScreen = screen;
         isInventoryScreen = screen instanceof InventoryScreen || screen.getClass().getName().contains("InventoryScreen");
         inventoryRenderer.setScreenOpenTime(System.currentTimeMillis());
@@ -100,8 +101,11 @@ public class SpatialGUIRenderer {
     *///? }
 
     private void onScreenRemoved() {
+        skipWindowOverride = false;
         var player = Minecraft.getInstance().player;
         MouseHandlerUtil.releaseMouseFromFirstPerson();
+        inventoryRenderer.resetRecipeBookState();
+        MouseHandlerUtil.resetMouseCache();
         hookedScreen = null;
         isInventoryScreen = false;
         cameraStartPos = null;
@@ -114,12 +118,12 @@ public class SpatialGUIRenderer {
             /*float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
             float cameraPitch = mc.gameRenderer.getMainCamera().xRot();
             *///?} else if >=1.21.11 {
-            /*float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
+            float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
             float cameraPitch = mc.gameRenderer.getMainCamera().xRot();
-            *///?} else {
-            float cameraYaw = mc.gameRenderer.getMainCamera().getYRot();
+            //?} else {
+            /*float cameraYaw = mc.gameRenderer.getMainCamera().getYRot();
             float cameraPitch = mc.gameRenderer.getMainCamera().getXRot();
-            //?}
+            *///?}
             if (player != null) {
                 player.setYRot(cameraYaw);
                 player.setXRot(cameraPitch);
@@ -161,12 +165,12 @@ public class SpatialGUIRenderer {
             /*cameraStartPos = mc.gameRenderer.getMainCamera().position();
             cameraStartYRot = mc.gameRenderer.getMainCamera().yRot();
             *///?} else if >=1.21.11 {
-            /*cameraStartPos = mc.gameRenderer.getMainCamera().position();
+            cameraStartPos = mc.gameRenderer.getMainCamera().position();
             cameraStartYRot = mc.gameRenderer.getMainCamera().yRot();
-            *///?} else {
-            cameraStartPos = mc.gameRenderer.getMainCamera().getPosition();
+            //?} else {
+            /*cameraStartPos = mc.gameRenderer.getMainCamera().getPosition();
             cameraStartYRot = mc.gameRenderer.getMainCamera().getYRot();
-            //?}
+            *///?}
             wasTrue = true;
         }
 
@@ -209,10 +213,10 @@ public class SpatialGUIRenderer {
     }
 
     //? if >1.21.1 {
-    /*public net.minecraft.client.gui.render.GuiRenderer getScreenGuiRenderer() {
+    public net.minecraft.client.gui.render.GuiRenderer getScreenGuiRenderer() {
         return screenExtractor.getScreenGuiRenderer();
     }
-    *///?}
+    //?}
 
     public void extractIsolatedScreen(Screen screen, float partialTick) {
         screenExtractor.extractIsolatedScreen(screen, partialTick, inventoryRenderer.getQuadBasis(), targetManager);

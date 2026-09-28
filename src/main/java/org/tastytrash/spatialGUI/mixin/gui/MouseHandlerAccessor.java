@@ -11,4 +11,10 @@ public interface MouseHandlerAccessor {
 
     @Accessor("mouseGrabbed")
     boolean getMouseGrabbed();
+
+    @Accessor("xpos")
+    double getRawXpos();
+
+    @Accessor("ypos")
+    double getRawYpos();
 }
