@@ -164,6 +164,7 @@ public class GameRendererMixin {
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
             renderer.prepareTarget();
         }
+        SpatialGUIRenderer.skipWindowOverride = true;
     }
 
     //? if fabric {
@@ -202,7 +203,7 @@ public class GameRendererMixin {
     private void spatialGUI$endRender(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            SpatialGUIRenderer.skipWindowOverride = false;
+            SpatialGUIRenderer.skipWindowOverride = true;
         }
     }
 

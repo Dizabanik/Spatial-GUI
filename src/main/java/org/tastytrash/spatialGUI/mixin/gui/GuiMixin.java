@@ -28,7 +28,7 @@ public class GuiMixin {
     }
 
     //? if fabric {
-    /^@Redirect(method = "extractRenderState", at = @At(
+    @Redirect(method = "extractRenderState", at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/gui/screens/Screen;extractRenderStateWithTooltipAndSubtitles(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V"
     ))
@@ -42,7 +42,7 @@ public class GuiMixin {
             screen.extractRenderStateWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
         }
     }
-    ^///? }
+    //? }
 }
 *///?} else if >=1.21.1 {
 import net.minecraft.client.DeltaTracker;

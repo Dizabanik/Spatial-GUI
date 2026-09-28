@@ -36,6 +36,11 @@ public class SpatialGUIRenderer {
         this.targetManager = new TextureTargetManager();
         this.screenExtractor = new ScreenExtractor();
         this.inventoryRenderer = new InventoryRenderer(targetManager);
+
+        //? if neoforge {
+        /*NeoForge.EVENT_BUS.addListener(this::onScreenRenderPre);
+        NeoForge.EVENT_BUS.addListener(this::onScreenClosing);
+        *///? }
     }
 
     public void hookScreen(Screen screen) {
@@ -76,10 +81,7 @@ public class SpatialGUIRenderer {
                 onScreenRemoved();
             }
         });
-        //? } else if neoforge {
-        /*NeoForge.EVENT_BUS.addListener(this::onScreenRenderPre);
-        NeoForge.EVENT_BUS.addListener(this::onScreenClosing);
-        *///? }
+        //?}
     }
 
     //? if neoforge {
@@ -95,7 +97,6 @@ public class SpatialGUIRenderer {
     private void onScreenClosing(ScreenEvent.Closing event) {
         if (event.getScreen() == hookedScreen) {
             onScreenRemoved();
-            NeoForge.EVENT_BUS.unregister(this);
         }
     }
     *///? }

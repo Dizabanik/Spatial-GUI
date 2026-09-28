@@ -1,5 +1,9 @@
 -------- HIGH PRIORITY ---------------
 
+When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
+
+Subtitles rendering in weird position fabric and neoforge 26.2, 26.3, etc
+
 Add 26.1.x support
 
 -------- MID PRIORITY ---------------
@@ -25,4 +29,5 @@ Minecraft's water effects not applying properly when in the menu with velocity u
 ----- POSSIBLY SOLVED/NOT NEEDED ------
 
 ----- CHANGELOG ------
-Added 1.21.11 (thanks Dizabanik) and 1.21.1 support, added pt_br.json translation (credit BUILDLCS), fixed first person parallax bugs, fixed scaling issue when resizing the window or opening a screen from withing a screen, added an option to mirror third person camera & screen settings
+
+Significant performance fixes and general bug fixes (with tons of help from Dizabanik on GitHub), lowered the versions of dependencies for more compatibility, added a config option to swing your hand when interacting in first person mode, added a resolution scale config option

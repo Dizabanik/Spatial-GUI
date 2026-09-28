@@ -214,6 +214,6 @@ public final class RenderUtil {
             return null;
         }
 
-        return new Vector2d(u * inventoryTarget.width, (1.0 - v) * inventoryTarget.height);
+        return new Vector2d(u * width, (1.0 - v) * height);
     }
 }

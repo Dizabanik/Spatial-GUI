@@ -74,6 +74,11 @@ public class SpatialGUIConfig implements ConfigData {
     // rendering
     @ConfigEntry.Category("rendering")
     @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.BoundedDiscrete(min = 25, max = 100)
+    public int renderScalePercent = 100;
+
+    @ConfigEntry.Category("rendering")
+    @ConfigEntry.Gui.Tooltip
     public boolean useLinearFiltering = true;
 
     @ConfigEntry.Category("rendering")
@@ -92,6 +97,10 @@ public class SpatialGUIConfig implements ConfigData {
     @ConfigEntry.Category("rendering")
     @ConfigEntry.Gui.Tooltip
     public boolean hideShieldInFirstPerson = true;
+
+    @ConfigEntry.Category("rendering")
+    @ConfigEntry.Gui.Tooltip
+    public boolean swingArmOnFirstPersonClick = false;
 
     @ConfigEntry.Category("rendering")
     @ConfigEntry.Gui.Tooltip

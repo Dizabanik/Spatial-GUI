@@ -65,6 +65,12 @@
   "text.autoconfig.spatial-gui.option.hideShieldInFirstPerson": "Hide Shield in First Person",
   "text.autoconfig.spatial-gui.option.hideShieldInFirstPerson.@Tooltip": "Hide the players shield when in first person mode",
 
+  "text.autoconfig.spatial-gui.option.swingArmOnFirstPersonClick": "Swing Arm on Click",
+  "text.autoconfig.spatial-gui.option.swingArmOnFirstPersonClick.@Tooltip": "Swing the player's arm when clicking items in first person mode",
+
+  "text.autoconfig.spatial-gui.option.renderScalePercent": "Resolution Scale",
+  "text.autoconfig.spatial-gui.option.renderScalePercent.@Tooltip": "Resolution scale for the GUI (25-100%).\nLower values improve performance, but look worse visually.",
+
   "text.autoconfig.spatial-gui.option.screenAlpha": "Screen Alpha",
   "text.autoconfig.spatial-gui.option.screenAlpha.@Tooltip": "Transparency of the inventory screen",
 
