@@ -3,7 +3,6 @@ package org.tastytrash.spatialGUI.mixin.render;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.fog.FogRenderer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,12 +14,16 @@ import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 
+//? if >1.21.1 {
+/*import net.minecraft.client.renderer.fog.FogRenderer;
+ *///?}
+
 //? if <26.2 {
-/*import net.minecraft.client.gui.GuiGraphics;
-*///?}
+import net.minecraft.client.gui.GuiGraphics;
+//?}
 
 //? if >=26.2 {
-import net.minecraft.client.Minecraft;
+/*import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.state.GameRenderState;
 
 @Mixin(GameRenderer.class)
@@ -74,7 +77,7 @@ public class GameRendererMixin {
         }
     }
 }
-//?} else {
+*///?} else if >1.21.1 {
 /*@Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Final @Shadow private FogRenderer fogRenderer;
@@ -145,4 +148,65 @@ public class GameRendererMixin {
         }
     }
 }
-*///?}
+*///?} else {
+@Mixin(GameRenderer.class)
+public class GameRendererMixin {
+    @Inject(method = "render", at = @At("HEAD"))
+    private void spatialGUI$beginRender(CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            SpatialGUIRenderer.skipWindowOverride = true;
+        }
+    }
+
+    //? if fabric {
+    @Redirect(method = "render", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/screens/Screen;renderWithTooltip(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"
+    ))
+    private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        var renderer = SpatialGUIClient.renderer();
+        if (SpatialGUI.config.enabled && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
+            SpatialGUIRenderer.skipWindowOverride = false;
+            renderer.extractIsolatedScreen(screen, partialTick);
+            SpatialGUIRenderer.skipWindowOverride = true;
+        } else {
+            screen.renderWithTooltip(graphics, mouseX, mouseY, partialTick);
+        }
+    }
+    //?} else {
+    /*@Redirect(method = "render", at = @At(
+            value = "INVOKE",
+            target = "Lnet/neoforged/neoforge/client/ClientHooks;drawScreen(Lnet/minecraft/client/gui/screens/Screen;Lnet/minecraft/client/gui/GuiGraphics;IIF)V"
+    ))
+    private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        var renderer = SpatialGUIClient.renderer();
+        if (SpatialGUI.config.enabled && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
+            SpatialGUIRenderer.skipWindowOverride = false;
+            renderer.extractIsolatedScreen(screen, partialTick);
+            SpatialGUIRenderer.skipWindowOverride = true;
+        } else {
+            net.neoforged.neoforge.client.ClientHooks.drawScreen(screen, graphics, mouseX, mouseY, partialTick);
+        }
+    }
+    *///?}
+
+    @Inject(method = "render", at = @At("TAIL"))
+    private void spatialGUI$endRender(CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            SpatialGUIRenderer.skipWindowOverride = true;
+        }
+    }
+
+    @Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
+    private void spatialGUI$overrideHideHand(CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.hideHandsInFirstPerson) {
+                ci.cancel();
+            }
+        }
+    }
+}
+//?}

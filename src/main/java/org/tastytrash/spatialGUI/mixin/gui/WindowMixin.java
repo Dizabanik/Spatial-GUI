@@ -16,9 +16,15 @@ import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 public class WindowMixin {
 
     @ModifyReturnValue(method = "getGuiScale", at = @At("RETURN"))
-    private int spatialGUI$overrideGuiScale(int original) {
+    //? if >1.21.1 {
+    /*private int spatialGUI$overrideGuiScale(int original) {
         return shouldOverride() ? getGuiScale() : original;
     }
+    *///?} else {
+    private double spatialGUI$overrideGuiScale(double original) {
+        return shouldOverride() ? getGuiScale() : original;
+    }
+    //?}
 
     @ModifyReturnValue(method = "getGuiScaledWidth", at = @At("RETURN"))
     private int spatialGUI$overrideScaledWidth(int original) {
@@ -52,10 +58,10 @@ public class WindowMixin {
         if (mc.gui == null) return false;
         if (SpatialGUIRenderer.skipWindowOverride) return false;
         //? if >=26.2 {
-        Screen screen = mc.gui.screen();
-        //?} else {
-        /*Screen screen = mc.screen;
-        *///?}
+        /*Screen screen = mc.gui.screen();
+        *///?} else {
+        Screen screen = mc.screen;
+        //?}
         return screen instanceof AbstractContainerScreen<?> && SpatialGUI.config.enabled;
     }
 }

@@ -11,11 +11,11 @@ import org.tastytrash.spatialGUI.util.MouseHandlerUtil;
 import org.tastytrash.spatialGUI.util.CameraUtil;
 
 //? if fabric {
- /*import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-*///? } else if neoforge {
-import net.neoforged.neoforge.client.event.ScreenEvent;
+ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+//? } else if neoforge {
+/*import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
-//? }
+*///? }
 
 public class SpatialGUIRenderer {
     public static boolean isExtractingScreen = false;
@@ -66,23 +66,23 @@ public class SpatialGUIRenderer {
         //? if fabric && >=26.2 {
         /*ScreenEvents.afterExtract(screen).register((screenArg, extractor, mouseX, mouseY, tickDelta) -> prepareTarget());
         *///?} else if fabric {
-        /*ScreenEvents.afterRender(screen).register((screenArg, graphics, mouseX, mouseY, tickDelta) -> prepareTarget());
-        *///?}
+        ScreenEvents.afterRender(screen).register((screenArg, graphics, mouseX, mouseY, tickDelta) -> prepareTarget());
+        //?}
 
         //? if fabric {
-        /*ScreenEvents.remove(screen).register(removedScreen -> {
+        ScreenEvents.remove(screen).register(removedScreen -> {
             if (hookedScreen == removedScreen) {
                 onScreenRemoved();
             }
         });
-        *///? } else if neoforge {
-        NeoForge.EVENT_BUS.addListener(this::onScreenRenderPre);
+        //? } else if neoforge {
+        /*NeoForge.EVENT_BUS.addListener(this::onScreenRenderPre);
         NeoForge.EVENT_BUS.addListener(this::onScreenClosing);
-        //? }
+        *///? }
     }
 
     //? if neoforge {
-    private void onScreenRenderPre(ScreenEvent.Render.Pre event) {
+    /*private void onScreenRenderPre(ScreenEvent.Render.Pre event) {
         if (event.getScreen() == hookedScreen) {
             event.setCanceled(true);
             SpatialGUIRenderer.skipWindowOverride = false;
@@ -97,7 +97,7 @@ public class SpatialGUIRenderer {
             NeoForge.EVENT_BUS.unregister(this);
         }
     }
-    //? }
+    *///? }
 
     private void onScreenRemoved() {
         var player = Minecraft.getInstance().player;
@@ -111,12 +111,15 @@ public class SpatialGUIRenderer {
         if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.keepFirstPersonCameraAngle) {
             var mc = Minecraft.getInstance();
             //? if >=26.2 {
-            float cameraYaw = mc.gameRenderer.mainCamera().yRot();
-            float cameraPitch = mc.gameRenderer.mainCamera().xRot();
-            //?} else {
             /*float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
             float cameraPitch = mc.gameRenderer.getMainCamera().xRot();
-            *///?}
+            *///?} else if >=1.21.11 {
+            /*float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
+            float cameraPitch = mc.gameRenderer.getMainCamera().xRot();
+            *///?} else {
+            float cameraYaw = mc.gameRenderer.getMainCamera().getYRot();
+            float cameraPitch = mc.gameRenderer.getMainCamera().getXRot();
+            //?}
             if (player != null) {
                 player.setYRot(cameraYaw);
                 player.setXRot(cameraPitch);
@@ -143,10 +146,10 @@ public class SpatialGUIRenderer {
     public boolean shouldCapture() {
         Minecraft client = Minecraft.getInstance();
         //? if >=26.2 {
-        boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.gui.screen() && SpatialGUI.config.enabled;
-        //?} else {
         /*boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.screen && SpatialGUI.config.enabled;
-        *///?}
+        *///?} else {
+        boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.screen && SpatialGUI.config.enabled;
+        //?}
         if (!bool) {
             wasTrue = false;
             return false;
@@ -155,12 +158,15 @@ public class SpatialGUIRenderer {
         if (!wasTrue) {
             var mc = Minecraft.getInstance();
             //? if >=26.2 {
-            cameraStartPos = mc.gameRenderer.mainCamera().position();
-            cameraStartYRot = mc.gameRenderer.mainCamera().yRot();
-            //?} else {
             /*cameraStartPos = mc.gameRenderer.getMainCamera().position();
             cameraStartYRot = mc.gameRenderer.getMainCamera().yRot();
-            *///?}
+            *///?} else if >=1.21.11 {
+            /*cameraStartPos = mc.gameRenderer.getMainCamera().position();
+            cameraStartYRot = mc.gameRenderer.getMainCamera().yRot();
+            *///?} else {
+            cameraStartPos = mc.gameRenderer.getMainCamera().getPosition();
+            cameraStartYRot = mc.gameRenderer.getMainCamera().getYRot();
+            //?}
             wasTrue = true;
         }
 
@@ -202,9 +208,11 @@ public class SpatialGUIRenderer {
         inventoryRenderer.renderInWorld(matrices);
     }
 
-    public net.minecraft.client.gui.render.GuiRenderer getScreenGuiRenderer() {
+    //? if >1.21.1 {
+    /*public net.minecraft.client.gui.render.GuiRenderer getScreenGuiRenderer() {
         return screenExtractor.getScreenGuiRenderer();
     }
+    *///?}
 
     public void extractIsolatedScreen(Screen screen, float partialTick) {
         screenExtractor.extractIsolatedScreen(screen, partialTick, inventoryRenderer.getQuadBasis(), targetManager);

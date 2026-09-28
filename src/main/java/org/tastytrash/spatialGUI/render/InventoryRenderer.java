@@ -5,12 +5,14 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import org.joml.Matrix4f;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
+//? if >1.21.1 {
+/*import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderType;
+*///?}
 //? if >26.2 {
-import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
+/*import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
 import com.mojang.renderpearl.api.textures.GpuTextureView;
 import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
@@ -18,7 +20,7 @@ import com.mojang.renderpearl.api.textures.AddressMode;
 import com.mojang.renderpearl.api.textures.FilterMode;
 import com.mojang.renderpearl.api.vertex.VertexFormat;
 import net.minecraft.client.renderer.StagedVertexBuffer;
-//?} else if 26.2 {
+*///?} else if 26.2 {
 /*import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.PrimitiveTopology;
@@ -27,7 +29,7 @@ import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.StagedVertexBuffer;
-*///?} else {
+*///?} else if >1.21.1 {
 /*import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
@@ -39,20 +41,32 @@ import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
-*///?}
+*///?} else {
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.GameRenderer;
+import org.lwjgl.opengl.GL11;
+//?}
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.util.AnimationUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil;
 
 public class InventoryRenderer {
-    private static final RenderPipeline INVENTORY_PIPELINE = RenderPipelines.GUI_TEXTURED;
+    //? if >1.21.1 {
+    /*private static final RenderPipeline INVENTORY_PIPELINE = RenderPipelines.GUI_TEXTURED;
+     *///?}
     //? if >=26.2 {
-    private static final StagedVertexBuffer INVENTORY_BUFFER = new StagedVertexBuffer(
+    /*private static final StagedVertexBuffer INVENTORY_BUFFER = new StagedVertexBuffer(
             () -> "Spatial GUI Inventory Buffer",
             RenderType.SMALL_BUFFER_SIZE
     );
-    //?}
+    *///?}
 
     private final TextureTargetManager targetManager;
     private QuadBasis quadBasis;
@@ -77,7 +91,7 @@ public class InventoryRenderer {
     }
 
     //? if >=26.2 {
-    public void renderInWorld(PoseStack matrices) {
+    /*public void renderInWorld(PoseStack matrices) {
         Minecraft client = Minecraft.getInstance();
 
         if (targetManager.getInventoryTarget() == null || !SpatialGUIClient.renderer().shouldCapture() || client.player == null) {
@@ -175,17 +189,17 @@ public class InventoryRenderer {
                 java.util.OptionalDouble.empty()
         )) {
             //? if >26.2 {
-            renderPass.setPipeline(RenderSystem.getCompiledPipeline(INVENTORY_PIPELINE));
-             //?} else {
-            /*renderPass.setPipeline(InventoryRenderer.INVENTORY_PIPELINE);
-            *///?}
+            /^renderPass.setPipeline(RenderSystem.getCompiledPipeline(INVENTORY_PIPELINE));
+             ^///?} else {
+            renderPass.setPipeline(InventoryRenderer.INVENTORY_PIPELINE);
+            //?}
             RenderSystem.bindDefaultUniforms(renderPass);
             renderPass.setUniform("DynamicTransforms", dynamicTransforms);
             //? if >26.2 {
-            renderPass.setUniform
-             //?} else {
-            /*renderPass.bindTexture
-                    *///?}
+            /^renderPass.setUniform
+             ^///?} else {
+            renderPass.bindTexture
+                    //?}
                             ("Sampler0", texture, RenderSystem.getSamplerCache().getSampler(
                                     AddressMode.CLAMP_TO_EDGE, AddressMode.CLAMP_TO_EDGE,
                                     filterMode, filterMode, SpatialGUI.config.useAnisotropicFiltering
@@ -195,7 +209,7 @@ public class InventoryRenderer {
             renderPass.drawIndexed(info.indexCount(), 1, info.firstIndex(), info.baseVertex(), 0);
         }
     }
-    //?} else {
+    *///?} else if >1.21.1 {
     /*public void renderInWorld(PoseStack matrices) {
         Minecraft client = Minecraft.getInstance();
 
@@ -307,5 +321,97 @@ public class InventoryRenderer {
             }
         }
     }
-    *///?}
+    *///?} else {
+    public void renderInWorld(PoseStack matrices) {
+        Minecraft client = Minecraft.getInstance();
+        RenderTarget target = targetManager.getInventoryTarget();
+
+        if (target == null || !SpatialGUIClient.renderer().shouldCapture() || client.player == null) {
+            return;
+        }
+
+        int textureId = target.getColorTextureId();
+        if (textureId <= 0) {
+            return;
+        }
+
+        matrices.pushPose();
+
+        var player = client.player;
+        boolean isFirstPerson = SpatialGUIClient.getEffectiveFirstPersonMode();
+        float yaw = player.getYRot();
+        float pitch = isFirstPerson ? player.getXRot() : 0;
+        float pitchClamp = (float) SpatialGUI.config.firstPersonPitchClamp;
+        pitch = Math.clamp(pitch, -pitchClamp, pitchClamp);
+        float yawRadians = (float) Math.toRadians(yaw);
+        float pitchRadians = (float) Math.toRadians(pitch);
+
+        RenderUtil.ScreenTransformConfig config = RenderUtil.getScreenTransformConfig(isFirstPerson);
+
+        double lookX = -Math.sin(yawRadians) * Math.cos(pitchRadians);
+        double lookY = -Math.sin(pitchRadians);
+        double lookZ = Math.cos(yawRadians) * Math.cos(pitchRadians);
+
+        RenderUtil.applyScreenTransform(matrices, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
+
+        float scale = AnimationUtil.calculateAnimatedScale(config.scale(), screenOpenTime, isRecipeBookOpen, recipeBookCloseDelay);
+        recipeBookCloseDelay = isRecipeBookOpen ? -2 : Math.min(0, recipeBookCloseDelay + 1);
+        matrices.scale(scale, scale, scale);
+
+        Matrix4f pose = matrices.last().pose();
+
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+
+        float aspect = (float) target.width / (float) target.height;
+        RenderUtil.addScreenQuad(buffer, pose, aspect);
+
+        PoseStack worldMatrices = new PoseStack();
+        RenderUtil.applyScreenTransform(worldMatrices, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
+        worldMatrices.scale(scale, scale, scale);
+        Matrix4f worldPose = worldMatrices.last().pose();
+
+        quadBasis = RenderUtil.computeQuadBasis(worldPose, aspect, scale);
+
+        matrices.popPose();
+
+        drawInventory(buffer.buildOrThrow(), textureId);
+    }
+
+    private void drawInventory(MeshData meshData, int textureId) {
+        Minecraft client = Minecraft.getInstance();
+
+        float fadeAlpha = SpatialGUI.config.enableFadeAnimation
+                ? Math.min(1.0F, (System.currentTimeMillis() - screenOpenTime) / (float) SpatialGUI.config.fadeDurationMs)
+                : 1.0F;
+
+        int filter = SpatialGUI.config.useLinearFiltering ? GL11.GL_LINEAR : GL11.GL_NEAREST;
+
+        client.getMainRenderTarget().bindWrite(true);
+
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderTexture(0, textureId);
+        RenderSystem.bindTexture(textureId);
+        GlStateManager._texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, filter);
+        GlStateManager._texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, filter);
+        GlStateManager._texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, 33071); // CLAMP_TO_EDGE
+        GlStateManager._texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, 33071);
+
+        RenderSystem.setShaderColor(fadeAlpha, fadeAlpha, fadeAlpha, fadeAlpha);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableCull();
+        RenderSystem.disableDepthTest();
+        RenderSystem.depthMask(false);
+
+        try {
+            BufferUploader.drawWithShader(meshData);
+        } finally {
+            RenderSystem.depthMask(true);
+            RenderSystem.enableDepthTest();
+            RenderSystem.enableCull();
+            RenderSystem.disableBlend();
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        }
+    }
+    //?}
 }

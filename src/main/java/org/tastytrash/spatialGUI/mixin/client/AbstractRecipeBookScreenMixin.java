@@ -1,7 +1,7 @@
 package org.tastytrash.spatialGUI.mixin.client;
 
 //? if >=26.2 {
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+/*import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import org.spongepowered.asm.mixin.Final;
@@ -24,7 +24,7 @@ public class AbstractRecipeBookScreenMixin {
         }
     }
 }
-//?} else {
+*///?} else if >1.21.1 {
 /*import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
@@ -48,4 +48,27 @@ public class AbstractRecipeBookScreenMixin {
         }
     }
 }
-*///?}
+*///?} else {
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractFurnaceScreen;
+import net.minecraft.client.gui.screens.inventory.CraftingScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.tastytrash.spatialGUI.client.SpatialGUIClient;
+
+@Mixin({InventoryScreen.class, CraftingScreen.class, AbstractFurnaceScreen.class})
+public class AbstractRecipeBookScreenMixin {
+    @Inject(method = "render", at = @At("HEAD"))
+    private void diegeticInventory$updateIsRecipeBookOpen(GuiGraphics graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer != null) {
+            RecipeUpdateListener listener = (RecipeUpdateListener) (Object) this;
+            renderer.getInventoryRenderer().setRecipeBookOpen(listener.getRecipeBookComponent().isVisible());
+        }
+    }
+}
+//?}

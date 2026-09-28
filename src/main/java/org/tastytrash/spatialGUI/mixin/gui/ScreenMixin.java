@@ -1,7 +1,7 @@
 package org.tastytrash.spatialGUI.mixin.gui;
 
 //? if >=26.2 {
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+/*import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,8 +19,8 @@ public class ScreenMixin {
         }
     }
 }
-//?} else {
-/*import net.minecraft.client.gui.GuiGraphics;
+*///?} else {
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,4 +38,4 @@ public class ScreenMixin {
         }
     }
 }
-*///?}
+//?}

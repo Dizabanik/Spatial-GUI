@@ -1,11 +1,16 @@
 -------- HIGH PRIORITY ---------------
 
+Add 26.1.x support
 
 -------- MID PRIORITY ---------------
 
 Make the screen position unaffected by the bob
 
 Add comments?
+
+Make the dependencies more strict
+
+Add forge 1.20.1 support
 
 -------- LOW PRIORITY ---------------
 
@@ -15,11 +20,9 @@ More images on curseforge/modrinth gallery
 
 Replace accessor with accesswidener (maybe not?)
 
-Minecraft's water effects not applying properly when in the menu with velocity underwater (is this solvable?)
+Minecraft's water effects not applying properly when in the menu with velocity underwater (is this solvable?) (affects all versions, could be a minecraft issue)
 
 ----- POSSIBLY SOLVED/NOT NEEDED ------
 
-
-
 ----- CHANGELOG ------
-Added 1.21.11 support, added pt_br.json translation (credit BUILDLCS), fixed first person parallax bugs, fixed scaling issue when resizing the window or opening a screen from withing a screen, added an option to mirror third person camera & screen settings
+Added 1.21.11 (thanks Dizabanik) and 1.21.1 support, added pt_br.json translation (credit BUILDLCS), fixed first person parallax bugs, fixed scaling issue when resizing the window or opening a screen from withing a screen, added an option to mirror third person camera & screen settings

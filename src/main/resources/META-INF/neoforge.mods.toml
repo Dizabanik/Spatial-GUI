@@ -1,9 +1,12 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
 license="MIT"
 
 [[mods]]
 modId="spatial_gui"
 version="${version}"
 displayName="Spatial GUI"
+logoFile="assets/spatial-gui/icon.png"
 iconFile = "/assets/spatial-gui/icon.png"
 bannerFile = "/assets/spatial-gui/icon.png"
 description='''
