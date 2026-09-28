@@ -44,7 +44,7 @@ public class GuiMixin {
     }
     ^///? }
 }
-*///?} else if >1.21.1 {
+*///?} else if >=1.21.1 {
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import org.spongepowered.asm.mixin.injection.At;

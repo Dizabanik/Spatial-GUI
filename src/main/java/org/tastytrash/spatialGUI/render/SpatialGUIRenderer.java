@@ -87,7 +87,7 @@ public class SpatialGUIRenderer {
         if (event.getScreen() == hookedScreen) {
             event.setCanceled(true);
             SpatialGUIRenderer.skipWindowOverride = false;
-            screenExtractor.extractIsolatedScreen(hookedScreen, event.getPartialTick(), null, targetManager);
+            screenExtractor.extractIsolatedScreen(hookedScreen, event.getPartialTick(), inventoryRenderer.getQuadBasis(), targetManager);
             SpatialGUIRenderer.skipWindowOverride = true;
         }
     }

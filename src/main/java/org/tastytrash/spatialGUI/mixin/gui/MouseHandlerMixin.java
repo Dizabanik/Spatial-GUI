@@ -55,8 +55,7 @@ public class MouseHandlerMixin {
         return overrideMousePosition(original, false);
     }
     //?} else {
-    /*// 1.21.1 has no getScaledXPos/YPos; vanilla computes xpos * guiScaledWidth / screenWidth inline.
-    @ModifyExpressionValue(
+    /*@ModifyExpressionValue(
             method = {"onPress", "onScroll", "handleAccumulatedMovement"},
             at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;xpos:D", opcode = Opcodes.GETFIELD)
     )
