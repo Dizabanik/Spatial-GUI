@@ -8,9 +8,9 @@ import net.minecraft.client.Minecraft;
 import org.joml.Matrix4f;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 //? if >1.21.1 {
-/*import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderType;
-*///?}
+//?}
 //? if >26.2 {
 /*import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
 import com.mojang.renderpearl.api.textures.GpuTextureView;
@@ -30,7 +30,7 @@ import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.StagedVertexBuffer;
 *///?} else if >1.21.1 {
-/*import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.textures.AddressMode;
@@ -41,8 +41,8 @@ import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
-*///?} else {
-import com.mojang.blaze3d.platform.GlStateManager;
+//?} else {
+/*import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -51,16 +51,23 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.GameRenderer;
 import org.lwjgl.opengl.GL11;
-//?}
+*///?}
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.util.AnimationUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil;
 
 public class InventoryRenderer {
+    private static final PoseStack WORLD_POSE_STACK = new PoseStack();
     //? if >1.21.1 {
-    /*private static final RenderPipeline INVENTORY_PIPELINE = RenderPipelines.GUI_TEXTURED;
-     *///?}
+    private static final RenderPipeline INVENTORY_PIPELINE = RenderPipelines.GUI_TEXTURED;
+    private static final org.joml.Vector3f ZERO_VECTOR = new org.joml.Vector3f();
+    private static final Matrix4f IDENTITY_MATRIX = new Matrix4f();
+    private static final org.joml.Vector4f COLOR_MODULATOR = new org.joml.Vector4f();
+     //?}
+    //? if >1.21.1 && <26.2 {
+    private static final ByteBufferBuilder INVENTORY_BYTE_BUFFER = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
+    //?}
     //? if >=26.2 {
     /*private static final StagedVertexBuffer INVENTORY_BUFFER = new StagedVertexBuffer(
             () -> "Spatial GUI Inventory Buffer",
@@ -88,6 +95,14 @@ public class InventoryRenderer {
 
     public void setRecipeBookOpen(boolean open) {
         isRecipeBookOpen = open;
+        if (!open) {
+            recipeBookCloseDelay = 0;
+        }
+    }
+
+    public void resetRecipeBookState() {
+        isRecipeBookOpen = false;
+        recipeBookCloseDelay = 0;
     }
 
     //? if >=26.2 {
@@ -141,10 +156,10 @@ public class InventoryRenderer {
         float aspect = (float) targetManager.getInventoryTarget().width / (float) targetManager.getInventoryTarget().height;
         RenderUtil.addScreenQuad(buffer, pose, aspect);
 
-        PoseStack worldMatrices = new PoseStack();
-        RenderUtil.applyScreenTransform(worldMatrices, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
-        worldMatrices.scale(scale, scale, scale);
-        Matrix4f worldPose = worldMatrices.last().pose();
+        WORLD_POSE_STACK.setIdentity();
+        RenderUtil.applyScreenTransform(WORLD_POSE_STACK, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
+        WORLD_POSE_STACK.scale(scale, scale, scale);
+        Matrix4f worldPose = WORLD_POSE_STACK.last().pose();
 
         quadBasis = RenderUtil.computeQuadBasis(worldPose, aspect, scale);
 
@@ -172,11 +187,12 @@ public class InventoryRenderer {
         float fadeAlpha = SpatialGUI.config.enableFadeAnimation
                 ? Math.min(1.0F, (System.currentTimeMillis() - screenOpenTime) / (float) SpatialGUI.config.fadeDurationMs)
                 : 1.0F;
+        COLOR_MODULATOR.set(fadeAlpha, fadeAlpha, fadeAlpha, fadeAlpha);
         GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms().writeTransform(
                 RenderSystem.getModelViewMatrixCopy(),
-                new org.joml.Vector4f(fadeAlpha, fadeAlpha, fadeAlpha, fadeAlpha),
-                new org.joml.Vector3f(),
-                new Matrix4f()
+                COLOR_MODULATOR,
+                ZERO_VECTOR,
+                IDENTITY_MATRIX
         );
 
         FilterMode filterMode = SpatialGUI.config.useLinearFiltering ? FilterMode.LINEAR : FilterMode.NEAREST;
@@ -210,7 +226,7 @@ public class InventoryRenderer {
         }
     }
     *///?} else if >1.21.1 {
-    /*public void renderInWorld(PoseStack matrices) {
+    public void renderInWorld(PoseStack matrices) {
         Minecraft client = Minecraft.getInstance();
 
         if (targetManager.getInventoryTarget() == null || !SpatialGUIClient.renderer().shouldCapture() || client.player == null) {
@@ -247,18 +263,17 @@ public class InventoryRenderer {
 
         Matrix4f pose = matrices.last().pose();
 
-        ByteBufferBuilder byteBufferBuilder = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
-        BufferBuilder buffer = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        BufferBuilder buffer = new BufferBuilder(INVENTORY_BYTE_BUFFER, VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
         float aspect = (float) targetManager.getInventoryTarget().width / (float) targetManager.getInventoryTarget().height;
         RenderUtil.addScreenQuad(buffer, pose, aspect);
 
         MeshData meshData = buffer.build();
 
-        PoseStack worldMatrices = new PoseStack();
-        RenderUtil.applyScreenTransform(worldMatrices, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
-        worldMatrices.scale(scale, scale, scale);
-        Matrix4f worldPose = worldMatrices.last().pose();
+        WORLD_POSE_STACK.setIdentity();
+        RenderUtil.applyScreenTransform(WORLD_POSE_STACK, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
+        WORLD_POSE_STACK.scale(scale, scale, scale);
+        Matrix4f worldPose = WORLD_POSE_STACK.last().pose();
 
         quadBasis = RenderUtil.computeQuadBasis(worldPose, aspect, scale);
 
@@ -269,7 +284,6 @@ public class InventoryRenderer {
                 drawInventory(meshData, texture);
             } finally {
                 meshData.close();
-                byteBufferBuilder.close();
             }
         }
     }
@@ -285,11 +299,12 @@ public class InventoryRenderer {
         float fadeAlpha = SpatialGUI.config.enableFadeAnimation
                 ? Math.min(1.0F, (System.currentTimeMillis() - screenOpenTime) / (float) SpatialGUI.config.fadeDurationMs)
                 : 1.0F;
+        COLOR_MODULATOR.set(fadeAlpha, fadeAlpha, fadeAlpha, fadeAlpha);
         GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms().writeTransform(
                 RenderSystem.getModelViewMatrix(),
-                new org.joml.Vector4f(fadeAlpha, fadeAlpha, fadeAlpha, fadeAlpha),
-                new org.joml.Vector3f(),
-                new Matrix4f()
+                COLOR_MODULATOR,
+                ZERO_VECTOR,
+                IDENTITY_MATRIX
         );
 
         FilterMode filterMode = SpatialGUI.config.useLinearFiltering ? FilterMode.LINEAR : FilterMode.NEAREST;
@@ -321,8 +336,8 @@ public class InventoryRenderer {
             }
         }
     }
-    *///?} else {
-    public void renderInWorld(PoseStack matrices) {
+    //?} else {
+    /*public void renderInWorld(PoseStack matrices) {
         Minecraft client = Minecraft.getInstance();
         RenderTarget target = targetManager.getInventoryTarget();
 
@@ -365,10 +380,10 @@ public class InventoryRenderer {
         float aspect = (float) target.width / (float) target.height;
         RenderUtil.addScreenQuad(buffer, pose, aspect);
 
-        PoseStack worldMatrices = new PoseStack();
-        RenderUtil.applyScreenTransform(worldMatrices, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
-        worldMatrices.scale(scale, scale, scale);
-        Matrix4f worldPose = worldMatrices.last().pose();
+        WORLD_POSE_STACK.setIdentity();
+        RenderUtil.applyScreenTransform(WORLD_POSE_STACK, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
+        WORLD_POSE_STACK.scale(scale, scale, scale);
+        Matrix4f worldPose = WORLD_POSE_STACK.last().pose();
 
         quadBasis = RenderUtil.computeQuadBasis(worldPose, aspect, scale);
 
@@ -413,5 +428,5 @@ public class InventoryRenderer {
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
-    //?}
+    *///?}
 }

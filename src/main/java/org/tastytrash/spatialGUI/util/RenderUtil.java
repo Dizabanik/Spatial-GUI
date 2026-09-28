@@ -115,9 +115,9 @@ public final class RenderUtil {
     public record QuadBasis(Vector3f centerOffset, Vector3f right, Vector3f up, Vector3f normal, float halfWidth, float halfHeight) {}
 
     public static QuadBasis computeQuadBasis(Matrix4f worldPose, float aspect, float scale) {
-        Vector3f centerOffset = worldPose.transformPosition(new Vector3f(), new Vector3f());
-        Vector3f right = worldPose.transformDirection(new Vector3f(1f, 0f, 0f), new Vector3f()).normalize();
-        Vector3f up = worldPose.transformDirection(new Vector3f(0f, 1f, 0f), new Vector3f()).normalize();
+        Vector3f centerOffset = worldPose.transformPosition(new Vector3f());
+        Vector3f right = worldPose.transformDirection(1f, 0f, 0f, new Vector3f()).normalize();
+        Vector3f up = worldPose.transformDirection(0f, 1f, 0f, new Vector3f()).normalize();
         Vector3f normal = new Vector3f(right).cross(up).normalize();
         float halfWidth = aspect * 0.5f * scale;
         float halfHeight = 0.5f * scale;
@@ -134,23 +134,36 @@ public final class RenderUtil {
 
         //? if >=26.2 {
         /*var camera = mc.gameRenderer.getMainCamera();
-        float yawRadians = (float) Math.toRadians(camera.getYRot());
-        float pitchRadians = (float) Math.toRadians(camera.getXRot());
+        float yawRadians = (float) Math.toRadians(camera.yRot());
+        float pitchRadians = (float) Math.toRadians(camera.xRot());
         *///?} else {
         var camera = mc.gameRenderer.getMainCamera();
-        float yawRadians = (float) Math.toRadians(camera.getYRot());
-        float pitchRadians = (float) Math.toRadians(camera.getXRot());
+        float yawRadians = (float) Math.toRadians(camera.yRot());
+        float pitchRadians = (float) Math.toRadians(camera.xRot());
         //?}
 
-        Vector3f forward = new Vector3f(
-                (float) (-Math.sin(yawRadians) * Math.cos(pitchRadians)),
-                (float) (-Math.sin(pitchRadians)),
-                (float) (Math.cos(yawRadians) * Math.cos(pitchRadians))
-        ).normalize();
+        float fx = (float) (-Math.sin(yawRadians) * Math.cos(pitchRadians));
+        float fy = (float) (-Math.sin(pitchRadians));
+        float fz = (float) (Math.cos(yawRadians) * Math.cos(pitchRadians));
+        float fInv = 1.0f / (float) Math.sqrt(fx * fx + fy * fy + fz * fz);
+        fx *= fInv;
+        fy *= fInv;
+        fz *= fInv;
 
-        Vector3f worldUp = new Vector3f(0f, 1f, 0f);
-        Vector3f right = new Vector3f(forward).cross(worldUp).normalize();
-        Vector3f up = new Vector3f(right).cross(forward).normalize();
+        float rx = -fz;
+        float ry = 0f;
+        float rz = fx;
+        float rInv = 1.0f / (float) Math.sqrt(rx * rx + rz * rz);
+        rx *= rInv;
+        rz *= rInv;
+
+        float ux = ry * fz - rz * fy;
+        float uy = rz * fx - rx * fz;
+        float uz = rx * fy - ry * fx;
+        float uInv = 1.0f / (float) Math.sqrt(ux * ux + uy * uy + uz * uz);
+        ux *= uInv;
+        uy *= uInv;
+        uz *= uInv;
 
         //? if >=26.2 {
         /*float fovDegrees = camera.getFov();
@@ -162,26 +175,37 @@ public final class RenderUtil {
         float tanHalfFovY = (float) Math.tan(Math.toRadians(fovDegrees / 2.0));
         float tanHalfFovX = tanHalfFovY * aspect;
 
-        Vector3f direction = new Vector3f(forward)
-                .add(new Vector3f(right).mul((float) ndcX * tanHalfFovX))
-                .add(new Vector3f(up).mul((float) ndcY * tanHalfFovY))
-                .normalize();
+        float xCoeff = (float) ndcX * tanHalfFovX;
+        float yCoeff = (float) ndcY * tanHalfFovY;
 
-        float denom = direction.dot(basis.normal());
+        float dx = fx + rx * xCoeff + ux * yCoeff;
+        float dy = fy + ry * xCoeff + uy * yCoeff;
+        float dz = fz + rz * xCoeff + uz * yCoeff;
+        float dInv = 1.0f / (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+        dx *= dInv;
+        dy *= dInv;
+        dz *= dInv;
+
+        Vector3f norm = basis.normal();
+        float denom = dx * norm.x() + dy * norm.y() + dz * norm.z();
         if (Math.abs(denom) < 1e-6f) {
             return null;
         }
 
-        float t = basis.centerOffset().dot(basis.normal()) / denom;
+        Vector3f center = basis.centerOffset();
+        float t = (center.x() * norm.x() + center.y() * norm.y() + center.z() * norm.z()) / denom;
         if (t <= 0f) {
             return null;
         }
 
-        Vector3f hitOffset = new Vector3f(direction).mul(t);
-        Vector3f localOffset = new Vector3f(hitOffset).sub(basis.centerOffset());
+        float hx = dx * t - center.x();
+        float hy = dy * t - center.y();
+        float hz = dz * t - center.z();
 
-        float localX = localOffset.dot(basis.right());
-        float localY = localOffset.dot(basis.up());
+        Vector3f bRight = basis.right();
+        Vector3f bUp = basis.up();
+        float localX = hx * bRight.x() + hy * bRight.y() + hz * bRight.z();
+        float localY = hx * bUp.x() + hy * bUp.y() + hz * bUp.z();
 
         float u = (localX / basis.halfWidth() + 1f) / 2f;
         float v = (localY / basis.halfHeight() + 1f) / 2f;

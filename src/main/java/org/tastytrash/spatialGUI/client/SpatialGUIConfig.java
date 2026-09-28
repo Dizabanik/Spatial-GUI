@@ -25,7 +25,7 @@ public class SpatialGUIConfig implements ConfigData {
 
     @ConfigEntry.Category("general")
     @ConfigEntry.Gui.Tooltip
-    @ConfigEntry.BoundedDiscrete(min = 1, max = 4)
+    @ConfigEntry.BoundedDiscrete(min = 1, max = 6)
     public int guiScale = 4;
 
     @ConfigEntry.Category("general")
@@ -62,6 +62,13 @@ public class SpatialGUIConfig implements ConfigData {
         if (windowHeight >= 650) return 3;
         if (windowHeight >= 430) return 2;
         return 1;
+    }
+
+    public int getEffectiveGuiScale(int windowHeight) {
+        if (autoCalculateGuiScale) {
+            return calculateAutoGuiScale(windowHeight);
+        }
+        return Math.clamp(guiScale, 1, 6);
     }
 
     // rendering

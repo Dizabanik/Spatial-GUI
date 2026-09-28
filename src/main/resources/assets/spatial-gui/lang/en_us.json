@@ -21,10 +21,10 @@
   "text.autoconfig.spatial-gui.option.firstPersonModeContainers.@Tooltip": "Use first person camera mode for non-inventory screens",
 
   "text.autoconfig.spatial-gui.option.autoCalculateGuiScale": "Auto Calculate GUI Scale",
-  "text.autoconfig.spatial-gui.option.autoCalculateGuiScale.@Tooltip": "Auto-calculate GUI scale based on window height",
+  "text.autoconfig.spatial-gui.option.autoCalculateGuiScale.@Tooltip": "Automatically calculate the GUI scale based on window height",
 
   "text.autoconfig.spatial-gui.option.guiScale": "GUI Scale",
-  "text.autoconfig.spatial-gui.option.guiScale.@Tooltip": "Forced GUI scale for inventory screens (1-4)",
+  "text.autoconfig.spatial-gui.option.guiScale.@Tooltip": "Manual GUI scale when Auto Calculate is disabled (1-6)",
 
   "text.autoconfig.spatial-gui.option.autoScaleByFov": "Auto Scale by FOV",
   "text.autoconfig.spatial-gui.option.autoScaleByFov.@Tooltip": "Automatically adjust screen scale, distance, and side offset based on your FOV setting",

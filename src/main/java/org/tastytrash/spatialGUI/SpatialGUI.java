@@ -40,7 +40,7 @@ public class SpatialGUI {
         initCommon();
         container.registerExtensionPoint(
                 IConfigScreenFactory.class,
-                (modContainer, parentScreen) -> me.shedaniel.autoconfig.AutoConfig.getConfigScreen(SpatialGUIConfig.class, parentScreen).get()
+                (modContainer, parentScreen) -> me.shedaniel.autoconfig.AutoConfigClient.getConfigScreen(SpatialGUIConfig.class, parentScreen).get()
         );
     }
     *///?}

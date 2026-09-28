@@ -3,6 +3,8 @@ package org.tastytrash.spatialGUI.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import org.joml.Vector2d;
+import org.tastytrash.spatialGUI.SpatialGUI;
+import org.tastytrash.spatialGUI.mixin.gui.MouseHandlerAccessor;
 import org.tastytrash.spatialGUI.util.RenderUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 
@@ -12,18 +14,18 @@ import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.render.pip.*;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
 *///?} else if >1.21.1 {
-/*import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.render.pip.*;
 import net.minecraft.client.gui.render.state.GuiRenderState;
 import com.mojang.blaze3d.platform.Window;
-*///?} else {
-import com.mojang.blaze3d.platform.Window;
+//?} else {
+/*import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexSorting;
 import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Matrix4f;
-//?}
+*///?}
 
 //? if neoforge && >=26.2 {
 /*import net.neoforged.neoforge.client.gui.PictureInPictureRendererRegistration;
@@ -37,17 +39,17 @@ import java.util.List;
 
 public class ScreenExtractor {
     //? if >1.21.1 {
-    /*private GuiRenderState screenRenderState;
+    private GuiRenderState screenRenderState;
     private GuiRenderer screenGuiRenderer;
-    *///?}
+    //?}
 
     public void ensureScreenGuiRenderer() {
         //? if >1.21.1 {
-        /*if (screenGuiRenderer == null) {
+        if (screenGuiRenderer == null) {
             Minecraft mc = Minecraft.getInstance();
             screenRenderState = new GuiRenderState();
             //? if fabric && >=26.2 {
-            /^screenGuiRenderer = new GuiRenderer(
+            /*screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.gameRenderer.featureRenderDispatcher(),
                     List.of(
@@ -58,8 +60,8 @@ public class ScreenExtractor {
                             new GuiProfilerChartRenderer()
                     )
             );
-            ^///?} else if neoforge && >=26.2 {
-            /^screenGuiRenderer = new GuiRenderer(
+            *///?} else if neoforge && >=26.2 {
+            /*screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.gameRenderer.featureRenderDispatcher(),
                     List.of(
@@ -70,7 +72,7 @@ public class ScreenExtractor {
                             new PictureInPictureRendererRegistration<>(GuiProfilerChartRenderState.class, GuiProfilerChartRenderer::new)
                     )
             );
-            ^///?} else if fabric {
+            *///?} else if fabric {
             screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.renderBuffers().bufferSource(),
@@ -86,7 +88,7 @@ public class ScreenExtractor {
                     )
             );
             //?} else if neoforge {
-            /^screenGuiRenderer = new GuiRenderer(
+            /*screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.renderBuffers().bufferSource(),
                     mc.gameRenderer.getSubmitNodeStorage(),
@@ -99,17 +101,17 @@ public class ScreenExtractor {
                             new PictureInPictureRendererRegistration<>(GuiProfilerChartRenderState.class, GuiProfilerChartRenderer::new)
                     )
             );
-            ^///?}
+            *///?}
         }
-        *///?}
+        //?}
     }
 
     //? if >1.21.1 {
-    /*public GuiRenderer getScreenGuiRenderer() {
+    public GuiRenderer getScreenGuiRenderer() {
         ensureScreenGuiRenderer();
         return screenGuiRenderer;
     }
-    *///?}
+    //?}
 
     public void extractIsolatedScreen(Screen screen, float partialTick, QuadBasis quadBasis, TextureTargetManager targetManager) {
         ensureScreenGuiRenderer();
@@ -120,8 +122,8 @@ public class ScreenExtractor {
             srcX = mc.getWindow().getScreenWidth() / 2.0;
             srcY = mc.getWindow().getScreenHeight() / 2.0;
         } else {
-            srcX = mc.mouseHandler.xpos();
-            srcY = mc.mouseHandler.ypos();
+            srcX = ((MouseHandlerAccessor) mc.mouseHandler).getRawXpos();
+            srcY = ((MouseHandlerAccessor) mc.mouseHandler).getRawYpos();
         }
 
         Vector2d mapped = quadBasis != null
@@ -130,13 +132,12 @@ public class ScreenExtractor {
 
         int mouseX, mouseY;
         if (mapped != null) {
-            double guiScale = mc.getWindow().getGuiScale();
+            double guiScale = SpatialGUI.config.getEffectiveGuiScale(mc.getWindow().getHeight());
             mouseX = (int) (mapped.x / guiScale);
             mouseY = (int) (mapped.y / guiScale);
         } else {
-            var window = mc.getWindow();
-            mouseX = (int) (mc.mouseHandler.xpos() * window.getGuiScaledWidth() / window.getScreenWidth());
-            mouseY = (int) (mc.mouseHandler.ypos() * window.getGuiScaledHeight() / window.getScreenHeight());
+            mouseX = -2000;
+            mouseY = -2000;
         }
 
         SpatialGUIRenderer.isExtractingScreen = true;
@@ -144,10 +145,10 @@ public class ScreenExtractor {
         /*GuiGraphicsExtractor graphics = new GuiGraphicsExtractor(mc, screenRenderState, mouseX, mouseY);
         screen.extractRenderStateWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
         *///?} else if >1.21.1 {
-        /*GuiGraphics graphics = new GuiGraphics(mc, screenRenderState, mouseX, mouseY);
+        GuiGraphics graphics = new GuiGraphics(mc, screenRenderState, mouseX, mouseY);
         screen.renderWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
-        *///?} else {
-        var target = targetManager.getTarget();
+        //?} else {
+        /*var target = targetManager.getTarget();
         if (target != null) {
             Window window = mc.getWindow();
             float guiWidth = (float) (window.getWidth() / window.getGuiScale());
@@ -180,7 +181,7 @@ public class ScreenExtractor {
                 mc.getMainRenderTarget().bindWrite(true);
             }
         }
-        //?}
+        *///?}
         SpatialGUIRenderer.isExtractingScreen = false;
     }
 }
