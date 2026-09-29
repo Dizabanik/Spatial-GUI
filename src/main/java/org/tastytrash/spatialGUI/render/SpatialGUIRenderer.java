@@ -151,9 +151,9 @@ public class SpatialGUIRenderer {
     public boolean shouldCapture() {
         Minecraft client = Minecraft.getInstance();
         //? if >=26.2 {
-        /*boolean bool = SpatialGUIClient.shouldHookScreen(hookedScreen) && hookedScreen == client.screen && SpatialGUI.config.enabled;
+        /*boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.screen && SpatialGUI.config.enabled;
         *///?} else {
-        boolean bool = SpatialGUIClient.shouldHookScreen(hookedScreen) && hookedScreen == client.screen && SpatialGUI.config.enabled;
+        boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.screen && SpatialGUI.config.enabled;
         //?}
         if (!bool) {
             wasTrue = false;

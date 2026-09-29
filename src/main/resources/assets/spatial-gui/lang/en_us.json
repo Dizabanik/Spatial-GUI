@@ -4,7 +4,6 @@
   "text.autoconfig.spatial-gui.title": "Spatial GUI Config",
   
   "text.autoconfig.spatial-gui.category.general": "General",
-  "text.autoconfig.spatial-gui.category.hook": "Hooks",
   "text.autoconfig.spatial-gui.category.rendering": "Rendering",
   "text.autoconfig.spatial-gui.category.thirdPersonScreen": "TP Screen",
   "text.autoconfig.spatial-gui.category.firstPersonScreen": "FP Screen",
@@ -30,12 +29,6 @@
   "text.autoconfig.spatial-gui.option.autoScaleByFov": "Auto Scale by FOV",
   "text.autoconfig.spatial-gui.option.autoScaleByFov.@Tooltip": "Automatically adjust screen scale, distance, and side offset based on your FOV setting",
 
-  "text.autoconfig.spatial-gui.option.pauseScreen": "Pause Screen",
-  "text.autoconfig.spatial-gui.option.pauseScreen.@Tooltip": "Render the pause menu in 3D",
-
-  "text.autoconfig.spatial-gui.option.allScreens": "All Screens",
-  "text.autoconfig.spatial-gui.option.allScreens.@Tooltip": "Render all screens in 3D while in a world\nEXPERIMENTAL: May cause issues with some screens",
-
   "text.autoconfig.spatial-gui.option.mirrorThirdPerson": "Mirror Third Person",
   "text.autoconfig.spatial-gui.option.mirrorThirdPerson.@Tooltip": "Mirror the camera and screen position/rotation in third person mode",
 
@@ -56,12 +49,6 @@
 
   "text.autoconfig.spatial-gui.option.autoFovTuning.autoScaleThirdPersonScreenMultiplier": "Auto Scale Third Person Screen Multiplier",
   "text.autoconfig.spatial-gui.option.autoFovTuning.autoScaleThirdPersonScreenMultiplier.@Tooltip": "Reduces FOV scaling effect on third person screen scale",
-
-  "text.autoconfig.spatial-gui.option.pauseScreen": "Pause Screen",
-  "text.autoconfig.spatial-gui.option.pauseScreen.@Tooltip": "Render the pause menu in 3D",
-
-  "text.autoconfig.spatial-gui.option.optionsScreen": "Options Screen",
-  "text.autoconfig.spatial-gui.option.optionsScreen.@Tooltip": "Render the options menu in 3D",
 
   "text.autoconfig.spatial-gui.option.useLinearFiltering": "Use Linear Filtering",
   "text.autoconfig.spatial-gui.option.useLinearFiltering.@Tooltip": "Use linear texture filtering",

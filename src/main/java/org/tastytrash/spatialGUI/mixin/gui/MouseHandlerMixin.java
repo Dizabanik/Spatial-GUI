@@ -6,6 +6,7 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import org.joml.Vector2d;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,9 +39,9 @@ public class MouseHandlerMixin {
          *///?} else {
         Screen screen = client.screen;
         //?}
-        if (SpatialGUIClient.shouldHookScreen(screen)) return true;
+        if (screen instanceof AbstractContainerScreen<?>) return true;
         var renderer = SpatialGUIClient.renderer();
-        return renderer != null && SpatialGUIClient.shouldHookScreen(renderer.getHookedScreen());
+        return renderer != null && renderer.getHookedScreen() instanceof AbstractContainerScreen<?>;
     }
 
     //? if >1.21.1 {

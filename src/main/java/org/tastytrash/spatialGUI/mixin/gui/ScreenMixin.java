@@ -1,4 +1,4 @@
-package org.tastytrash.spatialGUI.mixin.screens;
+package org.tastytrash.spatialGUI.mixin.gui;
 
 //? if >=26.2 {
 /*import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -14,20 +14,6 @@ import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 public class ScreenMixin {
     @Inject(method = "extractTransparentBackground", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$removeBackgroundOverlay(GuiGraphicsExtractor graphics, CallbackInfo ci) {
-        if (SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.enabled) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "extractBlurredBackground", at = @At("HEAD"), cancellable = true)
-    private void spatialGUI$removeBlur(GuiGraphicsExtractor graphics, CallbackInfo ci) {
-        if (SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.enabled) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "extractMenuBackground", at = @At("HEAD"), cancellable = true)
-    private void spatialGUI$removeMenuBackground(GuiGraphicsExtractor graphics, CallbackInfo ci) {
         if (SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.enabled) {
             ci.cancel();
         }

@@ -1,8 +1,5 @@
 package org.tastytrash.spatialGUI.client;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.PauseScreen;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 import org.tastytrash.spatialGUI.SpatialGUI;
@@ -34,7 +31,7 @@ public class SpatialGUIClient {
         renderer = new SpatialGUIRenderer();
 
         ScreenEvents.BEFORE_INIT.register((clientArg, screen, scaledWidth, scaledHeight) -> {
-            if (shouldHookScreen(screen) && org.tastytrash.spatialGUI.SpatialGUI.config.enabled) {
+            if (screen instanceof AbstractContainerScreen<?> && org.tastytrash.spatialGUI.SpatialGUI.config.enabled) {
                 renderer.hookScreen(screen);
             }
         });
@@ -49,29 +46,11 @@ public class SpatialGUIClient {
     private void onScreenInit(ScreenEvent.Init.Pre event) {
         var screen = event.getScreen();
 
-        if (shouldHookScreen(screen) && org.tastytrash.spatialGUI.SpatialGUI.config.enabled) {
+        if (screen instanceof AbstractContainerScreen<?> && org.tastytrash.spatialGUI.SpatialGUI.config.enabled) {
             renderer.hookScreen(screen);
         }
     }
     *///?}
-
-    public static boolean shouldHookScreen(Screen screen) {
-        if (screen == null) return false;
-        if (screen.getClass().getName().contains("TitleScreen")) return false;
-        if (screen.getClass().getName().contains("ReceivingLevelScreen")) return false;
-        if (screen.getClass().getName().contains("LevelLoadingScreen")) return false;
-        if (screen.getClass().getName().contains("ChatScreen")) return false;
-        if (SpatialGUI.config.allScreens && Minecraft.getInstance().level != null) {
-            return true;
-        }
-        if (screen instanceof AbstractContainerScreen<?>) {
-            return true;
-        }
-        if (screen instanceof PauseScreen) {
-            return SpatialGUI.config.pauseScreen;
-        }
-        return false;
-    }
 
     public static SpatialGUIRenderer renderer() {
         return renderer;
