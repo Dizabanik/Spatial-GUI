@@ -11,7 +11,7 @@ public interface GameRendererInvoker {
     /*@Invoker("getFov")
     double spatialGUI$getFov(Camera camera, float partialTick, boolean useFovSetting);
     *///? } else if 1.21.11 {
-    @Invoker("getFov")
+    /*@Invoker("getFov")
     float spatialGUI$getFov(Camera camera, float partialTick, boolean useFovSetting);
-    //?}
+    *///?}
 }

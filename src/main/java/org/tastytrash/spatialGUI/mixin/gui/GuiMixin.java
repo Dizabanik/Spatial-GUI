@@ -3,13 +3,14 @@ package org.tastytrash.spatialGUI.mixin.gui;
 import net.minecraft.client.gui.Gui;
 import org.spongepowered.asm.mixin.Mixin;
 
-//? if >=26.2 {
-/*import net.minecraft.client.gui.GuiGraphicsExtractor;
+//? if >=26.1.2 {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
@@ -18,17 +19,17 @@ import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 public class GuiMixin {
 
     @Inject(method = "extractRenderState", at = @At("HEAD"))
-    private void spatialGUI$beginExtract(net.minecraft.client.DeltaTracker deltaTracker, boolean shouldRenderLevel, boolean resourcesLoaded, org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
+    private void spatialGUI$beginExtract(CallbackInfo ci) {
         SpatialGUIRenderer.skipWindowOverride = true;
     }
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
-    private void spatialGUI$endExtract(net.minecraft.client.DeltaTracker deltaTracker, boolean shouldRenderLevel, boolean resourcesLoaded, org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
+    private void spatialGUI$endExtract(CallbackInfo ci) {
         SpatialGUIRenderer.skipWindowOverride = false;
     }
 
-    //? if fabric {
-    @Redirect(method = "extractRenderState", at = @At(
+    //? if fabric && >=26.2 {
+    /*@Redirect(method = "extractRenderState", at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/gui/screens/Screen;extractRenderStateWithTooltipAndSubtitles(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V"
     ))
@@ -42,10 +43,10 @@ public class GuiMixin {
             screen.extractRenderStateWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
         }
     }
-    //? }
+    *///? }
 }
-*///?} else if >=1.21.1 {
-import net.minecraft.client.DeltaTracker;
+//?} else if >=1.21.1 {
+/*import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -64,7 +65,7 @@ public class GuiMixin {
         SpatialGUIRenderer.skipWindowOverride = false;
     }
 }
-//?} else {
+*///?} else {
 /*import net.minecraft.client.gui.GuiGraphics;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

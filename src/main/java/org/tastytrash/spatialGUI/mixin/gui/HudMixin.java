@@ -9,31 +9,18 @@ import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 
 //? if >=26.2 {
-/*import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.Hud;
-
-@Mixin(Hud.class)
-public class HudMixin {
-    @Inject(method = "extractCrosshair", at = @At("HEAD"), cancellable = true)
-    private void spatialGUI$hideCrosshair(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (SpatialGUI.config.enabled 
-                && SpatialGUIClient.getEffectiveFirstPersonMode()
-                && !SpatialGUI.config.useCrosshairForFirstPerson
-                && SpatialGUIClient.renderer() != null
-                && SpatialGUIClient.renderer().getHookedScreen() != null) {
-            ci.cancel();
-        }
-    }
-}
+/*@Mixin(net.minecraft.client.gui.Hud.class)
 *///?} else {
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
-
-@Mixin(Gui.class)
+@Mixin(net.minecraft.client.gui.Gui.class)
+//?}
 public class HudMixin {
-    @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-    private void spatialGUI$hideCrosshair(GuiGraphics graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (SpatialGUI.config.enabled 
+    //? if >=26.1.2 {
+    @Inject(method = "extractCrosshair", at = @At("HEAD"), cancellable = true)
+    //?} else {
+    /*@Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
+     *///?}
+    private void spatialGUI$hideCrosshair(CallbackInfo ci) {
+        if (SpatialGUI.config.enabled
                 && SpatialGUIClient.getEffectiveFirstPersonMode()
                 && !SpatialGUI.config.useCrosshairForFirstPerson
                 && SpatialGUIClient.renderer() != null
@@ -42,4 +29,3 @@ public class HudMixin {
         }
     }
 }
-//?}

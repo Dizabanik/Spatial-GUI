@@ -11,11 +11,11 @@ import org.tastytrash.spatialGUI.util.MouseHandlerUtil;
 import org.tastytrash.spatialGUI.util.CameraUtil;
 
 //? if fabric {
- import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-//? } else if neoforge {
-/*import net.neoforged.neoforge.client.event.ScreenEvent;
+ /*import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+*///? } else if neoforge {
+import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
-*///? }
+//? }
 
 public class SpatialGUIRenderer {
     public static boolean isExtractingScreen = false;
@@ -38,9 +38,9 @@ public class SpatialGUIRenderer {
         this.inventoryRenderer = new InventoryRenderer(targetManager);
 
         //? if neoforge {
-        /*NeoForge.EVENT_BUS.addListener(this::onScreenRenderPre);
+        NeoForge.EVENT_BUS.addListener(this::onScreenRenderPre);
         NeoForge.EVENT_BUS.addListener(this::onScreenClosing);
-        *///? }
+        //? }
     }
 
     public void hookScreen(Screen screen) {
@@ -69,23 +69,23 @@ public class SpatialGUIRenderer {
             : SpatialGUI.config.firstPersonModeContainers) || SpatialGUIClient.getSwitchedToFirstPersonDueToBlock();
         SpatialGUIClient.setEffectiveFirstPersonMode(isFirstPerson);
 
-        //? if fabric && >=26.2 {
+        //? if fabric && >=26.1.2 {
         /*ScreenEvents.afterExtract(screen).register((screenArg, extractor, mouseX, mouseY, tickDelta) -> prepareTarget());
         *///?} else if fabric {
-        ScreenEvents.afterRender(screen).register((screenArg, graphics, mouseX, mouseY, tickDelta) -> prepareTarget());
-        //?}
+        /*ScreenEvents.afterRender(screen).register((screenArg, graphics, mouseX, mouseY, tickDelta) -> prepareTarget());
+        *///?}
 
         //? if fabric {
-        ScreenEvents.remove(screen).register(removedScreen -> {
+        /*ScreenEvents.remove(screen).register(removedScreen -> {
             if (hookedScreen == removedScreen) {
                 onScreenRemoved();
             }
         });
-        //?}
+        *///?}
     }
 
     //? if neoforge {
-    /*private void onScreenRenderPre(ScreenEvent.Render.Pre event) {
+    private void onScreenRenderPre(ScreenEvent.Render.Pre event) {
         if (event.getScreen() == hookedScreen) {
             event.setCanceled(true);
             SpatialGUIRenderer.skipWindowOverride = false;
@@ -99,7 +99,7 @@ public class SpatialGUIRenderer {
             onScreenRemoved();
         }
     }
-    *///? }
+    //? }
 
     private void onScreenRemoved() {
         skipWindowOverride = false;

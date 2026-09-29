@@ -18,17 +18,21 @@ import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 import net.minecraft.client.renderer.fog.FogRenderer;
  //?}
 
-//? if <26.2 {
-import net.minecraft.client.gui.GuiGraphics;
+//? if <26.1.2 {
+//import net.minecraft.client.gui.GuiGraphics;
 //?}
 
-//? if >=26.2 {
-/*import net.minecraft.client.Minecraft;
+//? if >=26.1.2 {
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.state.GameRenderState;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Final @Shadow private GameRenderState gameRenderState;
+    //? if <26.2 {
+    @Final @Shadow private FogRenderer fogRenderer;
+    //?}
 
     @Inject(method = "render", at = @At("HEAD"))
     private void spatialGUI$prepareTargetEarly(CallbackInfo ci) {
@@ -38,18 +42,38 @@ public class GameRendererMixin {
         }
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render()V"))
+    //? if >=26.2 {
+    /*@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render()V"))
+     *///?} else {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V"))
+            //?}
     private void spatialGUI$beforeGuiRender(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
 
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            //renderer.prepareTarget();
             renderer.clearTarget();
 
             SpatialGUIRenderer.skipWindowOverride = true;
             this.gameRenderState.windowRenderState.guiScale = Minecraft.getInstance().getWindow().getGuiScale();
         }
     }
+
+    //? if fabric && <26.2 {
+    /*@Redirect(method = "extractGui", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/screens/Screen;extractRenderStateWithTooltipAndSubtitles(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V"
+    ))
+    private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        var renderer = SpatialGUIClient.renderer();
+        if (SpatialGUI.config.enabled && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
+            SpatialGUIRenderer.skipWindowOverride = false;
+            renderer.extractIsolatedScreen(screen, partialTick);
+            SpatialGUIRenderer.skipWindowOverride = true;
+        } else {
+            screen.extractRenderStateWithTooltipAndSubtitles(graphics, mouseX, mouseY, partialTick);
+        }
+    }
+    *///?}
 
     @Inject(method = "render", at = @At("TAIL"))
     private void spatialGUI$renderIsolatedScreen(CallbackInfo ci) {
@@ -58,7 +82,11 @@ public class GameRendererMixin {
             SpatialGUIRenderer.skipWindowOverride = false;
             this.gameRenderState.windowRenderState.guiScale = Minecraft.getInstance().getWindow().getGuiScale();
 
-            renderer.getScreenGuiRenderer().render();
+            //? if >=26.2 {
+            /*renderer.getScreenGuiRenderer().render();
+             *///?} else {
+            renderer.getScreenGuiRenderer().render(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
+            //?}
             renderer.getScreenGuiRenderer().endFrame();
 
             SpatialGUIRenderer.skipWindowOverride = false;
@@ -69,7 +97,9 @@ public class GameRendererMixin {
     private void spatialGUI$overrideHideHand(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            this.gameRenderState.guiRenderState.isHudHidden = false;
+            //? if >=26.2 {
+            /*this.gameRenderState.guiRenderState.isHudHidden = false;
+             *///?}
 
             if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.hideHandsInFirstPerson) {
                 ci.cancel();
@@ -77,8 +107,8 @@ public class GameRendererMixin {
         }
     }
 }
-*///?} else if >1.21.1 {
-@Mixin(GameRenderer.class)
+//?} else if >1.21.1 {
+/*@Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Final @Shadow private FogRenderer fogRenderer;
 
@@ -116,7 +146,7 @@ public class GameRendererMixin {
         }
     }
     //?} else {
-    /*@Redirect(method = "render", at = @At(
+    /^@Redirect(method = "render", at = @At(
             value = "INVOKE",
             target = "Lnet/neoforged/neoforge/client/ClientHooks;drawScreen(Lnet/minecraft/client/gui/screens/Screen;Lnet/minecraft/client/gui/GuiGraphics;IIF)V"
     ))
@@ -130,7 +160,7 @@ public class GameRendererMixin {
             net.neoforged.neoforge.client.ClientHooks.drawScreen(screen, graphics, mouseX, mouseY, partialTick);
         }
     }
-    *///?}
+    ^///?}
 
     @Inject(method = "render", at = @At("TAIL"))
     private void spatialGUI$renderIsolatedScreen(CallbackInfo ci) {
@@ -155,7 +185,7 @@ public class GameRendererMixin {
         }
     }
 }
-//?} else {
+*///?} else {
 /*@Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Inject(method = "render", at = @At("HEAD"))

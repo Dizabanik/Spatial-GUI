@@ -1,5 +1,5 @@
 //? if fabric {
-package org.tastytrash.spatialGUI.client;
+/*package org.tastytrash.spatialGUI.client;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
@@ -11,4 +11,4 @@ public class SpatialGUIModMenu implements ModMenuApi {
         return parent -> me.shedaniel.autoconfig.AutoConfigClient.getConfigScreen(SpatialGUIConfig.class, parent).get();
     }
 }
-//? }
+*///? }

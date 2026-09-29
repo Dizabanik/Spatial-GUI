@@ -47,13 +47,13 @@ public abstract class CameraMixin {
     @Unique
     private record CameraTransform(Vec3 pos, float yaw, float pitch) {}
 
-    //? if >=26.2 {
-    /*@Inject(method = "alignWithEntity", at = @At("TAIL"))
+    //? if >=26.1.2 {
+    @Inject(method = "alignWithEntity", at = @At("TAIL"))
     private void diegeticInventory$modifyCamera(float partialTicks, CallbackInfo ci) {
-    *///?} else if >1.21.1 {
-    @Inject(method = "setup", at = @At("TAIL"))
+    //?} else if >1.21.1 {
+    /*@Inject(method = "setup", at = @At("TAIL"))
     private void diegeticInventory$modifyCamera(net.minecraft.world.level.Level level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTicks, CallbackInfo ci) {
-    //?} else {
+    *///?} else {
     /*@Inject(method = "setup", at = @At("TAIL"))
     private void diegeticInventory$modifyCamera(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTicks, CallbackInfo ci) {
         *///?}
