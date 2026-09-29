@@ -43,8 +43,9 @@ This mod is mainly visual and tries not provide any gameplay advantages.
 
 ## Notes
 *   Feel free to suggest features or report bugs on the github
+*   This mod is absolutely welcome to be used in modpacks, just be careful about it's compatilbility with certain mods
 
 *Special thanks to:*  
-Dizabanik for 1.21.11 support  
+Dizabanik for 1.21.11 support and performance/bug fixes  
 BUILDLCS for the Brazilian Portuguese translation  
 22SSendo for awesome feature suggestions

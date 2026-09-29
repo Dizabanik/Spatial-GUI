@@ -2,8 +2,6 @@
 
 When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
 
-Subtitles rendering in weird position fabric and neoforge 26.2, 26.3, etc
-
 Add 26.1.x support
 
 -------- MID PRIORITY ---------------
@@ -30,4 +28,4 @@ Minecraft's water effects not applying properly when in the menu with velocity u
 
 ----- CHANGELOG ------
 
-Significant performance fixes and general bug fixes (with tons of help from Dizabanik on GitHub), lowered the versions of dependencies for more compatibility, added a config option to swing your hand when interacting in first person mode, added a resolution scale config option
+Significant performance fixes and general bug fixes (with tons of help from Dizabanik on GitHub), lowered the versions of certain dependencies for more compatibility, added a config option to swing your hand when interacting in first person mode, added a resolution scale config option
