@@ -32,6 +32,15 @@ public class SpatialGUIConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public boolean autoScaleByFov = true;
 
+    // hook
+    @ConfigEntry.Category("hook")
+    @ConfigEntry.Gui.Tooltip
+    public boolean pauseScreen = false;
+
+    @ConfigEntry.Category("hook")
+    @ConfigEntry.Gui.Tooltip
+    public boolean allScreens = false;
+
     @ConfigEntry.Category("general")
     @ConfigEntry.Gui.Tooltip
     public boolean mirrorThirdPerson = false;

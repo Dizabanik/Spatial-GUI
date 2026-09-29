@@ -1,5 +1,10 @@
 -------- HIGH PRIORITY ---------------
 
+Fix issues related to hooking all screens
+ - Doesn't work well in first person
+ - Stops hooking when going into an options menu and back
+ - Doesn't work in 1.21.1, still blurs in 1.21.11
+
 When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
 
 Add 26.1.x support

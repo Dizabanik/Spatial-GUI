@@ -1,7 +1,6 @@
 package org.tastytrash.spatialGUI.mixin.render;
 
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -107,7 +106,7 @@ public class GameRendererMixin {
     ))
     private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
-        if (SpatialGUI.config.enabled && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
+        if (SpatialGUI.config.enabled && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
@@ -122,7 +121,7 @@ public class GameRendererMixin {
     ))
     private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
-        if (SpatialGUI.config.enabled && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
+        if (SpatialGUI.config.enabled && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
@@ -174,7 +173,7 @@ public class GameRendererMixin {
     ))
     private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
-        if (SpatialGUI.config.enabled && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
+        if (SpatialGUI.config.enabled && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
@@ -189,7 +188,7 @@ public class GameRendererMixin {
     ))
     private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
-        if (SpatialGUI.config.enabled && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
+        if (SpatialGUI.config.enabled && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;

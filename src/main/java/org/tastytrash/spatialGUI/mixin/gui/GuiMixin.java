@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.Mixin;
 //? if >=26.2 {
 /*import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -34,7 +33,7 @@ public class GuiMixin {
     ))
     private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
-        if (SpatialGUI.config.enabled && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
+        if (SpatialGUI.config.enabled && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
