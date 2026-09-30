@@ -27,6 +27,14 @@ public class MouseHandlerUtil {
         cachedGuiScale = Double.NaN;
     }
 
+    public static double getFallback(boolean isX) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.getWindow() != null) {
+            return isX ? mc.getWindow().getGuiScaledWidth() / 2.0 : mc.getWindow().getGuiScaledHeight() / 2.0;
+        }
+        return 0.0;
+    }
+
     public static Vector2d getOrComputeMousePosition(double srcX, double srcY, QuadBasis quadBasis, double guiScale, com.mojang.blaze3d.pipeline.TextureTarget target) {
         if (srcX == cachedSrcX && srcY == cachedSrcY && quadBasis == cachedQuadBasis && guiScale == cachedGuiScale) {
             return cachedMouse;
@@ -40,16 +48,20 @@ public class MouseHandlerUtil {
         if (mouse != null) {
             lastPosX = mouse.x / guiScale;
             lastPosY = mouse.y / guiScale;
-        } else {
-            lastPosX = -2000.0;
-            lastPosY = -2000.0;
         }
         return mouse;
     }
 
     public static double getLastPos(boolean isX, double fallback) {
         double val = isX ? lastPosX : lastPosY;
-        return Double.isNaN(val) ? fallback : val;
+        if (Double.isNaN(val) || val <= -1000.0) {
+            return (Double.isNaN(fallback) || fallback <= -1000.0) ? getFallback(isX) : fallback;
+        }
+        return val;
+    }
+
+    public static double getLastPos(boolean isX) {
+        return getLastPos(isX, getFallback(isX));
     }
     //? if >26.2 || <1.21.11{
     private static double freeLookDeltaX = 0;

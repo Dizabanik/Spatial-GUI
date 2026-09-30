@@ -211,7 +211,11 @@ public final class RenderUtil {
 
         Vector3f center = basis.centerOffset();
         float t = (center.x() * norm.x() + center.y() * norm.y() + center.z() * norm.z()) / denom;
-        if (t <= 0f) {
+        if (t <= 0f || Float.isNaN(t) || Float.isInfinite(t)) {
+            return null;
+        }
+
+        if (basis.halfWidth() <= 0f || basis.halfHeight() <= 0f) {
             return null;
         }
 
@@ -227,10 +231,13 @@ public final class RenderUtil {
         float u = (localX / basis.halfWidth() + 1f) / 2f;
         float v = (localY / basis.halfHeight() + 1f) / 2f;
 
-        if (u < 0f || u > 1f || v < 0f || v > 1f) {
+        if (Float.isNaN(u) || Float.isNaN(v)) {
             return null;
         }
 
-        return new Vector2d(u * width, (1.0 - v) * height);
+        float clampedU = Math.max(0.0f, Math.min(1.0f, u));
+        float clampedV = Math.max(0.0f, Math.min(1.0f, v));
+
+        return new Vector2d(clampedU * width, (1.0 - clampedV) * height);
     }
 }

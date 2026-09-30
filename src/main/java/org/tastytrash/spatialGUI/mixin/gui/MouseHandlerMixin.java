@@ -17,12 +17,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
+import org.tastytrash.spatialGUI.compat.InventoryParticlesCompat;
 import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 import org.tastytrash.spatialGUI.util.MouseHandlerUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 
-@Mixin(MouseHandler.class)
+@Mixin(value = MouseHandler.class, priority = 1100)
 public class MouseHandlerMixin {
 
     //? if <=1.21.1 {
@@ -132,26 +133,22 @@ public class MouseHandlerMixin {
         }
 
         var renderer = SpatialGUIClient.renderer();
-        if (renderer == null) return -2000.0;
+        if (renderer == null) return MouseHandlerUtil.getLastPos(isX);
 
         QuadBasis quadBasis = renderer.getInventoryRenderer().getQuadBasis();
-        if (quadBasis == null) return -2000.0;
+        if (quadBasis == null) return MouseHandlerUtil.getLastPos(isX);
 
         Vector2d mouse = MouseHandlerUtil.getOrComputeMousePosition(
                 srcX, srcY, quadBasis, guiScale, renderer.getTargetManager().getInventoryTarget()
         );
 
-        if (mouse == null) {
-            return -2000.0;
-        }
-
-        return MouseHandlerUtil.getLastPos(isX, -2000.0);
+        return MouseHandlerUtil.getLastPos(isX);
     }
 
     @Inject(method = "turnPlayer", at = @At("HEAD"), cancellable = true)
     //? if >1.20.1 {
-//    private void spatialGUI$cancelPlayerRotation(double mousea, CallbackInfo ci) {
-    //?} else {
+    /*private void spatialGUI$cancelPlayerRotation(double mousea, CallbackInfo ci) {
+    *///?} else {
     private void spatialGUI$cancelPlayerRotation(CallbackInfo ci) {
     //?}
         if (SpatialGUIRenderer.isCrosshairModeActive()) {
@@ -169,5 +166,19 @@ public class MouseHandlerMixin {
             MouseHandlerUtil.addFreeLookDelta(xrel, yrel);
         }
     }
-    *///?}
+
+    @Inject(method = "onMove(JDDDD)V", at = @At("TAIL"))
+    private void spatialGUI$syncInventoryParticles(long handle, double xpos, double ypos, double xrel, double yrel, CallbackInfo ci) {
+        if (shouldApplyMouseOverride()) {
+            InventoryParticlesCompat.updateCursor(MouseHandlerUtil.getLastPos(true), MouseHandlerUtil.getLastPos(false));
+        }
+    }
+    *///?} else {
+    @Inject(method = "onMove(JDD)V", at = @At("TAIL"))
+    private void spatialGUI$syncInventoryParticles(long handle, double xpos, double ypos, CallbackInfo ci) {
+        if (shouldApplyMouseOverride()) {
+            InventoryParticlesCompat.updateCursor(MouseHandlerUtil.getLastPos(true), MouseHandlerUtil.getLastPos(false));
+        }
+    }
+    //?}
 }
