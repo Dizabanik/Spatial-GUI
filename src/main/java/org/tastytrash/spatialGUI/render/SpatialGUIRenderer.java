@@ -16,6 +16,11 @@ import org.tastytrash.spatialGUI.util.CameraUtil;
 /*import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
 *///? }
+//? if >26.2 {
+/*import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
+*///?} else if >1.21.1 {
+/*import com.mojang.blaze3d.buffers.GpuBufferSlice;
+*///?}
 
 public class SpatialGUIRenderer {
     public static boolean isExtractingScreen = false;
@@ -106,6 +111,7 @@ public class SpatialGUIRenderer {
         var player = Minecraft.getInstance().player;
         MouseHandlerUtil.releaseMouseFromFirstPerson();
         inventoryRenderer.resetRecipeBookState();
+        inventoryRenderer.resetPerspectiveState();
         MouseHandlerUtil.resetMouseCache();
         hookedScreen = null;
         isInventoryScreen = false;
@@ -211,6 +217,24 @@ public class SpatialGUIRenderer {
 
     public void renderInWorld(com.mojang.blaze3d.vertex.PoseStack matrices) {
         inventoryRenderer.renderInWorld(matrices);
+    }
+
+    //? if >1.21.1 {
+    /*public void capturePerspectiveState(GpuBufferSlice buffer, com.mojang.blaze3d.ProjectionType type, com.mojang.blaze3d.vertex.PoseStack poseStack) {
+        inventoryRenderer.capturePerspectiveState(buffer, type, poseStack);
+    }
+    *///?} else {
+    public void capturePerspectiveState(org.joml.Matrix4f projectionMatrix, com.mojang.blaze3d.vertex.VertexSorting vertexSorting, com.mojang.blaze3d.vertex.PoseStack poseStack) {
+        inventoryRenderer.capturePerspectiveState(projectionMatrix, vertexSorting, poseStack);
+    }
+    //?}
+
+    public void renderInWorldPost() {
+        inventoryRenderer.renderInWorldPost();
+    }
+
+    public void onFrameStart() {
+        inventoryRenderer.onFrameStart();
     }
 
     //? if >1.21.1 {

@@ -39,6 +39,15 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
             renderer.prepareTarget();
+            renderer.onFrameStart();
+        }
+    }
+
+    @Inject(method = "processBlurEffect()V", at = @At("HEAD"), cancellable = true)
+    private void spatialGUI$cancelBlurEffect(CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            ci.cancel();
         }
     }
 
@@ -90,6 +99,8 @@ public class GameRendererMixin {
             renderer.getScreenGuiRenderer().endFrame();
 
             SpatialGUIRenderer.skipWindowOverride = false;
+
+            renderer.renderInWorldPost();
         }
     }
 
@@ -117,6 +128,15 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
             renderer.prepareTarget();
+            renderer.onFrameStart();
+        }
+    }
+
+    @Inject(method = "processBlurEffect()V", at = @At("HEAD"), cancellable = true)
+    private void spatialGUI$cancelBlurEffect(CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            ci.cancel();
         }
     }
 
@@ -172,6 +192,8 @@ public class GameRendererMixin {
             renderer.getScreenGuiRenderer().incrementFrameNumber();
 
             SpatialGUIRenderer.skipWindowOverride = false;
+
+            renderer.renderInWorldPost();
         }
     }
 
@@ -193,8 +215,28 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
             renderer.prepareTarget();
+            renderer.onFrameStart();
         }
         SpatialGUIRenderer.skipWindowOverride = true;
+    }
+
+    //? if 1.21.1 {
+    /*@Inject(method = "processBlurEffect(F)V", at = @At("HEAD"), cancellable = true)
+    private void spatialGUI$cancelBlurEffect(CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            ci.cancel();
+        }
+    }
+    *///?}
+
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/PostChain;process(F)V"))
+    private void spatialGUI$suppressPostEffect(net.minecraft.client.renderer.PostChain postChain, float partialTick) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            return;
+        }
+        postChain.process(partialTick);
     }
 
     //? if fabric {
@@ -208,6 +250,7 @@ public class GameRendererMixin {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
+            renderer.renderInWorldPost();
         } else {
             screen.renderWithTooltip(graphics, mouseX, mouseY, partialTick);
         }
@@ -223,6 +266,7 @@ public class GameRendererMixin {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
+            renderer.renderInWorldPost();
         } else {
             net.neoforged.neoforge.client.ClientHooks.drawScreen(screen, graphics, mouseX, mouseY, partialTick);
         }
