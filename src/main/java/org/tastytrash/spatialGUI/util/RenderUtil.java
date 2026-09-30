@@ -138,11 +138,11 @@ public final class RenderUtil {
 
     public static Vector2d getInventoryMousePositionRay(double screenX, double screenY, QuadBasis basis, TextureTarget inventoryTarget) {
         Minecraft mc = Minecraft.getInstance();
-        int width = mc.getWindow().getWidth();
-        int height = mc.getWindow().getHeight();
+        int screenWidth = mc.getWindow().getScreenWidth();
+        int screenHeight = mc.getWindow().getScreenHeight();
 
-        double ndcX = (screenX / width) * 2.0 - 1.0;
-        double ndcY = 1.0 - (screenY / height) * 2.0;
+        double ndcX = (screenX / (double) screenWidth) * 2.0 - 1.0;
+        double ndcY = 1.0 - (screenY / (double) screenHeight) * 2.0;
 
         //? if >=26.2 {
         /*var camera = mc.gameRenderer.getMainCamera();
@@ -188,7 +188,7 @@ public final class RenderUtil {
                         Minecraft.getInstance().getFrameTime(), true);
                         //?}
         //?}
-        float aspect = (float) width / (float) height;
+        float aspect = (float) screenWidth / (float) screenHeight;
         float tanHalfFovY = (float) Math.tan(Math.toRadians(fovDegrees / 2.0));
         float tanHalfFovX = tanHalfFovY * aspect;
 
@@ -211,7 +211,11 @@ public final class RenderUtil {
 
         Vector3f center = basis.centerOffset();
         float t = (center.x() * norm.x() + center.y() * norm.y() + center.z() * norm.z()) / denom;
-        if (t <= 0f) {
+        if (t <= 0f || Float.isNaN(t) || Float.isInfinite(t)) {
+            return null;
+        }
+
+        if (basis.halfWidth() <= 0f || basis.halfHeight() <= 0f) {
             return null;
         }
 
@@ -227,10 +231,16 @@ public final class RenderUtil {
         float u = (localX / basis.halfWidth() + 1f) / 2f;
         float v = (localY / basis.halfHeight() + 1f) / 2f;
 
-        if (u < 0f || u > 1f || v < 0f || v > 1f) {
+        if (Float.isNaN(u) || Float.isNaN(v)) {
             return null;
         }
 
-        return new Vector2d(u * width, (1.0 - v) * height);
+        float clampedU = Math.max(0.0f, Math.min(1.0f, u));
+        float clampedV = Math.max(0.0f, Math.min(1.0f, v));
+
+        int targetWidth = mc.getWindow().getWidth();
+        int targetHeight = mc.getWindow().getHeight();
+
+        return new Vector2d(clampedU * targetWidth, (1.0 - clampedV) * targetHeight);
     }
 }

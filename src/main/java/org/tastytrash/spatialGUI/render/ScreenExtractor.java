@@ -4,7 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import org.joml.Vector2d;
 import org.tastytrash.spatialGUI.SpatialGUI;
+import org.tastytrash.spatialGUI.compat.InventoryParticlesCompat;
 import org.tastytrash.spatialGUI.mixin.gui.MouseHandlerAccessor;
+import org.tastytrash.spatialGUI.util.MouseHandlerUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 
@@ -126,19 +128,15 @@ public class ScreenExtractor {
             srcY = ((MouseHandlerAccessor) mc.mouseHandler).getRawYpos();
         }
 
-        Vector2d mapped = quadBasis != null
-                ? RenderUtil.getInventoryMousePositionRay(srcX, srcY, quadBasis, targetManager.getInventoryTarget())
-                : null;
-
-        int mouseX, mouseY;
-        if (mapped != null) {
-            double guiScale = SpatialGUI.config.getEffectiveGuiScale(mc.getWindow().getHeight());
-            mouseX = (int) (mapped.x / guiScale);
-            mouseY = (int) (mapped.y / guiScale);
-        } else {
-            mouseX = -2000;
-            mouseY = -2000;
+        double guiScale = SpatialGUI.config.getEffectiveGuiScale(mc.getWindow().getHeight());
+        if (quadBasis != null) {
+            MouseHandlerUtil.getOrComputeMousePosition(srcX, srcY, quadBasis, guiScale, targetManager.getInventoryTarget());
         }
+
+        int mouseX = (int) MouseHandlerUtil.getLastPos(true);
+        int mouseY = (int) MouseHandlerUtil.getLastPos(false);
+
+        InventoryParticlesCompat.updateCursor(mouseX, mouseY);
 
         SpatialGUIRenderer.isExtractingScreen = true;
         //? if >=26.1.2 {
@@ -169,8 +167,8 @@ public class ScreenExtractor {
                 );
                 modelView.pushPose();
                 //? if >1.20.1 {
-//                modelView.translation(0.0F, 0.0F, -11000.0F);
-                //?} else {
+                /*modelView.translation(0.0F, 0.0F, -11000.0F);
+                *///?} else {
                 modelView.translate(0.0F, 0.0F, -11000.0F);
                 //?}
                 RenderSystem.applyModelViewMatrix();

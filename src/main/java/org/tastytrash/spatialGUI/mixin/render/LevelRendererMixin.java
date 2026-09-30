@@ -1,5 +1,6 @@
 package org.tastytrash.spatialGUI.mixin.render;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -51,6 +52,19 @@ public class LevelRendererMixin {
         Quaternionf rotation = modelViewMatrix.getNormalizedRotation(new Quaternionf());
         poseStack.mulPose(rotation);
          //?}
-        renderer.renderInWorld(poseStack);
+
+        //? if >1.21.1 {
+        /*renderer.capturePerspectiveState(
+                RenderSystem.getProjectionMatrixBuffer(),
+                RenderSystem.getProjectionType(),
+                poseStack
+        );
+        *///?} else {
+        renderer.capturePerspectiveState(
+                RenderSystem.getProjectionMatrix(),
+                RenderSystem.getVertexSorting(),
+                poseStack
+        );
+        //?}
     }
 }

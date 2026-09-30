@@ -33,6 +33,7 @@ import net.minecraft.client.renderer.StagedVertexBuffer;
 /*import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.textures.AddressMode;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTextureView;
@@ -51,6 +52,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 *///?}
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexSorting;
 import net.minecraft.client.renderer.GameRenderer;
 import org.lwjgl.opengl.GL11;
 //?}
@@ -83,12 +85,99 @@ public class InventoryRenderer {
     private static boolean isRecipeBookOpen = false;
     private static int recipeBookCloseDelay = 0;
 
+    //? if >1.21.1 {
+    /*private GpuBufferSlice capturedProjectionBuffer;
+    private com.mojang.blaze3d.ProjectionType capturedProjectionType;
+    *///?} else {
+    private final Matrix4f capturedProjectionMatrix = new Matrix4f();
+    private VertexSorting capturedVertexSorting;
+    //?}
+    private final PoseStack capturedPoseStack = new PoseStack();
+    private boolean hasCapturedPerspective = false;
+    private boolean hasDrawnThisFrame = false;
+
     public InventoryRenderer(TextureTargetManager targetManager) {
         this.targetManager = targetManager;
     }
 
+    public void updateQuadBasis() {
+        Minecraft client = Minecraft.getInstance();
+        var player = client.player;
+        if (player == null) return;
+
+        boolean isFirstPerson = SpatialGUIClient.getEffectiveFirstPersonMode();
+        float yaw = player.getYRot();
+        //? if >=26.2 {
+        /*float pitch = isFirstPerson ? player.getXRot() : 0;
+        float pitchClamp = (float) SpatialGUI.config.firstPersonPitchClamp;
+        pitch = Math.clamp(pitch, -pitchClamp, pitchClamp);
+        *///?} else {
+        float pitch = isFirstPerson ? player.getXRot() : 0;
+        float pitchClamp = (float) SpatialGUI.config.firstPersonPitchClamp;
+        pitch = Math.max(-pitchClamp, Math.min(pitch, pitchClamp));
+        //?}
+        float yawRadians = (float) Math.toRadians(yaw);
+        float pitchRadians = (float) Math.toRadians(pitch);
+
+        RenderUtil.ScreenTransformConfig config = RenderUtil.getScreenTransformConfig(isFirstPerson);
+
+        double lookX = -Math.sin(yawRadians) * Math.cos(pitchRadians);
+        double lookY = -Math.sin(pitchRadians);
+        double lookZ = Math.cos(yawRadians) * Math.cos(pitchRadians);
+
+        float scale = AnimationUtil.calculateAnimatedScale(config.scale(), screenOpenTime, isRecipeBookOpen, recipeBookCloseDelay);
+
+        WORLD_POSE_STACK.setIdentity();
+        RenderUtil.applyScreenTransform(WORLD_POSE_STACK, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
+        WORLD_POSE_STACK.scale(scale, scale, scale);
+        Matrix4f worldPose = WORLD_POSE_STACK.last().pose();
+
+        var target = targetManager.getInventoryTarget();
+        float aspect = target != null && target.height > 0
+                ? (float) target.width / (float) target.height
+                : 1.0f;
+
+        quadBasis = RenderUtil.computeQuadBasis(worldPose, aspect, scale);
+    }
+
     public QuadBasis getQuadBasis() {
+        updateQuadBasis();
         return quadBasis;
+    }
+
+    //? if >1.21.1 {
+    /*public void capturePerspectiveState(GpuBufferSlice buffer, com.mojang.blaze3d.ProjectionType type, PoseStack poseStack) {
+        this.capturedProjectionBuffer = buffer;
+        this.capturedProjectionType = type;
+        this.capturedPoseStack.setIdentity();
+        if (poseStack != null) {
+            this.capturedPoseStack.last().pose().set(poseStack.last().pose());
+            this.capturedPoseStack.last().normal().set(poseStack.last().normal());
+        }
+        this.hasCapturedPerspective = true;
+    }
+    *///?} else {
+    public void capturePerspectiveState(Matrix4f projectionMatrix, VertexSorting vertexSorting, PoseStack poseStack) {
+        if (projectionMatrix != null) {
+            this.capturedProjectionMatrix.set(projectionMatrix);
+        }
+        this.capturedVertexSorting = vertexSorting;
+        this.capturedPoseStack.setIdentity();
+        if (poseStack != null) {
+            this.capturedPoseStack.last().pose().set(poseStack.last().pose());
+            this.capturedPoseStack.last().normal().set(poseStack.last().normal());
+        }
+        this.hasCapturedPerspective = true;
+    }
+    //?}
+
+    public void resetPerspectiveState() {
+        this.hasCapturedPerspective = false;
+        this.hasDrawnThisFrame = false;
+    }
+
+    public void onFrameStart() {
+        this.hasDrawnThisFrame = false;
     }
 
     public void setScreenOpenTime(long time) {
@@ -191,7 +280,7 @@ public class InventoryRenderer {
                 : 1.0F;
         COLOR_MODULATOR.set(fadeAlpha, fadeAlpha, fadeAlpha, fadeAlpha);
         GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms().writeTransform(
-                RenderSystem.getModelViewMatrixCopy(),
+                IDENTITY_MATRIX,
                 COLOR_MODULATOR,
                 ZERO_VECTOR,
                 IDENTITY_MATRIX
@@ -225,6 +314,34 @@ public class InventoryRenderer {
             renderPass.setVertexBuffer(0, info.vertexBuffer().slice());
             renderPass.setIndexBuffer(info.indexBuffer(), info.indexType());
             renderPass.drawIndexed(info.indexCount(), 1, info.firstIndex(), info.baseVertex(), 0);
+        }
+    }
+
+    public void renderInWorldPost() {
+        Minecraft client = Minecraft.getInstance();
+        if (!hasCapturedPerspective || hasDrawnThisFrame || targetManager.getInventoryTarget() == null || client.player == null) {
+            return;
+        }
+
+        var texture = targetManager.getInventoryTarget().getColorTextureView();
+        if (texture == null) {
+            return;
+        }
+
+        hasDrawnThisFrame = true;
+
+        var prevBuffer = RenderSystem.getProjectionMatrixBuffer();
+        var prevType = RenderSystem.getProjectionType();
+
+        try {
+            if (capturedProjectionBuffer != null && capturedProjectionType != null) {
+                RenderSystem.setProjectionMatrix(capturedProjectionBuffer, capturedProjectionType);
+            }
+            renderInWorld(capturedPoseStack);
+        } finally {
+            if (prevBuffer != null && prevType != null) {
+                RenderSystem.setProjectionMatrix(prevBuffer, prevType);
+            }
         }
     }
     *///?} else if >1.21.1 {
@@ -303,7 +420,7 @@ public class InventoryRenderer {
                 : 1.0F;
         COLOR_MODULATOR.set(fadeAlpha, fadeAlpha, fadeAlpha, fadeAlpha);
         GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms().writeTransform(
-                RenderSystem.getModelViewMatrix(),
+                IDENTITY_MATRIX,
                 COLOR_MODULATOR,
                 ZERO_VECTOR,
                 IDENTITY_MATRIX
@@ -335,6 +452,34 @@ public class InventoryRenderer {
                 renderPass.setVertexBuffer(0, vertexBuffer);
                 renderPass.setIndexBuffer(indexBuffer, indexType);
                 renderPass.drawIndexed(0, 0, 6, 1);
+            }
+        }
+    }
+
+    public void renderInWorldPost() {
+        Minecraft client = Minecraft.getInstance();
+        if (!hasCapturedPerspective || hasDrawnThisFrame || targetManager.getInventoryTarget() == null || client.player == null) {
+            return;
+        }
+
+        var texture = targetManager.getInventoryTarget().getColorTextureView();
+        if (texture == null) {
+            return;
+        }
+
+        hasDrawnThisFrame = true;
+
+        var prevBuffer = RenderSystem.getProjectionMatrixBuffer();
+        var prevType = RenderSystem.getProjectionType();
+
+        try {
+            if (capturedProjectionBuffer != null && capturedProjectionType != null) {
+                RenderSystem.setProjectionMatrix(capturedProjectionBuffer, capturedProjectionType);
+            }
+            renderInWorld(capturedPoseStack);
+        } finally {
+            if (prevBuffer != null && prevType != null) {
+                RenderSystem.setProjectionMatrix(prevBuffer, prevType);
             }
         }
     }
@@ -445,6 +590,42 @@ public class InventoryRenderer {
             RenderSystem.enableCull();
             RenderSystem.disableBlend();
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        }
+    }
+
+    public void renderInWorldPost() {
+        Minecraft client = Minecraft.getInstance();
+        if (!hasCapturedPerspective || hasDrawnThisFrame || targetManager.getInventoryTarget() == null || client.player == null) {
+            return;
+        }
+
+        RenderTarget target = targetManager.getInventoryTarget();
+        int textureId = target.getColorTextureId();
+        if (textureId <= 0) {
+            return;
+        }
+
+        hasDrawnThisFrame = true;
+
+        Matrix4f prevProjection = RenderSystem.getProjectionMatrix();
+        VertexSorting prevSorting = RenderSystem.getVertexSorting();
+        var modelView = RenderSystem.getModelViewStack();
+
+        try {
+            RenderSystem.setProjectionMatrix(capturedProjectionMatrix, capturedVertexSorting);
+            modelView.pushPose();
+            //? if >1.20.1 {
+            /*modelView.identity();
+            *///?} else {
+            modelView.setIdentity();
+            //?}
+            RenderSystem.applyModelViewMatrix();
+
+            renderInWorld(capturedPoseStack);
+        } finally {
+            modelView.popPose();
+            RenderSystem.applyModelViewMatrix();
+            RenderSystem.setProjectionMatrix(prevProjection, prevSorting);
         }
     }
     //?}
