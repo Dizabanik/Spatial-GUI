@@ -46,12 +46,12 @@ public class MouseHandlerMixin {
     }
 
     //? if >1.21.1 {
-    /*@ModifyReturnValue(method = "getScaledXPos*", at = @At("RETURN"))
+    /*@ModifyReturnValue(method = "getScaledXPos(Lcom/mojang/blaze3d/platform/Window;)D", at = @At("RETURN"))
     private static double spatialGUI$modifyX(double original) {
         return overrideMousePosition(original, true);
     }
 
-    @ModifyReturnValue(method = "getScaledYPos*", at = @At("RETURN"))
+    @ModifyReturnValue(method = "getScaledYPos(Lcom/mojang/blaze3d/platform/Window;)D", at = @At("RETURN"))
     private static double spatialGUI$modifyY(double original) {
         return overrideMousePosition(original, false);
     }
@@ -76,8 +76,6 @@ public class MouseHandlerMixin {
             //?}
             at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;ypos:D", opcode = Opcodes.GETFIELD)
     )
-    //?}
-
     private double spatialGUI$modifyRawY(double original) {
         return overrideRawPosition(original, false);
     }
@@ -91,6 +89,7 @@ public class MouseHandlerMixin {
     private double spatialGUI$modifyRawYpos(double original) {
         return overrideRawPosition(original, false);
     }
+    //?}
 
     @Unique
     private static double overrideRawPosition(double raw, boolean isX) {
@@ -133,16 +132,16 @@ public class MouseHandlerMixin {
         }
 
         var renderer = SpatialGUIClient.renderer();
-        if (renderer == null) return MouseHandlerUtil.getLastPos(isX);
+        if (renderer == null) return MouseHandlerUtil.getLastPos(isX, original);
 
         QuadBasis quadBasis = renderer.getInventoryRenderer().getQuadBasis();
-        if (quadBasis == null) return MouseHandlerUtil.getLastPos(isX);
+        if (quadBasis == null) return MouseHandlerUtil.getLastPos(isX, original);
 
         Vector2d mouse = MouseHandlerUtil.getOrComputeMousePosition(
                 srcX, srcY, quadBasis, guiScale, renderer.getTargetManager().getInventoryTarget()
         );
 
-        return MouseHandlerUtil.getLastPos(isX);
+        return MouseHandlerUtil.getLastPos(isX, original);
     }
 
     @Inject(method = "turnPlayer", at = @At("HEAD"), cancellable = true)
