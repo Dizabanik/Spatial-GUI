@@ -1,24 +1,20 @@
 -------- HIGH PRIORITY ---------------
 
-When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
+Mouse position snapping to top left when going off screen, not saving last position
 
-Add 26.1.x support
+When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
 
 -------- MID PRIORITY ---------------
 
+Update README, try something different
+
 Make the screen position unaffected by the bob
-
-Add comments?
-
-Make the dependencies more strict
 
 Add forge 1.20.1 support
 
 -------- LOW PRIORITY ---------------
 
 Parallax magnitude config
-
-More images on curseforge/modrinth gallery
 
 Replace accessor with accesswidener (maybe not?)
 
