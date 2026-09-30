@@ -1,5 +1,8 @@
 -------- HIGH PRIORITY ---------------
 
+Add Fabric 1.20.1 support, then add forge 1.20.1, as the jump from fabric/neoforge 1.21.1 is too large
+
+
 Mouse position snapping to top left when going off screen, not saving last position
 
 When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
