@@ -1,7 +1,7 @@
 package org.tastytrash.spatialGUI.mixin.client;
 
 //? if >=26.1.2 {
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+/*import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
@@ -52,7 +52,7 @@ public class AbstractRecipeBookScreenMixin {
         }
     }
 }
-//?} else if >1.21.1 {
+*///?} else if >1.21.1 {
 /*import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
@@ -105,7 +105,7 @@ public class AbstractRecipeBookScreenMixin {
     }
 }
 *///?} else {
-/*import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractFurnaceScreen;
 import net.minecraft.client.gui.screens.inventory.CraftingScreen;
@@ -117,6 +117,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
+import org.tastytrash.spatialGUI.mixin.gui.ScreenInvoker;
 
 @Mixin({InventoryScreen.class, CraftingScreen.class, AbstractFurnaceScreen.class})
 public class AbstractRecipeBookScreenMixin {
@@ -147,7 +148,11 @@ public class AbstractRecipeBookScreenMixin {
             renderer.getInventoryRenderer().setRecipeBookOpen(visible);
             if (!visible) {
                 AbstractContainerScreen<?> screen = (AbstractContainerScreen<?>)(Object) this;
-                screen.clearFocus();
+                //? if >1.20.1 {
+                /*screen.clearFocus();
+                *///?} else {
+                ((ScreenInvoker) screen).invokeClearFocus();
+                //?}
                 var focused = screen.getFocused();
                 if (focused != null) {
                     focused.setFocused(false);
@@ -157,4 +162,4 @@ public class AbstractRecipeBookScreenMixin {
         }
     }
 }
-*///?}
+//?}

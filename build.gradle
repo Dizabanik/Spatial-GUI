@@ -8,6 +8,7 @@ version = project.mod_version
 group = project.maven_group
 
 def dependencyVersions = [
+        "1.20.1-fabric":   [minecraft: "1.20.1", minecraft_dependency: "1.20.1", fabric: "0.92.2+1.20.1", loader: "0.19.3", cloth_config: "11.1.106", modmenu: "7.2.2", obfuscated: true, java: 17],
         "1.21.1-neoforge": [minecraft: "1.21.1", minecraft_dependency: "1.21.1", neoforge: "21.1.240", cloth_config: "15.0.140", obfuscated: true, java: 21],
         "1.21.1-fabric":   [minecraft: "1.21.1", minecraft_dependency: "1.21.1", fabric: "0.116.0+1.21.1", loader: "0.19.3", cloth_config: "15.0.140", modmenu: "11.0.4", obfuscated: true, java: 21],
         "1.21.11-neoforge":[minecraft: "1.21.11", minecraft_dependency: ">=1.21.6 <=1.21.11", neoforge: "21.11.42", cloth_config: "21.11.153", obfuscated: true, java: 21],
@@ -109,11 +110,13 @@ processResources {
         exclude "META-INF/neoforge.mods.toml"
         inputs.property "loader_version", project.loader_version
         inputs.property "minecraft_dependency", project.minecraft_dependency
+        inputs.property "cloth_config_version", project.cloth_config_version
         filesMatching("fabric.mod.json") {
             expand "version": project.version,
                     "minecraft_dependency": project.minecraft_dependency,
                     "minecraft_version": project.minecraft_version,
-                    "loader_version": project.loader_version
+                    "loader_version": project.loader_version,
+                    "cloth_config_version": project.cloth_config_version
         }
     } else if (isNeoForge) {
         exclude "fabric.mod.json"

@@ -26,9 +26,9 @@ import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 public class MouseHandlerMixin {
 
     //? if <=1.21.1 {
-    /*@Shadow private double accumulatedDX;
+    @Shadow private double accumulatedDX;
     @Shadow private double accumulatedDY;
-    *///?}
+    //?}
 
     @Unique
     private static boolean shouldApplyMouseOverride() {
@@ -45,7 +45,7 @@ public class MouseHandlerMixin {
     }
 
     //? if >1.21.1 {
-    @ModifyReturnValue(method = "getScaledXPos*", at = @At("RETURN"))
+    /*@ModifyReturnValue(method = "getScaledXPos*", at = @At("RETURN"))
     private static double spatialGUI$modifyX(double original) {
         return overrideMousePosition(original, true);
     }
@@ -54,9 +54,13 @@ public class MouseHandlerMixin {
     private static double spatialGUI$modifyY(double original) {
         return overrideMousePosition(original, false);
     }
-    //?} else {
-    /*@ModifyExpressionValue(
-            method = {"onPress", "onScroll", "handleAccumulatedMovement"},
+    *///?} else {
+    @ModifyExpressionValue(
+            //? if >1.20.1 {
+            /*method = {"onPress", "onScroll", "handleAccumulatedMovement"},
+            *///?} else {
+            method = {"onPress", "onScroll"},
+            //?}
             at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;xpos:D", opcode = Opcodes.GETFIELD)
     )
     private double spatialGUI$modifyRawX(double original) {
@@ -64,13 +68,18 @@ public class MouseHandlerMixin {
     }
 
     @ModifyExpressionValue(
-            method = {"onPress", "onScroll", "handleAccumulatedMovement"},
+            //? if >1.20.1 {
+            /*method = {"onPress", "onScroll", "handleAccumulatedMovement"},
+            *///?} else {
+            method = {"onPress", "onScroll"},
+            //?}
             at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;ypos:D", opcode = Opcodes.GETFIELD)
     )
+    //?}
+
     private double spatialGUI$modifyRawY(double original) {
         return overrideRawPosition(original, false);
     }
-    *///?}
 
     @ModifyReturnValue(method = "xpos", at = @At("RETURN"))
     private double spatialGUI$modifyRawXpos(double original) {
@@ -140,12 +149,15 @@ public class MouseHandlerMixin {
     }
 
     @Inject(method = "turnPlayer", at = @At("HEAD"), cancellable = true)
-    private void spatialGUI$cancelPlayerRotation(double mousea, CallbackInfo ci) {
+    //? if >1.20.1 {
+//    private void spatialGUI$cancelPlayerRotation(double mousea, CallbackInfo ci) {
+    //?} else {
+    private void spatialGUI$cancelPlayerRotation(CallbackInfo ci) {
+    //?}
         if (SpatialGUIRenderer.isCrosshairModeActive()) {
             //? if <=1.21.1 {
-            /*// 1.21.1 has no xrel/yrel in onMove, so hand over the accumulated deltas here.
             MouseHandlerUtil.addFreeLookDelta(this.accumulatedDX, this.accumulatedDY);
-            *///?}
+            //?}
             ci.cancel();
         }
     }

@@ -68,7 +68,7 @@ public class SpatialGUIConfig implements ConfigData {
         if (autoCalculateGuiScale) {
             return calculateAutoGuiScale(windowHeight);
         }
-        return Math.clamp(guiScale, 1, 6);
+        return Math.max(1, Math.min(guiScale, 6));
     }
 
     // rendering
@@ -84,7 +84,6 @@ public class SpatialGUIConfig implements ConfigData {
     @ConfigEntry.Category("rendering")
     @ConfigEntry.Gui.Tooltip
     public boolean useAnisotropicFiltering = true;
-
 
     @ConfigEntry.Category("rendering")
     @ConfigEntry.Gui.Tooltip

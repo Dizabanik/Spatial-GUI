@@ -1,7 +1,7 @@
 plugins {
     id("dev.kikugie.stonecutter")
 }
-stonecutter active "26.1.2-neoforge"
+stonecutter active "1.20.1-fabric"
 
 stonecutter parameters {
     constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge")
@@ -10,6 +10,11 @@ stonecutter parameters {
         string(current.parsed < "26.2") {
             replace("gameRenderer.mainCamera()", "gameRenderer.getMainCamera()")
             replace("= client.gui.screen()", "= client.screen")
+        }
+
+        string(current.parsed < "1.21.1") {
+            replace("modelView.pushMatrix()", "modelView.pushPose()")
+            replace("modelView.popMatrix()", "modelView.popPose()")
         }
 
         string(current.parsed < "1.21.11") {

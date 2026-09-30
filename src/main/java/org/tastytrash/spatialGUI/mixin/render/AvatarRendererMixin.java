@@ -9,7 +9,7 @@ import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.mixin.gui.MouseHandlerAccessor;
 
 //? if >1.21.1 {
-import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+/*import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.entity.Avatar;
 import org.spongepowered.asm.mixin.injection.At;
@@ -72,8 +72,8 @@ public class AvatarRendererMixin {
         state.xRot = smoothedHeadPitch;
     }
 }
-//?} else {
-/*import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+*///?} else {
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -113,8 +113,8 @@ public class AvatarRendererMixin {
         int width = client.getWindow().getScreenWidth();
         int height = client.getWindow().getScreenHeight();
 
-        float normX = Math.clamp((float) (mouseX / width) * 2f - 1f, -1f, 1f);
-        float normY = Math.clamp((float) (mouseY / height) * 2f - 1f, -1f, 1f);
+        float normX = Math.max(-1f, Math.min(1f, (float) mouseX / width * 2f - 1f));
+        float normY = Math.max(-1f, Math.min(1f, (float) mouseY / height * 2f - 1f));
 
         float bodyRotationOffset = (float) SpatialGUI.config.avatarBodyRotationOffset;
         if (SpatialGUI.config.mirrorThirdPerson) {
@@ -163,4 +163,4 @@ public class AvatarRendererMixin {
         }
     }
 }
-*///?}
+//?}

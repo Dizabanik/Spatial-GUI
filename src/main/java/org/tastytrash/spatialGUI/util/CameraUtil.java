@@ -60,7 +60,7 @@ public class CameraUtil {
         float fovAdjustment = (1.0f / fovMultiplier) - 1.0f;
         float distanceFovAdjustment = fovAdjustment * distanceMultiplier;
         
-        return Math.clamp(baseDistance * (1.0f + distanceFovAdjustment), -4, 4);
+        return Math.max(-4, Math.min(baseDistance * (1.0f + distanceFovAdjustment), 4));
     }
 
     public static float calculateAutoFovSideOffset(float baseSideOffset, boolean isFirstPerson) {
@@ -71,7 +71,7 @@ public class CameraUtil {
         float fovAdjustment = (1.0f / fovMultiplier) - 1.0f;
         float sideOffsetFovAdjustment = fovAdjustment * sideOffsetMultiplier;
         
-        return Math.clamp(baseSideOffset * (1.0f + sideOffsetFovAdjustment), -4, 4);
+        return Math.max(-4, Math.min(baseSideOffset * (1.0f + sideOffsetFovAdjustment), 4));
     }
 
     public static double calculateMouseSensitivity() {

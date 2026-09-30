@@ -17,7 +17,11 @@ public final class RenderUtil {
 
     public static void addQuadVertex(VertexConsumer buffer, Matrix4f pose,
             float x, float y, float z, float u, float v) {
-        buffer.addVertex(pose, x, y, z).setUv(u, v).setColor(255, 255, 255, SpatialGUI.config.screenAlpha);
+        //? if >1.20.1 {
+        /*buffer.addVertex(pose, x, y, z).setUv(u, v).setColor(255, 255, 255, SpatialGUI.config.screenAlpha);
+        *///?} else {
+        buffer.vertex(pose, x, y, z).uv(u, v).color(255, 255, 255, SpatialGUI.config.screenAlpha);
+        //?}
     }
 
     public static void applyScreenTransform(PoseStack matrices, boolean isFirstPerson,
@@ -35,7 +39,9 @@ public final class RenderUtil {
             matrices.mulPose(new Quaternionf()
                     .rotateY(-yawRadians + yawOffsetRad)
                     .rotateX(-pitchRadians + pitchOffsetRad)
-                    .get(new Matrix4f())
+                    //? if >1.20.1 {
+                    /*.get(new Matrix4f())
+                    *///?}
             );
         } else {
             matrices.translate(
@@ -46,7 +52,9 @@ public final class RenderUtil {
             matrices.mulPose(new Quaternionf()
                     .rotateY(-yawRadians + yawOffsetRad)
                     .rotateX(pitchOffsetRad)
-                    .get(new Matrix4f())
+                    //? if >1.20.1 {
+                    /*.get(new Matrix4f())
+                    *///?}
             );
         }
     }
@@ -57,12 +65,16 @@ public final class RenderUtil {
         if (!autoScaleByFov) return 1.0f;
         
         //? if >=26.1.2 {
-        float currentFov = Minecraft.getInstance().gameRenderer.getMainCamera().getFov();
-        //?} else {
-        /*float currentFov = (float) ((GameRendererInvoker) Minecraft.getInstance().gameRenderer)
+        /*float currentFov = Minecraft.getInstance().gameRenderer.getMainCamera().getFov();
+        *///?} else {
+        float currentFov = (float) ((GameRendererInvoker) Minecraft.getInstance().gameRenderer)
                 .spatialGUI$getFov(Minecraft.getInstance().gameRenderer.getMainCamera(),
-                        Minecraft.getInstance().gameRenderer.getMainCamera().getPartialTickTime(), true);
-        *///?}
+                        //? if >1.20.1 {
+                        /*Minecraft.getInstance().gameRenderer.getMainCamera().getPartialTickTime(), true);
+                        *///?} else {
+                        Minecraft.getInstance().getFrameTime(), true);
+                        //?}
+        //?}
         float baselineFov = (float) SpatialGUI.config.autoFovTuning.autoScaleBaselineFov;
         float power = (float) SpatialGUI.config.autoFovTuning.autoScaleScreenPower;
 
@@ -134,12 +146,12 @@ public final class RenderUtil {
 
         //? if >=26.2 {
         /*var camera = mc.gameRenderer.getMainCamera();
-        float yawRadians = (float) Math.toRadians(camera.yRot());
-        float pitchRadians = (float) Math.toRadians(camera.xRot());
+        float yawRadians = (float) Math.toRadians(camera.getYRot());
+        float pitchRadians = (float) Math.toRadians(camera.getXRot());
         *///?} else {
         var camera = mc.gameRenderer.getMainCamera();
-        float yawRadians = (float) Math.toRadians(camera.yRot());
-        float pitchRadians = (float) Math.toRadians(camera.xRot());
+        float yawRadians = (float) Math.toRadians(camera.getYRot());
+        float pitchRadians = (float) Math.toRadians(camera.getXRot());
         //?}
 
         float fx = (float) (-Math.sin(yawRadians) * Math.cos(pitchRadians));
@@ -166,11 +178,16 @@ public final class RenderUtil {
         uz *= uInv;
 
         //? if >=26.1.2 {
-        float fovDegrees = camera.getFov();
-         //?} else {
-        /*float fovDegrees = (float) ((GameRendererInvoker) mc.gameRenderer)
-                .spatialGUI$getFov(camera, camera.getPartialTickTime(), true);
-        *///?}
+        /*float fovDegrees = camera.getFov();
+         *///?} else {
+        float fovDegrees = (float) ((GameRendererInvoker) mc.gameRenderer)
+                .spatialGUI$getFov(camera,
+                        //? if >1.20.1 {
+                        /*camera.getPartialTickTime(), true);
+                        *///?} else {
+                        Minecraft.getInstance().getFrameTime(), true);
+                        //?}
+        //?}
         float aspect = (float) width / (float) height;
         float tanHalfFovY = (float) Math.tan(Math.toRadians(fovDegrees / 2.0));
         float tanHalfFovX = tanHalfFovY * aspect;

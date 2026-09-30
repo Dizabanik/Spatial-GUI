@@ -48,15 +48,15 @@ public abstract class CameraMixin {
     private record CameraTransform(Vec3 pos, float yaw, float pitch) {}
 
     //? if >=26.1.2 {
-    @Inject(method = "alignWithEntity", at = @At("TAIL"))
+    /*@Inject(method = "alignWithEntity", at = @At("TAIL"))
     private void diegeticInventory$modifyCamera(float partialTicks, CallbackInfo ci) {
-    //?} else if >1.21.1 {
+    *///?} else if >1.21.1 {
     /*@Inject(method = "setup", at = @At("TAIL"))
     private void diegeticInventory$modifyCamera(net.minecraft.world.level.Level level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTicks, CallbackInfo ci) {
     *///?} else {
-    /*@Inject(method = "setup", at = @At("TAIL"))
+    @Inject(method = "setup", at = @At("TAIL"))
     private void diegeticInventory$modifyCamera(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTicks, CallbackInfo ci) {
-        *///?}
+        //?}
         var renderer = SpatialGUIClient.renderer();
         boolean isCapturing = renderer.shouldCapture();
 
@@ -73,7 +73,7 @@ public abstract class CameraMixin {
                 initialMouseX = ((MouseHandlerAccessor) mc.mouseHandler).getRawXpos();
                 initialMouseY = ((MouseHandlerAccessor) mc.mouseHandler).getRawYpos();
                 hasMouseMovedSinceScreenOpen = false;
-                baseXRot = Math.clamp(xRot, -SpatialGUI.config.firstPersonPitchClamp, SpatialGUI.config.firstPersonPitchClamp);
+                baseXRot = Math.max(-SpatialGUI.config.firstPersonPitchClamp, Math.min(SpatialGUI.config.firstPersonPitchClamp, xRot));
 
                 if (SpatialGUIRenderer.isCrosshairModeActive()) {
                     lastMouseX = ((MouseHandlerAccessor) mc.mouseHandler).getRawXpos();
@@ -109,8 +109,7 @@ public abstract class CameraMixin {
     private CameraTransform calculateCameraTransform(boolean isFirstPerson, float partialTicks) {
         float distance = CameraUtil.calculateAutoFovDistance((float) SpatialGUI.config.cameraDistance, isFirstPerson);
         float sideOffset = CameraUtil.calculateAutoFovSideOffset((float) SpatialGUI.config.cameraSideOffset, isFirstPerson);
-        float heightOffset = isFirstPerson ? entity.getEyeHeight() : Math.clamp((float) SpatialGUI.config.cameraHeightOffset, -4, 4);
-
+        float heightOffset = isFirstPerson ? entity.getEyeHeight() : Math.max(-4f, Math.min(4f, (float) SpatialGUI.config.cameraHeightOffset));
         float yaw, pitch;
         float positionYaw;
 
@@ -129,8 +128,10 @@ public abstract class CameraMixin {
             hasMouseMovedSinceScreenOpen = mouseDeltaX > 1.0 || mouseDeltaY > 1.0;
         }
 
-        float normX = hasMouseMovedSinceScreenOpen ? Math.clamp((float) (rawMouseX / client.getWindow().getScreenWidth()) * 2f - 1f, -1f, 1f) : 0f;
-        float normY = hasMouseMovedSinceScreenOpen ? Math.clamp((float) (rawMouseY / client.getWindow().getScreenHeight()) * 2f - 1f, -1f, 1f) : 0f;
+        float normX = hasMouseMovedSinceScreenOpen
+                ? Math.max(-1f, Math.min(1f, (float) rawMouseX / client.getWindow().getScreenWidth() * 2f - 1f)) : 0f;
+        float normY = hasMouseMovedSinceScreenOpen
+                ? Math.max(-1f, Math.min(1f, (float) rawMouseY / client.getWindow().getScreenHeight() * 2f - 1f)) : 0f;
 
         if (isFirstPerson) {
             float maxPitch = 90;
@@ -153,14 +154,14 @@ public abstract class CameraMixin {
 
                 double sens = CameraUtil.calculateMouseSensitivity();
                 //? if >1.21.1 {
-                double xOffset = deltaX * sens * (client.options.invertMouseX().get() ? -1 : 1);
-                //?} else {
-                /*double xOffset = deltaX * sens;
-                *///?}
-                double yOffset = deltaY * sens * (client.options.invertMouseY().get() ? -1 : 1);
+                /*double xOffset = deltaX * sens * (client.options.invertMouseX().get() ? -1 : 1);
+                *///?} else {
+                double xOffset = deltaX * sens;
+                //?}
+                double yOffset = deltaY * sens * (client.options.invertYMouse().get() ? -1 : 1);
 
-                freeLookYaw = Math.clamp(freeLookYaw + (float) xOffset, -MAX_YAW_OFFSET, MAX_YAW_OFFSET);
-                freeLookPitch = Math.clamp(freeLookPitch + (float) yOffset, -maxPitch - entityXRot, maxPitch - entityXRot);
+                freeLookYaw = Math.max(-MAX_YAW_OFFSET, Math.min(MAX_YAW_OFFSET, freeLookYaw + (float) xOffset));
+                freeLookPitch = Math.max(-maxPitch - entityXRot, Math.min(maxPitch - entityXRot, freeLookPitch + (float) yOffset));
 
                 smoothedCameraYaw = freeLookYaw;
                 smoothedCameraPitch = entityXRot + freeLookPitch;
@@ -172,7 +173,7 @@ public abstract class CameraMixin {
                 smoothedCameraPitch = baseXRot + normY * 180f * (float) SpatialGUI.config.firstPersonMouseSensitivityPitch;
             }
 
-            smoothedCameraPitch = Math.clamp(smoothedCameraPitch, -maxPitch, maxPitch);
+            smoothedCameraPitch = Math.max(-maxPitch, Math.min(maxPitch, smoothedCameraPitch));
             yaw = entity.getYRot() + smoothedCameraYaw;
             pitch = smoothedCameraPitch;
             positionYaw = yaw;
