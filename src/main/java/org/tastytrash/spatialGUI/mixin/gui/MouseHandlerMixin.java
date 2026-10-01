@@ -79,6 +79,7 @@ public class MouseHandlerMixin {
     private double spatialGUI$modifyRawY(double original) {
         return overrideRawPosition(original, false);
     }
+    *///?}
 
     @ModifyReturnValue(method = "xpos", at = @At("RETURN"))
     private double spatialGUI$modifyRawXpos(double original) {
@@ -89,7 +90,6 @@ public class MouseHandlerMixin {
     private double spatialGUI$modifyRawYpos(double original) {
         return overrideRawPosition(original, false);
     }
-    *///?}
 
     @Unique
     private static double overrideRawPosition(double raw, boolean isX) {

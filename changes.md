@@ -106,10 +106,29 @@ This document summarizes all modifications made to the codebase compared to the 
 
 ---
 
-### 5. Modified Files Summary
+### 5. Fix Button Click Detection and Mouse Alignment on Minecraft 1.21.11 (Inventory Profiles Next, Recipe Book, Widgets)
+
+#### Problem
+* On Minecraft 1.21.11 (`1.21.11-fabric`), clicks on Inventory Profiles Next (IPN) buttons were misaligned and not registering, and clicking on the vanilla Recipe Book button or other GUI widgets failed to register.
+* **Root Cause:**
+  * In commit `750f32d`, the closing `*///?}` comment of the Stonecutter version block in `MouseHandlerMixin.java` was placed at line 92.
+  * This trapped `spatialGUI$modifyRawXpos` and `spatialGUI$modifyRawYpos` (which intercept `mc.mouseHandler.xpos()` and `mc.mouseHandler.ypos()`) inside the `//?} else {` block that only compiles for Minecraft `<=1.21.1`.
+  * For versions `>1.21.1` (including 1.21.11), `mc.mouseHandler.xpos()` and `mc.mouseHandler.ypos()` were left completely unintercepted and returned raw 2D GLFW window pixel coordinates rather than the 3D raycasted screen position.
+  * GUI helper mods like Inventory Profiles Next and its core library `libIPN` (`VanillaUtil.mouseXRaw()` / `mouseYRaw()`) use `mouseHandler.xpos()` and `ypos()` to compute cursor coordinates for button rendering and click handling.
+  * Furthermore, `libIPN`'s `MixinMouse` injects into `MouseHandler.onButton` right before `Screen.mouseClicked` and cancels the event if it determines an IPN action was triggered. With unmapped raw GLFW coordinates, IPN erroneously intercepted clicks or completely missed its own buttons, causing clicks on the Recipe Book and other widgets to be either canceled or sent to incorrect coordinates.
+
+#### Solution
+* **[MouseHandlerMixin.java](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/mixin/gui/MouseHandlerMixin.java):**
+  * Moved `spatialGUI$modifyRawXpos` (`method = "xpos"`) and `spatialGUI$modifyRawYpos` (`method = "ypos"`) outside the Stonecutter version condition block so they are active across all Minecraft versions (`1.20.1`, `1.21.1`, `1.21.11`, `26.1.2`, `26.2`, `26.3`).
+  * `xpos()` and `ypos()` now consistently return the transformed GLFW coordinates matching the 3D raycasted GUI cursor position, restoring proper button hover, click detection, and interaction for both Inventory Profiles Next and vanilla widgets like the Recipe Book.
+
+---
+
+### 6. Modified Files Summary
 * [`src/main/java/org/tastytrash/spatialGUI/mixin/render/GameRendererMixin.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/mixin/render/GameRendererMixin.java): Fixed hands and crosshair layering in 26.3, bypassed Vitrail suppression, resolved sky-fogged inventory items, and restored the isolated screen render pipeline in 1.21.11 and 1.20.1/1.21.1.
+* [`src/main/java/org/tastytrash/spatialGUI/mixin/gui/MouseHandlerMixin.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/mixin/gui/MouseHandlerMixin.java): Restored `xpos()` and `ypos()` overrides across all versions (`>1.21.1` and `<=1.21.1`), fixing Inventory Profiles Next button misalignment and Recipe Book click handling; updated effective GUI scale query.
 * [`src/main/java/org/tastytrash/spatialGUI/client/SpatialGUIConfig.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/client/SpatialGUIConfig.java): Relative GUI scaling with 1–6 slider (scale 4 on Retina feels identical to scale 4 on Full HD) and dynamic auto-scaling.
 * [`src/main/java/org/tastytrash/spatialGUI/mixin/gui/WindowMixin.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/mixin/gui/WindowMixin.java): Updated effective GUI scale query.
-* [`src/main/java/org/tastytrash/spatialGUI/mixin/gui/MouseHandlerMixin.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/mixin/gui/MouseHandlerMixin.java): Updated effective GUI scale query.
 * [`src/main/java/org/tastytrash/spatialGUI/render/ScreenExtractor.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/render/ScreenExtractor.java): Updated effective GUI scale query.
 * [`changes.md`](file:///Users/diz/projects/min_mods/changes.md): Complete summary of changes since last pull.
+
