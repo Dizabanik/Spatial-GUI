@@ -27,9 +27,9 @@ import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 public class MouseHandlerMixin {
 
     //? if <=1.21.1 {
-    @Shadow private double accumulatedDX;
+    /*@Shadow private double accumulatedDX;
     @Shadow private double accumulatedDY;
-    //?}
+    *///?}
 
     @Unique
     private static boolean shouldApplyMouseOverride() {
@@ -40,13 +40,13 @@ public class MouseHandlerMixin {
          *///?} else {
         Screen screen = client.screen;
         //?}
-        if (screen instanceof AbstractContainerScreen<?>) return true;
+        if (SpatialGUIClient.shouldHookScreen(screen)) return true;
         var renderer = SpatialGUIClient.renderer();
-        return renderer != null && renderer.getHookedScreen() instanceof AbstractContainerScreen<?>;
+        return renderer != null && SpatialGUIClient.shouldHookScreen(renderer.getHookedScreen());
     }
 
     //? if >1.21.1 {
-    /*@ModifyReturnValue(method = "getScaledXPos(Lcom/mojang/blaze3d/platform/Window;)D", at = @At("RETURN"))
+    @ModifyReturnValue(method = "getScaledXPos(Lcom/mojang/blaze3d/platform/Window;)D", at = @At("RETURN"))
     private static double spatialGUI$modifyX(double original) {
         return overrideMousePosition(original, true);
     }
@@ -55,13 +55,13 @@ public class MouseHandlerMixin {
     private static double spatialGUI$modifyY(double original) {
         return overrideMousePosition(original, false);
     }
-    *///?} else {
-    @ModifyExpressionValue(
+    //?} else {
+    /*@ModifyExpressionValue(
             //? if >1.20.1 {
-            /*method = {"onPress", "onScroll", "handleAccumulatedMovement"},
-            *///?} else {
-            method = {"onPress", "onScroll"},
-            //?}
+            method = {"onPress", "onScroll", "handleAccumulatedMovement"},
+            //?} else {
+            /^method = {"onPress", "onScroll"},
+            ^///?}
             at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;xpos:D", opcode = Opcodes.GETFIELD)
     )
     private double spatialGUI$modifyRawX(double original) {
@@ -70,10 +70,10 @@ public class MouseHandlerMixin {
 
     @ModifyExpressionValue(
             //? if >1.20.1 {
-            /*method = {"onPress", "onScroll", "handleAccumulatedMovement"},
-            *///?} else {
-            method = {"onPress", "onScroll"},
-            //?}
+            method = {"onPress", "onScroll", "handleAccumulatedMovement"},
+            //?} else {
+            /^method = {"onPress", "onScroll"},
+            ^///?}
             at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;ypos:D", opcode = Opcodes.GETFIELD)
     )
     private double spatialGUI$modifyRawY(double original) {
@@ -89,7 +89,7 @@ public class MouseHandlerMixin {
     private double spatialGUI$modifyRawYpos(double original) {
         return overrideRawPosition(original, false);
     }
-    //?}
+    *///?}
 
     @Unique
     private static double overrideRawPosition(double raw, boolean isX) {
@@ -146,16 +146,16 @@ public class MouseHandlerMixin {
 
     @Inject(method = "turnPlayer", at = @At("HEAD"), cancellable = true)
     //? if >1.20.1 {
-    /*private void spatialGUI$cancelPlayerRotation(double mousea, CallbackInfo ci) {
-    *///?} else {
-    private void spatialGUI$cancelPlayerRotation(CallbackInfo ci) {
-    //?}
+    private void spatialGUI$cancelPlayerRotation(double mousea, CallbackInfo ci) {
+    //?} else {
+    /*private void spatialGUI$cancelPlayerRotation(CallbackInfo ci) {
+    *///?}
         if (SpatialGUIRenderer.isCrosshairModeActive()) {
             //? if <=1.21.1 {
-            MouseHandlerUtil.addFreeLookDelta(this.accumulatedDX, this.accumulatedDY);
+            /*MouseHandlerUtil.addFreeLookDelta(this.accumulatedDX, this.accumulatedDY);
             this.accumulatedDX = 0.0;
             this.accumulatedDY = 0.0;
-            //?}
+            *///?}
             ci.cancel();
         }
     }

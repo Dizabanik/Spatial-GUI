@@ -8,9 +8,9 @@ import net.minecraft.client.Minecraft;
 import org.joml.Matrix4f;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
 //? if >1.21.1 {
-/*import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderType;
-*///?}
+//?}
 //? if >26.2 {
 /*import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
 import com.mojang.renderpearl.api.textures.GpuTextureView;
@@ -30,7 +30,7 @@ import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.StagedVertexBuffer;
 *///?} else if >1.21.1 {
-/*import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.ProjectionType;
@@ -42,20 +42,20 @@ import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
-*///?} else {
-import com.mojang.blaze3d.platform.GlStateManager;
+//?} else {
+/*import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 //? if 1.21.1 {
-/*import com.mojang.blaze3d.vertex.MeshData;
-*///?}
+/^import com.mojang.blaze3d.vertex.MeshData;
+^///?}
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexSorting;
 import net.minecraft.client.renderer.GameRenderer;
 import org.lwjgl.opengl.GL11;
-//?}
+*///?}
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.util.AnimationUtil;
@@ -64,14 +64,14 @@ import org.tastytrash.spatialGUI.util.RenderUtil;
 public class InventoryRenderer {
     private static final PoseStack WORLD_POSE_STACK = new PoseStack();
     //? if >1.21.1 {
-    /*private static final RenderPipeline INVENTORY_PIPELINE = RenderPipelines.GUI_TEXTURED;
+    private static final RenderPipeline INVENTORY_PIPELINE = RenderPipelines.GUI_TEXTURED;
     private static final org.joml.Vector3f ZERO_VECTOR = new org.joml.Vector3f();
     private static final Matrix4f IDENTITY_MATRIX = new Matrix4f();
     private static final org.joml.Vector4f COLOR_MODULATOR = new org.joml.Vector4f();
-     *///?}
+     //?}
     //? if >1.21.1 && <26.2 {
-    /*private static final ByteBufferBuilder INVENTORY_BYTE_BUFFER = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
-    *///?}
+    private static final ByteBufferBuilder INVENTORY_BYTE_BUFFER = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
+    //?}
     //? if >=26.2 {
     /*private static final StagedVertexBuffer INVENTORY_BUFFER = new StagedVertexBuffer(
             () -> "Spatial GUI Inventory Buffer",
@@ -86,12 +86,12 @@ public class InventoryRenderer {
     private static int recipeBookCloseDelay = 0;
 
     //? if >1.21.1 {
-    /*private GpuBufferSlice capturedProjectionBuffer;
+    private GpuBufferSlice capturedProjectionBuffer;
     private com.mojang.blaze3d.ProjectionType capturedProjectionType;
-    *///?} else {
-    private final Matrix4f capturedProjectionMatrix = new Matrix4f();
+    //?} else {
+    /*private final Matrix4f capturedProjectionMatrix = new Matrix4f();
     private VertexSorting capturedVertexSorting;
-    //?}
+    *///?}
     private final PoseStack capturedPoseStack = new PoseStack();
     private boolean hasCapturedPerspective = false;
     private boolean hasDrawnThisFrame = false;
@@ -146,7 +146,7 @@ public class InventoryRenderer {
     }
 
     //? if >1.21.1 {
-    /*public void capturePerspectiveState(GpuBufferSlice buffer, com.mojang.blaze3d.ProjectionType type, PoseStack poseStack) {
+    public void capturePerspectiveState(GpuBufferSlice buffer, com.mojang.blaze3d.ProjectionType type, PoseStack poseStack) {
         this.capturedProjectionBuffer = buffer;
         this.capturedProjectionType = type;
         this.capturedPoseStack.setIdentity();
@@ -156,8 +156,8 @@ public class InventoryRenderer {
         }
         this.hasCapturedPerspective = true;
     }
-    *///?} else {
-    public void capturePerspectiveState(Matrix4f projectionMatrix, VertexSorting vertexSorting, PoseStack poseStack) {
+    //?} else {
+    /*public void capturePerspectiveState(Matrix4f projectionMatrix, VertexSorting vertexSorting, PoseStack poseStack) {
         if (projectionMatrix != null) {
             this.capturedProjectionMatrix.set(projectionMatrix);
         }
@@ -169,7 +169,7 @@ public class InventoryRenderer {
         }
         this.hasCapturedPerspective = true;
     }
-    //?}
+    *///?}
 
     public void resetPerspectiveState() {
         this.hasCapturedPerspective = false;
@@ -345,7 +345,7 @@ public class InventoryRenderer {
         }
     }
     *///?} else if >1.21.1 {
-    /*public void renderInWorld(PoseStack matrices) {
+    public void renderInWorld(PoseStack matrices) {
         Minecraft client = Minecraft.getInstance();
 
         if (targetManager.getInventoryTarget() == null || !SpatialGUIClient.renderer().shouldCapture() || client.player == null) {
@@ -483,8 +483,8 @@ public class InventoryRenderer {
             }
         }
     }
-    *///?} else {
-    public void renderInWorld(PoseStack matrices) {
+    //?} else {
+    /*public void renderInWorld(PoseStack matrices) {
         Minecraft client = Minecraft.getInstance();
         RenderTarget target = targetManager.getInventoryTarget();
 
@@ -523,8 +523,8 @@ public class InventoryRenderer {
         Matrix4f pose = matrices.last().pose();
 
         //? if 1.21.1 {
-        /*BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        *///?} else {
+        /^BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        ^///?} else {
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         //?}
@@ -542,15 +542,15 @@ public class InventoryRenderer {
         matrices.popPose();
 
         //? if 1.21.1 {
-        /*drawInventory(buffer.buildOrThrow(), textureId);
-        *///?} else {
+        /^drawInventory(buffer.buildOrThrow(), textureId);
+        ^///?} else {
         drawInventory(buffer.end(), textureId);
         //?}
     }
 
     //? if 1.21.1 {
-    /*private void drawInventory(MeshData meshData, int textureId) {
-    *///?} else {
+    /^private void drawInventory(MeshData meshData, int textureId) {
+    ^///?} else {
     private void drawInventory(BufferBuilder.RenderedBuffer renderedBuffer, int textureId) {
     //?}
         Minecraft client = Minecraft.getInstance();
@@ -580,8 +580,8 @@ public class InventoryRenderer {
 
         try {
             //? if 1.21.1 {
-            /*BufferUploader.drawWithShader(meshData);
-            *///?} else {
+            /^BufferUploader.drawWithShader(meshData);
+            ^///?} else {
             BufferUploader.drawWithShader(renderedBuffer);
             //?}
         } finally {
@@ -613,20 +613,20 @@ public class InventoryRenderer {
 
         try {
             RenderSystem.setProjectionMatrix(capturedProjectionMatrix, capturedVertexSorting);
-            modelView.pushPose();
+            modelView.pushMatrix();
             //? if >1.20.1 {
-            /*modelView.identity();
-            *///?} else {
-            modelView.setIdentity();
-            //?}
+            modelView.identity();
+            //?} else {
+            /^modelView.setIdentity();
+            ^///?}
             RenderSystem.applyModelViewMatrix();
 
             renderInWorld(capturedPoseStack);
         } finally {
-            modelView.popPose();
+            modelView.popMatrix();
             RenderSystem.applyModelViewMatrix();
             RenderSystem.setProjectionMatrix(prevProjection, prevSorting);
         }
     }
-    //?}
+    *///?}
 }

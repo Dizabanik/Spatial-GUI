@@ -14,6 +14,7 @@
     "gui.MouseHandlerAccessor",
     "gui.MouseHandlerMixin",
     "gui.MouseHandlerSwingMixin",
+    "gui.PauseScreenMixin",
     "gui.ScreenInvoker",
     "gui.ScreenMixin",
     "gui.SubtitleOverlayMixin",

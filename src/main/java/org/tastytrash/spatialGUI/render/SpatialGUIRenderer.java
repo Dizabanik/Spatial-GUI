@@ -19,8 +19,8 @@ import net.neoforged.neoforge.common.NeoForge;
 //? if >26.2 {
 /*import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
 *///?} else if >1.21.1 {
-/*import com.mojang.blaze3d.buffers.GpuBufferSlice;
-*///?}
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
+//?}
 
 public class SpatialGUIRenderer {
     public static boolean isExtractingScreen = false;
@@ -75,10 +75,10 @@ public class SpatialGUIRenderer {
         SpatialGUIClient.setEffectiveFirstPersonMode(isFirstPerson);
 
         //? if fabric && >=26.1.2 {
-        /*ScreenEvents.afterExtract(screen).register((screenArg, extractor, mouseX, mouseY, tickDelta) -> prepareTarget());
-        *///?} else if fabric {
-        ScreenEvents.afterRender(screen).register((screenArg, graphics, mouseX, mouseY, tickDelta) -> prepareTarget());
-        //?}
+        ScreenEvents.afterExtract(screen).register((screenArg, extractor, mouseX, mouseY, tickDelta) -> prepareTarget());
+        //?} else if fabric {
+        /*ScreenEvents.afterRender(screen).register((screenArg, graphics, mouseX, mouseY, tickDelta) -> prepareTarget());
+        *///?}
 
         //? if fabric {
         ScreenEvents.remove(screen).register(removedScreen -> {
@@ -125,12 +125,12 @@ public class SpatialGUIRenderer {
             /*float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
             float cameraPitch = mc.gameRenderer.getMainCamera().xRot();
             *///?} else if >=1.21.11 {
-            /*float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
+            float cameraYaw = mc.gameRenderer.getMainCamera().yRot();
             float cameraPitch = mc.gameRenderer.getMainCamera().xRot();
-            *///?} else {
-            float cameraYaw = mc.gameRenderer.getMainCamera().getYRot();
+            //?} else {
+            /*float cameraYaw = mc.gameRenderer.getMainCamera().getYRot();
             float cameraPitch = mc.gameRenderer.getMainCamera().getXRot();
-            //?}
+            *///?}
             if (player != null) {
                 player.setYRot(cameraYaw);
                 player.setXRot(cameraPitch);
@@ -157,9 +157,9 @@ public class SpatialGUIRenderer {
     public boolean shouldCapture() {
         Minecraft client = Minecraft.getInstance();
         //? if >=26.2 {
-        /*boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.screen && SpatialGUI.config.enabled;
+        /*boolean bool = SpatialGUIClient.shouldHookScreen(hookedScreen) && hookedScreen == client.screen;
         *///?} else {
-        boolean bool = hookedScreen instanceof AbstractContainerScreen<?> && hookedScreen == client.screen && SpatialGUI.config.enabled;
+        boolean bool = SpatialGUIClient.shouldHookScreen(hookedScreen) && hookedScreen == client.screen;
         //?}
         if (!bool) {
             wasTrue = false;
@@ -172,12 +172,12 @@ public class SpatialGUIRenderer {
             /*cameraStartPos = mc.gameRenderer.getMainCamera().position();
             cameraStartYRot = mc.gameRenderer.getMainCamera().yRot();
             *///?} else if >=1.21.11 {
-            /*cameraStartPos = mc.gameRenderer.getMainCamera().position();
+            cameraStartPos = mc.gameRenderer.getMainCamera().position();
             cameraStartYRot = mc.gameRenderer.getMainCamera().yRot();
-            *///?} else {
-            cameraStartPos = mc.gameRenderer.getMainCamera().getPosition();
+            //?} else {
+            /*cameraStartPos = mc.gameRenderer.getMainCamera().getPosition();
             cameraStartYRot = mc.gameRenderer.getMainCamera().getYRot();
-            //?}
+            *///?}
             wasTrue = true;
         }
 
@@ -220,14 +220,14 @@ public class SpatialGUIRenderer {
     }
 
     //? if >1.21.1 {
-    /*public void capturePerspectiveState(GpuBufferSlice buffer, com.mojang.blaze3d.ProjectionType type, com.mojang.blaze3d.vertex.PoseStack poseStack) {
+    public void capturePerspectiveState(GpuBufferSlice buffer, com.mojang.blaze3d.ProjectionType type, com.mojang.blaze3d.vertex.PoseStack poseStack) {
         inventoryRenderer.capturePerspectiveState(buffer, type, poseStack);
     }
-    *///?} else {
-    public void capturePerspectiveState(org.joml.Matrix4f projectionMatrix, com.mojang.blaze3d.vertex.VertexSorting vertexSorting, com.mojang.blaze3d.vertex.PoseStack poseStack) {
+    //?} else {
+    /*public void capturePerspectiveState(org.joml.Matrix4f projectionMatrix, com.mojang.blaze3d.vertex.VertexSorting vertexSorting, com.mojang.blaze3d.vertex.PoseStack poseStack) {
         inventoryRenderer.capturePerspectiveState(projectionMatrix, vertexSorting, poseStack);
     }
-    //?}
+    *///?}
 
     public void renderInWorldPost() {
         inventoryRenderer.renderInWorldPost();
@@ -238,10 +238,10 @@ public class SpatialGUIRenderer {
     }
 
     //? if >1.21.1 {
-    /*public net.minecraft.client.gui.render.GuiRenderer getScreenGuiRenderer() {
+    public net.minecraft.client.gui.render.GuiRenderer getScreenGuiRenderer() {
         return screenExtractor.getScreenGuiRenderer();
     }
-    *///?}
+    //?}
 
     public void extractIsolatedScreen(Screen screen, float partialTick) {
         screenExtractor.extractIsolatedScreen(screen, partialTick, inventoryRenderer.getQuadBasis(), targetManager);

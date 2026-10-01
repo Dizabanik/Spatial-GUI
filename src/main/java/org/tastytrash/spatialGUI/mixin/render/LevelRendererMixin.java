@@ -36,40 +36,40 @@ public class LevelRendererMixin {
 
         PoseStack poseStack = new PoseStack();
         //? if >=26.1.2 {
-        /*//? if >=26.2 {
-        /^var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-         ^///?} else {
+        //? if >=26.2 {
+        /*var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+         *///?} else {
         var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         //?}
         poseStack.mulPose(new Quaternionf()
-                .rotateX((float) Math.toRadians(camera.getXRot()))
-                .rotateY((float) Math.toRadians(camera.getYRot() + 180.0f))
+                .rotateX((float) Math.toRadians(camera.xRot()))
+                .rotateY((float) Math.toRadians(camera.yRot() + 180.0f))
                 .get(new Matrix4f())
         );
-        *///?} else if >1.20.1 {
+        //?} else if >1.20.1 {
         /*poseStack.mulPose(modelViewMatrix);
          *///?} else {
-        // 1.20.1: the only Matrix4f arg to renderLevel is the projection matrix,
+        /*// 1.20.1: the only Matrix4f arg to renderLevel is the projection matrix,
         // so rebuild the camera rotation from the Camera instead.
         var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         poseStack.mulPose(new Quaternionf()
-                .rotateX((float) Math.toRadians(camera.getXRot()))
-                .rotateY((float) Math.toRadians(camera.getYRot() + 180.0f))
+                .rotateX((float) Math.toRadians(camera.xRot()))
+                .rotateY((float) Math.toRadians(camera.yRot() + 180.0f))
         );
-        //?}
+        *///?}
 
         //? if >1.21.1 {
-        /*renderer.capturePerspectiveState(
+        renderer.capturePerspectiveState(
                 RenderSystem.getProjectionMatrixBuffer(),
                 RenderSystem.getProjectionType(),
                 poseStack
         );
-        *///?} else {
-        renderer.capturePerspectiveState(
+        //?} else {
+        /*renderer.capturePerspectiveState(
                 RenderSystem.getProjectionMatrix(),
                 RenderSystem.getVertexSorting(),
                 poseStack
         );
-        //?}
+        *///?}
     }
 }

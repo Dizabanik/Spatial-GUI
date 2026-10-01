@@ -71,6 +71,15 @@ public class SpatialGUIConfig implements ConfigData {
         return Math.max(1, Math.min(guiScale, 6));
     }
 
+    // screens
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean pauseScreen = false;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean allScreens = false;
+
     // rendering
     @ConfigEntry.Category("rendering")
     @ConfigEntry.Gui.Tooltip

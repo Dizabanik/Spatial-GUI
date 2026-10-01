@@ -4,6 +4,7 @@
   "text.autoconfig.spatial-gui.title": "Spatial GUI Config",
   
   "text.autoconfig.spatial-gui.category.general": "General",
+  "text.autoconfig.spatial-gui.category.screens": "Screens",
   "text.autoconfig.spatial-gui.category.rendering": "Rendering",
   "text.autoconfig.spatial-gui.category.thirdPersonScreen": "TP Screen",
   "text.autoconfig.spatial-gui.category.firstPersonScreen": "FP Screen",
@@ -25,6 +26,12 @@
 
   "text.autoconfig.spatial-gui.option.guiScale": "GUI Scale",
   "text.autoconfig.spatial-gui.option.guiScale.@Tooltip": "Manual GUI scale when Auto Calculate is disabled (1-6)",
+
+  "text.autoconfig.spatial-gui.option.pauseScreen": "Pause Screen",
+  "text.autoconfig.spatial-gui.option.pauseScreen.@Tooltip": "Enable Spatial GUI for the pause menu",
+
+  "text.autoconfig.spatial-gui.option.allScreens": "All Screens",
+  "text.autoconfig.spatial-gui.option.allScreens.@Tooltip": "Enable Spatial GUI for most screens\nWARNING: EXPERIMENTAL",
 
   "text.autoconfig.spatial-gui.option.autoScaleByFov": "Auto Scale by FOV",
   "text.autoconfig.spatial-gui.option.autoScaleByFov.@Tooltip": "Automatically adjust screen scale, distance, and side offset based on your FOV setting",

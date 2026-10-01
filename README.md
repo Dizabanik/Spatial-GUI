@@ -42,11 +42,11 @@ This mod is mainly visual and tries not provide any gameplay advantages.
 **Server Disclaimer:** Please check with server administrators before using it on multiplayer servers.
 
 ## Notes
-*   Feel free to suggest features or report bugs on the github
+*   Feel free to suggest features or report bugs on the GitHub
 *   This mod is absolutely welcome to be used in modpacks, just be careful about it's compatilbility with certain mods
 
 *Special thanks to:*  
-Dizabanik for 1.21.11 support and performance/bug fixes  
-BUILDLCS for the Brazilian Portuguese translation
-suheckii for the Russian translation
-22SSendo for awesome feature suggestions
+Dizabanik for tons of code fixes and improvements from GitHub contributions  
+BUILDLCS for the Brazilian Portuguese translation  
+suheckii for the Russian translation  
+22SSendo for awesome feature suggestions  

@@ -2,6 +2,12 @@
 
 Add forge 1.20.1
 
+Fix issues related to hooking all screens
+ - Test all versions
+ - Doesn't work well in first person, likely also an issue when opening screens within screens (like shops)
+ - Stops hooking when going into an options menu and back
+ - Possibly just stick to only the pause menu
+
 When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
 
 -------- MID PRIORITY ---------------

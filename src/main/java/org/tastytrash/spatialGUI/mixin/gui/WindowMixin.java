@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.tastytrash.spatialGUI.SpatialGUI;
+import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 
 @Mixin(Window.class)
@@ -17,14 +18,14 @@ public class WindowMixin {
 
     @ModifyReturnValue(method = "getGuiScale", at = @At("RETURN"))
     //? if >1.21.1 {
-    /*private int spatialGUI$overrideGuiScale(int original) {
+    private int spatialGUI$overrideGuiScale(int original) {
         return shouldOverride() ? getGuiScale() : original;
     }
-    *///?} else {
-    private double spatialGUI$overrideGuiScale(double original) {
+    //?} else {
+    /*private double spatialGUI$overrideGuiScale(double original) {
         return shouldOverride() ? (double) getGuiScale() : original;
     }
-    //?}
+    *///?}
 
     @ModifyReturnValue(method = "getGuiScaledWidth", at = @At("RETURN"))
     private int spatialGUI$overrideScaledWidth(int original) {
@@ -59,8 +60,8 @@ public class WindowMixin {
         *///?} else {
         Screen screen = mc.screen;
         //?}
-        if (screen instanceof AbstractContainerScreen<?>) return true;
+        if (SpatialGUIClient.shouldHookScreen(screen)) return true;
         var renderer = org.tastytrash.spatialGUI.client.SpatialGUIClient.renderer();
-        return renderer != null && renderer.getHookedScreen() instanceof AbstractContainerScreen<?>;
+        return renderer != null && SpatialGUIClient.shouldHookScreen(renderer.getHookedScreen());
     }
 }
