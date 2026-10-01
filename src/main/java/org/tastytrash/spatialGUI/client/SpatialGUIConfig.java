@@ -277,6 +277,10 @@ public class SpatialGUIConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public boolean keepFirstPersonCameraAngle = true;
 
+    @ConfigEntry.Category("firstPersonCamera")
+    @ConfigEntry.Gui.Tooltip
+    public boolean inheritScreenOriginOnSwap = true;
+
     // animations
     @ConfigEntry.Category("animations")
     @ConfigEntry.Gui.Tooltip

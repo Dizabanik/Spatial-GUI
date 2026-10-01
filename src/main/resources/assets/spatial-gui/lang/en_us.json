@@ -168,6 +168,9 @@
   "text.autoconfig.spatial-gui.option.keepFirstPersonCameraAngle": "Keep First Person Camera Angle",
   "text.autoconfig.spatial-gui.option.keepFirstPersonCameraAngle.@Tooltip": "Keep the camera angle when closing the GUI\nWARNING: This affects your server-side rotation \nand may be disallowed by servers",
 
+  "text.autoconfig.spatial-gui.option.inheritScreenOriginOnSwap": "Inherit Screen Origin on Swap",
+  "text.autoconfig.spatial-gui.option.inheritScreenOriginOnSwap.@Tooltip": "When a screen opens another screen, the new screen keeps the previous screen position instead of following your in-screen look direction",
+
   "text.autoconfig.spatial-gui.option.useCrosshairForFirstPerson": "Use Crosshair for First Person",
   "text.autoconfig.spatial-gui.option.useCrosshairForFirstPerson.@Tooltip": "Use the in-game crosshair position for mouse interaction instead of the actual mouse cursor",
 
