@@ -201,7 +201,8 @@ public class SpatialGUIConfig implements ConfigData {
 
     @ConfigEntry.Category("firstPersonScreen")
     @ConfigEntry.Gui.Tooltip
-    public double curvedScreenArcDegrees = 30.0;
+    @ConfigEntry.BoundedDiscrete(min = 5, max = 150)
+    public int curvedScreenArcDegrees = 30;
 
     // thirdPersonCamera
     @ConfigEntry.Category("thirdPersonCamera")

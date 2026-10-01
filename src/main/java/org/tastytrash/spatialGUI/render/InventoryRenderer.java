@@ -159,8 +159,8 @@ public class InventoryRenderer {
 
     private static boolean isCurvedScreenActive(boolean isFirstPerson) {
         return SpatialGUI.config.curvedScreenEnabled && isFirstPerson
-                && SpatialGUI.config.curvedScreenArcDegrees >= 5.0
-                && SpatialGUI.config.curvedScreenArcDegrees <= 150.0;
+                && SpatialGUI.config.curvedScreenArcDegrees >= 5
+                && SpatialGUI.config.curvedScreenArcDegrees <= 150;
     }
 
     private void addScreenQuadMesh(VertexConsumer buffer, Matrix4f pose, float aspect, boolean isFirstPerson) {
