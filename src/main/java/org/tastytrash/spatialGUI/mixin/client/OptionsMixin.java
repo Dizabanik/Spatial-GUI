@@ -14,7 +14,7 @@ import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 public class OptionsMixin {
 
     @Inject(method = "getCameraType", at = @At("HEAD"), cancellable = true)
-    private void diegeticInventory$forceCameraMode(CallbackInfoReturnable<CameraType> cir) {
+    private void spatialGUI$forceCameraMode(CallbackInfoReturnable<CameraType> cir) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
             boolean isFirstPerson = (SpatialGUIRenderer.isInventoryScreen() ? SpatialGUI.config.firstPersonModeInventory : SpatialGUI.config.firstPersonModeContainers)

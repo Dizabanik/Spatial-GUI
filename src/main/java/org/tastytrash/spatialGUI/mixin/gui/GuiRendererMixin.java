@@ -24,7 +24,7 @@ public class GuiRendererMixin {
                     //?}
 
             ), index = 1)
-    private RenderTarget diegeticInventory$redirectRenderTarget(RenderTarget original) {
+    private RenderTarget spatialGUI$redirectRenderTarget(RenderTarget original) {
         // makes Minecraft render to the framebuffer instead of the normal GUI
         SpatialGUIRenderer renderer = SpatialGUIClient.renderer();
 

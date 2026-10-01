@@ -20,7 +20,7 @@ public final class RenderUtil {
         //? if >1.20.1 {
         /*buffer.addVertex(pose, x, y, z).setUv(u, v).setColor(255, 255, 255, SpatialGUI.config.screenAlpha);
         *///?} else {
-        buffer.vertex(pose, x, y, z).uv(u, v).color(255, 255, 255, SpatialGUI.config.screenAlpha);
+        buffer.vertex(pose, x, y, z).uv(u, v).color(255, 255, 255, SpatialGUI.config.screenAlpha).endVertex();
         //?}
     }
 

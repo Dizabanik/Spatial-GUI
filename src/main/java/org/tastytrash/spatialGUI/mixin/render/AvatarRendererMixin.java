@@ -26,7 +26,7 @@ public class AvatarRendererMixin {
     @Unique private static final float SMOOTHING = 0.15f;
 
     @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;F)V", at = @At("TAIL"))
-    private void diegeticInventory$overrideHeadLook(Avatar entity, AvatarRenderState state, float partialTicks, CallbackInfo ci) {
+    private void spatialGUI$overrideHeadLook(Avatar entity, AvatarRenderState state, float partialTicks, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         var renderer = SpatialGUIClient.renderer();
 
@@ -91,7 +91,7 @@ public class AvatarRendererMixin {
     @Unique private static final float SMOOTHING = 0.15f;
 
     @WrapMethod(method = "render(Lnet/minecraft/client/player/AbstractClientPlayer;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
-    private void diegeticInventory$overrideHeadLook(AbstractClientPlayer entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, Operation<Void> original) {
+    private void spatialGUI$overrideHeadLook(AbstractClientPlayer entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, Operation<Void> original) {
         Minecraft client = Minecraft.getInstance();
         var renderer = SpatialGUIClient.renderer();
 

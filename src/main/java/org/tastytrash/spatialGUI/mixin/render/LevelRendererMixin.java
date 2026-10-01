@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 
-//? if <26.1.2 {
-import com.llamalad7.mixinextras.sugar.Local;
- //?}
+//? if <26.1.2 && >1.20.1 {
+/*import com.llamalad7.mixinextras.sugar.Local;
+ *///?}
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
@@ -24,10 +24,10 @@ public class LevelRendererMixin {
      *///?} else {
     @Inject(method = "renderLevel", at = @At("TAIL"))
             //?}
-    private void diegeticInventory$renderScreen(CallbackInfo ci
-            //? if <26.1.2 {
-            , @Local(argsOnly = true, ordinal = 0) Matrix4f modelViewMatrix
-            //?}
+    private void spatialGUI$renderScreen(CallbackInfo ci
+            //? if <26.1.2 && >1.20.1 {
+            /*, @Local(argsOnly = true, ordinal = 0) Matrix4f modelViewMatrix
+             *///?}
     ) {
         var renderer = SpatialGUIClient.renderer();
         if (!SpatialGUI.config.enabled || renderer == null || !renderer.shouldCapture()) {
@@ -47,11 +47,16 @@ public class LevelRendererMixin {
                 .get(new Matrix4f())
         );
         *///?} else if >1.20.1 {
-//        poseStack.mulPose(modelViewMatrix);
-         //?} else {
-        Quaternionf rotation = modelViewMatrix.getNormalizedRotation(new Quaternionf());
-        poseStack.mulPose(rotation);
-         //?}
+        /*poseStack.mulPose(modelViewMatrix);
+         *///?} else {
+        // 1.20.1: the only Matrix4f arg to renderLevel is the projection matrix,
+        // so rebuild the camera rotation from the Camera instead.
+        var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        poseStack.mulPose(new Quaternionf()
+                .rotateX((float) Math.toRadians(camera.getXRot()))
+                .rotateY((float) Math.toRadians(camera.getYRot() + 180.0f))
+        );
+        //?}
 
         //? if >1.21.1 {
         /*renderer.capturePerspectiveState(

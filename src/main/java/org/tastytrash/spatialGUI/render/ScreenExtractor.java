@@ -151,7 +151,6 @@ public class ScreenExtractor {
             Window window = mc.getWindow();
             float guiWidth = (float) (window.getWidth() / window.getGuiScale());
             float guiHeight = (float) (window.getHeight() / window.getGuiScale());
-
             Matrix4f oldProjection = RenderSystem.getProjectionMatrix();
             VertexSorting oldSorting = RenderSystem.getVertexSorting();
             var modelView = RenderSystem.getModelViewStack();
@@ -169,6 +168,7 @@ public class ScreenExtractor {
                 //? if >1.20.1 {
                 /*modelView.translation(0.0F, 0.0F, -11000.0F);
                 *///?} else {
+                modelView.setIdentity();
                 modelView.translate(0.0F, 0.0F, -11000.0F);
                 //?}
                 RenderSystem.applyModelViewMatrix();

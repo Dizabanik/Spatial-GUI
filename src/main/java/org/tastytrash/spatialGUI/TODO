@@ -1,19 +1,18 @@
 -------- HIGH PRIORITY ---------------
 
-Add Fabric 1.20.1 support, then add forge 1.20.1, as the jump from fabric/neoforge 1.21.1 is too large
-
-
-Mouse position snapping to top left when going off screen, not saving last position
+Add forge 1.20.1
 
 When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
 
 -------- MID PRIORITY ---------------
 
+Issue #17 & #18
+
+Hands rendering behind screen with vitrail, this was an issue without vitrail, but was fixed by calling renderInWorldPost() in overrideHideHand
+
 Update README, try something different
 
 Make the screen position unaffected by the bob
-
-Add forge 1.20.1 support
 
 -------- LOW PRIORITY ---------------
 

@@ -49,13 +49,13 @@ public abstract class CameraMixin {
 
     //? if >=26.1.2 {
     /*@Inject(method = "alignWithEntity", at = @At("TAIL"))
-    private void diegeticInventory$modifyCamera(float partialTicks, CallbackInfo ci) {
+    private void spatialGUI$modifyCamera(float partialTicks, CallbackInfo ci) {
     *///?} else if >1.21.1 {
     /*@Inject(method = "setup", at = @At("TAIL"))
-    private void diegeticInventory$modifyCamera(net.minecraft.world.level.Level level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTicks, CallbackInfo ci) {
+    private void spatialGUI$modifyCamera(net.minecraft.world.level.Level level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTicks, CallbackInfo ci) {
     *///?} else {
     @Inject(method = "setup", at = @At("TAIL"))
-    private void diegeticInventory$modifyCamera(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTicks, CallbackInfo ci) {
+    private void spatialGUI$modifyCamera(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTicks, CallbackInfo ci) {
         //?}
         var renderer = SpatialGUIClient.renderer();
         boolean isCapturing = renderer.shouldCapture();

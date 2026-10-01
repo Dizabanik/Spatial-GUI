@@ -153,6 +153,8 @@ public class MouseHandlerMixin {
         if (SpatialGUIRenderer.isCrosshairModeActive()) {
             //? if <=1.21.1 {
             MouseHandlerUtil.addFreeLookDelta(this.accumulatedDX, this.accumulatedDY);
+            this.accumulatedDX = 0.0;
+            this.accumulatedDY = 0.0;
             //?}
             ci.cancel();
         }

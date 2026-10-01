@@ -60,6 +60,7 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
 
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            renderer.renderInWorldPost();
             renderer.clearTarget();
 
             SpatialGUIRenderer.skipWindowOverride = true;
@@ -108,6 +109,7 @@ public class GameRendererMixin {
     private void spatialGUI$overrideHideHand(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            renderer.renderInWorldPost();
             //? if >=26.2 {
             /^this.gameRenderState.guiRenderState.isHudHidden = false;
              ^///?}
@@ -145,6 +147,7 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
 
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            renderer.renderInWorldPost();
             renderer.clearTarget();
 
             SpatialGUIRenderer.skipWindowOverride = true;
@@ -201,6 +204,7 @@ public class GameRendererMixin {
     private void spatialGUI$overrideHideHand(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            renderer.renderInWorldPost();
             if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.hideHandsInFirstPerson) {
                 ci.cancel();
             }
@@ -229,6 +233,20 @@ public class GameRendererMixin {
         }
     }
     *///?}
+
+    //? if 1.21.1 {
+    /*@Inject(method = "render", at = @At(value = "INVOKE",
+    target = "Lnet/minecraft/client/gui/Gui;render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V"))
+    *///?} else {
+    @Inject(method = "render", at = @At(value = "INVOKE",
+    target = "Lnet/minecraft/client/gui/Gui;render(Lnet/minecraft/client/gui/GuiGraphics;F)V"))
+    //?}
+    private void spatialGUI$drawBeforeHud(CallbackInfo ci) {
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            renderer.renderInWorldPost();
+        }
+    }
 
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/PostChain;process(F)V"))
     private void spatialGUI$suppressPostEffect(net.minecraft.client.renderer.PostChain postChain, float partialTick) {
@@ -285,6 +303,7 @@ public class GameRendererMixin {
     private void spatialGUI$overrideHideHand(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            renderer.renderInWorldPost();
             if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.hideHandsInFirstPerson) {
                 ci.cancel();
             }
