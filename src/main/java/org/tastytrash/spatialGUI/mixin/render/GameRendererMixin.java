@@ -274,8 +274,52 @@ public abstract class GameRendererMixin {
 }
 //?} else if >1.21.1 {
 /*@Mixin(GameRenderer.class)
-public class GameRendererMixin {
+public abstract class GameRendererMixin {
     @Final @Shadow private FogRenderer fogRenderer;
+    @Final @Shadow private net.minecraft.client.renderer.RenderBuffers renderBuffers;
+    @Final @Shadow private net.minecraft.client.renderer.feature.FeatureRenderDispatcher featureRenderDispatcher;
+    @Final @Shadow private net.minecraft.client.Camera mainCamera;
+    @Final @Shadow private net.minecraft.client.renderer.CachedPerspectiveProjectionMatrixBuffer hud3dProjectionMatrixBuffer;
+
+    @Shadow protected abstract float getFov(net.minecraft.client.Camera camera, float partialTick, boolean useFovSetting);
+    @Shadow protected abstract void renderItemInHand(float partialTick, boolean flag, org.joml.Matrix4f matrix4f);
+
+    @Unique
+    private boolean spatialGUI$isRedrawingHand = false;
+
+    @Unique
+    private void spatialGUI$renderHandsInFront() {
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+        if (this.mainCamera == null || !this.mainCamera.isInitialized()) {
+            return;
+        }
+
+        float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        int width = mc.getWindow().getWidth();
+        int height = mc.getWindow().getHeight();
+        float fov = this.getFov(this.mainCamera, partialTick, false);
+
+        com.mojang.blaze3d.systems.RenderSystem.setProjectionMatrix(
+                this.hud3dProjectionMatrixBuffer.getBuffer(width, height, fov),
+                com.mojang.blaze3d.ProjectionType.PERSPECTIVE
+        );
+
+        var encoder = com.mojang.blaze3d.systems.RenderSystem.getDevice().createCommandEncoder();
+        encoder.clearDepthTexture(mc.getMainRenderTarget().getDepthTexture(), 1.0);
+
+        org.joml.Matrix4f rotationMatrix = new org.joml.Matrix4f().rotation(
+                this.mainCamera.rotation().conjugate(new org.joml.Quaternionf())
+        );
+
+        this.spatialGUI$isRedrawingHand = true;
+        try {
+            this.renderItemInHand(partialTick, false, rotationMatrix);
+            this.featureRenderDispatcher.renderAllFeatures();
+            this.renderBuffers.bufferSource().endBatch();
+        } finally {
+            this.spatialGUI$isRedrawingHand = false;
+        }
+    }
 
     @Inject(method = "render", at = @At("HEAD"))
     private void spatialGUI$prepareTargetEarly(CallbackInfo ci) {
@@ -299,7 +343,18 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
 
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            SpatialGUIRenderer.skipWindowOverride = false;
+
+            com.mojang.blaze3d.systems.RenderSystem.setShaderFog(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
+            renderer.getScreenGuiRenderer().render(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
+            renderer.getScreenGuiRenderer().incrementFrameNumber();
+
+            renderer.renderInWorldPost();
             renderer.clearTarget();
+
+            if (SpatialGUIClient.getEffectiveFirstPersonMode() && !SpatialGUI.config.hideHandsInFirstPerson) {
+                spatialGUI$renderHandsInFront();
+            }
 
             SpatialGUIRenderer.skipWindowOverride = true;
         }
@@ -341,21 +396,17 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
             SpatialGUIRenderer.skipWindowOverride = false;
-
-            renderer.getScreenGuiRenderer().render(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
-            renderer.getScreenGuiRenderer().incrementFrameNumber();
-
-            SpatialGUIRenderer.skipWindowOverride = false;
-
-            renderer.renderInWorldPost();
         }
     }
 
     @Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$overrideHideHand(CallbackInfo ci) {
+        if (this.spatialGUI$isRedrawingHand) {
+            return;
+        }
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.hideHandsInFirstPerson) {
+        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            if (SpatialGUIClient.getEffectiveFirstPersonMode()) {
                 ci.cancel();
             }
         }

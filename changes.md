@@ -124,11 +124,35 @@ This document summarizes all modifications made to the codebase compared to the 
 
 ---
 
-### 6. Modified Files Summary
-* [`src/main/java/org/tastytrash/spatialGUI/mixin/render/GameRendererMixin.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/mixin/render/GameRendererMixin.java): Fixed hands and crosshair layering in 26.3, bypassed Vitrail suppression, resolved sky-fogged inventory items, and restored the isolated screen render pipeline in 1.21.11 and 1.20.1/1.21.1.
+### 6. Fix Hands, Crosshair, and Tooltips Occluded Behind Spatial UI on Minecraft 1.21.11
+
+#### Problem
+* On Minecraft 1.21.11 (`1.21.11-fabric`), first-person hands and the HUD crosshair rendered behind the 3D Spatial GUI quad.
+* Hovering on buttons (such as Inventory Profiles Next buttons or vanilla widgets) displayed their tooltips and popup UIs behind the Spatial GUI quad, making them occluded and nearly invisible.
+* **Root Cause:**
+  * In 1.21.11, `renderer.renderInWorldPost()` was previously hooked at `@At("TAIL")` of `GameRenderer.render()`.
+  * `GameRenderer.render()` renders the 3D level (including hands) first, then vanilla `GuiRenderer.render()` renders the HUD, crosshair, and 2D elements/tooltips onto the main framebuffer.
+  * Executing `renderInWorldPost()` at `@At("TAIL")` drew the 3D Spatial GUI quad at the very end directly over the color buffer without depth testing, painting over the hands, the crosshair, and any tooltips/popups.
+
+#### Solution
+* **[GameRendererMixin.java](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/mixin/render/GameRendererMixin.java):**
+  * **Moved Quad Drawing to `beforeGuiRender`:** Moved `screenGuiRenderer.render(...)`, `incrementFrameNumber()`, `renderInWorldPost()`, and `clearTarget()` to `spatialGUI$beforeGuiRender` (invoked right before vanilla `GuiRenderer.render()`).
+  * **Hands Redrawn In Front (`spatialGUI$renderHandsInFront`):**
+    * Canceled in-world hand rendering during `renderLevel()` (`renderItemInHand`) when first-person mode is active.
+    * Added `spatialGUI$renderHandsInFront()` in 1.21.11, setting up perspective projection via `hud3dProjectionMatrixBuffer`, clearing depth to `1.0`, and redrawing hands directly on top of the Spatial GUI quad with the camera rotation matrix.
+  * **Crosshair and Tooltips on Top:**
+    * Vanilla `GuiRenderer.render()` runs immediately after `beforeGuiRender`, rendering the HUD crosshair, tooltips, and popup overlays cleanly in front of both the 3D screen quad and hands.
+    * Cleared `@At("TAIL")` so nothing is painted over the GUI pass.
+    * Added `RenderSystem.setShaderFog(FogMode.NONE)` in `beforeGuiRender` to eliminate sky-colored fog on items and blocks in 1.21.11.
+
+---
+
+### 7. Modified Files Summary
+* [`src/main/java/org/tastytrash/spatialGUI/mixin/render/GameRendererMixin.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/mixin/render/GameRendererMixin.java): Fixed hands, crosshair, and tooltip layering across both 26.x and 1.21.11; bypassed Vitrail suppression; resolved sky-fogged inventory items; restored isolated screen extraction and rasterization pipelines.
 * [`src/main/java/org/tastytrash/spatialGUI/mixin/gui/MouseHandlerMixin.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/mixin/gui/MouseHandlerMixin.java): Restored `xpos()` and `ypos()` overrides across all versions (`>1.21.1` and `<=1.21.1`), fixing Inventory Profiles Next button misalignment and Recipe Book click handling; updated effective GUI scale query.
 * [`src/main/java/org/tastytrash/spatialGUI/client/SpatialGUIConfig.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/client/SpatialGUIConfig.java): Relative GUI scaling with 1–6 slider (scale 4 on Retina feels identical to scale 4 on Full HD) and dynamic auto-scaling.
 * [`src/main/java/org/tastytrash/spatialGUI/mixin/gui/WindowMixin.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/mixin/gui/WindowMixin.java): Updated effective GUI scale query.
 * [`src/main/java/org/tastytrash/spatialGUI/render/ScreenExtractor.java`](file:///Users/diz/projects/min_mods/src/main/java/org/tastytrash/spatialGUI/render/ScreenExtractor.java): Updated effective GUI scale query.
 * [`changes.md`](file:///Users/diz/projects/min_mods/changes.md): Complete summary of changes since last pull.
+
 
