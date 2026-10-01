@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -28,11 +29,135 @@ import net.minecraft.client.renderer.state.GameRenderState;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 @Mixin(GameRenderer.class)
-public class GameRendererMixin {
+public abstract class GameRendererMixin {
     @Final @Shadow private GameRenderState gameRenderState;
-    //? if <26.2 {
     @Final @Shadow private FogRenderer fogRenderer;
+    @Shadow private net.minecraft.client.renderer.Projection hudProjection;
+    @Shadow private net.minecraft.client.renderer.ProjectionMatrixBuffer hud3dProjectionMatrixBuffer;
+    @Shadow @Final private net.minecraft.client.renderer.feature.FeatureRenderDispatcher featureRenderDispatcher;
+    //? if >=26.2 {
+    /*@Shadow @Final private net.minecraft.client.renderer.SubmitNodeStorage handAndScreenSubmitNodeStorage;
+    *///?} else {
+    @Shadow @Final private net.minecraft.client.renderer.RenderBuffers renderBuffers;
     //?}
+    //? if <26.3 {
+    @Shadow protected abstract void renderItemInHand(net.minecraft.client.renderer.state.level.CameraRenderState cameraRenderState, float partialTick, org.joml.Matrix4fc matrix4fc);
+    //?} else {
+    /*@Shadow @Final private net.minecraft.client.renderer.FirstPersonHandsAndItemsRenderer firstPersonHandsAndItemsRenderer;
+    @Shadow protected abstract void bobHurt(net.minecraft.client.renderer.state.level.CameraRenderState cameraState, com.mojang.blaze3d.vertex.PoseStack poseStack);
+    @Shadow protected abstract void bobView(net.minecraft.client.renderer.state.level.CameraRenderState cameraState, com.mojang.blaze3d.vertex.PoseStack poseStack);
+    *///?}
+
+    @Unique
+    private boolean spatialGUI$isRedrawingHand = false;
+
+    @Unique
+    private void spatialGUI$renderHandsInFront() {
+        Minecraft mc = Minecraft.getInstance();
+        var cameraRenderState = this.gameRenderState.levelRenderState.cameraRenderState;
+        if (cameraRenderState == null || !cameraRenderState.initialized) {
+            return;
+        }
+
+        //? if <26.3 {
+        int width = this.gameRenderState.windowRenderState.width;
+        int height = this.gameRenderState.windowRenderState.height;
+        this.hudProjection.setupPerspective(0.05F, 100.0F, cameraRenderState.hudFov, (float) width, (float) height);
+        //? if >=26.2 {
+        /*com.mojang.blaze3d.systems.RenderSystem.setProjectionMatrix(
+                this.hud3dProjectionMatrixBuffer.getBuffer(this.hudProjection),
+                com.mojang.blaze3d.ProjectionType.PERSPECTIVE
+        );
+        var encoder = com.mojang.blaze3d.systems.RenderSystem.getDevice().createCommandEncoder();
+        encoder.clearDepthTexture(((GameRenderer) (Object) this).mainRenderTarget().getDepthTexture(), 0.0);
+        ((GameRenderer) (Object) this).lighting().setupFor(com.mojang.blaze3d.platform.Lighting.Entry.ITEMS_3D);
+        *///?} else {
+        com.mojang.blaze3d.systems.RenderSystem.setProjectionMatrix(
+                this.hud3dProjectionMatrixBuffer.getBuffer(this.hudProjection),
+                com.mojang.blaze3d.ProjectionType.PERSPECTIVE
+        );
+        var encoder = com.mojang.blaze3d.systems.RenderSystem.getDevice().createCommandEncoder();
+        encoder.clearDepthTexture(mc.getMainRenderTarget().getDepthTexture(), 1.0);
+        //?}
+        float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        spatialGUI$isRedrawingHand = true;
+        try {
+            this.renderItemInHand(cameraRenderState, partialTick, cameraRenderState.viewRotationMatrix);
+            //? if >=26.2 {
+            /*this.featureRenderDispatcher.renderAllFeatures(this.handAndScreenSubmitNodeStorage);
+            *///?} else {
+            this.featureRenderDispatcher.renderAllFeatures();
+            this.renderBuffers.bufferSource().endBatch();
+            //?}
+        } finally {
+            spatialGUI$isRedrawingHand = false;
+        }
+        //?} else {
+        /*var playerState = this.gameRenderState.levelRenderState.playerRenderState;
+        if (!playerState.hasPlayer || playerState.firstPersonHandsAndItems == null) {
+            return;
+        }
+
+        spatialGUI$isRedrawingHand = true;
+        try {
+            int width = this.gameRenderState.windowRenderState.width;
+            int height = this.gameRenderState.windowRenderState.height;
+            this.hudProjection.setupPerspective(0.05F, cameraRenderState.depthFar, cameraRenderState.hudFov, (float) width, (float) height);
+            com.mojang.blaze3d.systems.RenderSystem.setProjectionMatrix(
+                    this.hud3dProjectionMatrixBuffer.getBuffer(this.hudProjection),
+                    com.mojang.blaze3d.ProjectionType.PERSPECTIVE
+            );
+
+            var encoder = com.mojang.blaze3d.systems.RenderSystem.getDevice().createCommandEncoder();
+            encoder.clearDepthTexture(((GameRenderer) (Object) this).mainRenderTarget().getDepthTexture(), 0.0);
+
+            com.mojang.blaze3d.systems.RenderSystem.setShaderFog(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
+            ((GameRenderer) (Object) this).lighting().setupFor(com.mojang.blaze3d.platform.Lighting.Entry.ITEMS_3D);
+
+            var poseStack = new com.mojang.blaze3d.vertex.PoseStack();
+            poseStack.pushPose();
+            poseStack.mulPose(cameraRenderState.viewRotationMatrix.invert(new org.joml.Matrix4f()));
+            var modelViewStack = com.mojang.blaze3d.systems.RenderSystem.getModelViewStack();
+            modelViewStack.pushMatrix().mul(cameraRenderState.viewRotationMatrix);
+            this.bobHurt(cameraRenderState, poseStack);
+            if (this.gameRenderState.optionsRenderState.bobView) {
+                this.bobView(cameraRenderState, poseStack);
+            }
+
+            this.firstPersonHandsAndItemsRenderer.submitHandsWithItems(
+                    cameraRenderState.cameraEntityPartialTicks,
+                    poseStack,
+                    this.handAndScreenSubmitNodeStorage,
+                    playerState,
+                    playerState.firstPersonHandsAndItems
+            );
+
+            var frame = this.featureRenderDispatcher.prepareFrame(this.handAndScreenSubmitNodeStorage);
+            try {
+                var depthView = ((GameRenderer) (Object) this).mainRenderTarget().getDepthTextureView();
+                try (var renderPass = com.mojang.blaze3d.systems.RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+                        () -> "Item in hand in front of SpatialGUI",
+                        ((GameRenderer) (Object) this).mainRenderTarget().getColorTextureView(),
+                        java.util.Optional.empty(),
+                        depthView,
+                        java.util.OptionalDouble.empty()
+                )) {
+                    com.mojang.blaze3d.systems.RenderSystem.bindDefaultUniforms(renderPass);
+                    net.minecraft.client.renderer.feature.FeatureRenderDispatcher.renderAllFeatures(renderPass, frame);
+                }
+            } finally {
+                if (frame != null) {
+                    frame.close();
+                }
+            }
+
+            modelViewStack.popMatrix();
+            poseStack.popPose();
+        } finally {
+            spatialGUI$isRedrawingHand = false;
+        }
+        *///?}
+    }
 
     @Inject(method = "render", at = @At("HEAD"))
     private void spatialGUI$prepareTargetEarly(CallbackInfo ci) {
@@ -60,8 +185,27 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
 
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            SpatialGUIRenderer.skipWindowOverride = false;
+            this.gameRenderState.windowRenderState.guiScale = Minecraft.getInstance().getWindow().getGuiScale();
+
+            //? if >=26.2 {
+            /*com.mojang.blaze3d.systems.RenderSystem.setShaderFog(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
+            renderer.getScreenGuiRenderer().render();
+             *///?} else {
+            renderer.getScreenGuiRenderer().render(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
+            //?}
+            renderer.getScreenGuiRenderer().endFrame();
+
             renderer.renderInWorldPost();
             renderer.clearTarget();
+
+            if (SpatialGUIClient.getEffectiveFirstPersonMode() && !SpatialGUI.config.hideHandsInFirstPerson) {
+                spatialGUI$renderHandsInFront();
+            }
+
+            //? if >=26.2 {
+            /*this.gameRenderState.guiRenderState.isHudHidden = false;
+             *///?}
 
             SpatialGUIRenderer.skipWindowOverride = true;
             this.gameRenderState.windowRenderState.guiScale = Minecraft.getInstance().getWindow().getGuiScale();
@@ -91,39 +235,91 @@ public class GameRendererMixin {
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
             SpatialGUIRenderer.skipWindowOverride = false;
             this.gameRenderState.windowRenderState.guiScale = Minecraft.getInstance().getWindow().getGuiScale();
-
-            //? if >=26.2 {
-            /*renderer.getScreenGuiRenderer().render();
-             *///?} else {
-            renderer.getScreenGuiRenderer().render(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
-            //?}
-            renderer.getScreenGuiRenderer().endFrame();
-
-            SpatialGUIRenderer.skipWindowOverride = false;
-
-            renderer.renderInWorldPost();
         }
     }
 
+    //? if <26.3 {
     @Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$overrideHideHand(CallbackInfo ci) {
+        if (this.spatialGUI$isRedrawingHand) {
+            return;
+        }
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            renderer.renderInWorldPost();
+        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.enabled) {
             //? if >=26.2 {
             /*this.gameRenderState.guiRenderState.isHudHidden = false;
              *///?}
 
-            if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.hideHandsInFirstPerson) {
+            if (SpatialGUIClient.getEffectiveFirstPersonMode()) {
                 ci.cancel();
             }
         }
     }
+    //?} else {
+    /*@Inject(method = "render3dHud", at = @At("HEAD"), cancellable = true)
+    private void spatialGUI$overrideHideHand(CallbackInfo ci) {
+        if (this.spatialGUI$isRedrawingHand) {
+            return;
+        }
+        var renderer = SpatialGUIClient.renderer();
+        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            this.gameRenderState.guiRenderState.isHudHidden = false;
+
+            if (SpatialGUIClient.getEffectiveFirstPersonMode()) {
+                ci.cancel();
+            }
+        }
+    }
+    *///?}
 }
 //?} else if >1.21.1 {
 /*@Mixin(GameRenderer.class)
-public class GameRendererMixin {
+public abstract class GameRendererMixin {
     @Final @Shadow private FogRenderer fogRenderer;
+    @Final @Shadow private net.minecraft.client.renderer.RenderBuffers renderBuffers;
+    @Final @Shadow private net.minecraft.client.renderer.feature.FeatureRenderDispatcher featureRenderDispatcher;
+    @Final @Shadow private net.minecraft.client.Camera mainCamera;
+    @Final @Shadow private net.minecraft.client.renderer.CachedPerspectiveProjectionMatrixBuffer hud3dProjectionMatrixBuffer;
+
+    @Shadow protected abstract float getFov(net.minecraft.client.Camera camera, float partialTick, boolean useFovSetting);
+    @Shadow protected abstract void renderItemInHand(float partialTick, boolean flag, org.joml.Matrix4f matrix4f);
+
+    @Unique
+    private boolean spatialGUI$isRedrawingHand = false;
+
+    @Unique
+    private void spatialGUI$renderHandsInFront() {
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+        if (this.mainCamera == null || !this.mainCamera.isInitialized()) {
+            return;
+        }
+
+        float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        int width = mc.getWindow().getWidth();
+        int height = mc.getWindow().getHeight();
+        float fov = this.getFov(this.mainCamera, partialTick, false);
+
+        com.mojang.blaze3d.systems.RenderSystem.setProjectionMatrix(
+                this.hud3dProjectionMatrixBuffer.getBuffer(width, height, fov),
+                com.mojang.blaze3d.ProjectionType.PERSPECTIVE
+        );
+
+        var encoder = com.mojang.blaze3d.systems.RenderSystem.getDevice().createCommandEncoder();
+        encoder.clearDepthTexture(mc.getMainRenderTarget().getDepthTexture(), 1.0);
+
+        org.joml.Matrix4f rotationMatrix = new org.joml.Matrix4f().rotation(
+                this.mainCamera.rotation().conjugate(new org.joml.Quaternionf())
+        );
+
+        this.spatialGUI$isRedrawingHand = true;
+        try {
+            this.renderItemInHand(partialTick, false, rotationMatrix);
+            this.featureRenderDispatcher.renderAllFeatures();
+            this.renderBuffers.bufferSource().endBatch();
+        } finally {
+            this.spatialGUI$isRedrawingHand = false;
+        }
+    }
 
     @Inject(method = "render", at = @At("HEAD"))
     private void spatialGUI$prepareTargetEarly(CallbackInfo ci) {
@@ -147,8 +343,18 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
 
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            SpatialGUIRenderer.skipWindowOverride = false;
+
+            com.mojang.blaze3d.systems.RenderSystem.setShaderFog(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
+            renderer.getScreenGuiRenderer().render(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
+            renderer.getScreenGuiRenderer().incrementFrameNumber();
+
             renderer.renderInWorldPost();
             renderer.clearTarget();
+
+            if (SpatialGUIClient.getEffectiveFirstPersonMode() && !SpatialGUI.config.hideHandsInFirstPerson) {
+                spatialGUI$renderHandsInFront();
+            }
 
             SpatialGUIRenderer.skipWindowOverride = true;
         }
@@ -190,22 +396,17 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
             SpatialGUIRenderer.skipWindowOverride = false;
-
-            renderer.getScreenGuiRenderer().render(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
-            renderer.getScreenGuiRenderer().incrementFrameNumber();
-
-            SpatialGUIRenderer.skipWindowOverride = false;
-
-            renderer.renderInWorldPost();
         }
     }
 
     @Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$overrideHideHand(CallbackInfo ci) {
+        if (this.spatialGUI$isRedrawingHand) {
+            return;
+        }
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            renderer.renderInWorldPost();
-            if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.hideHandsInFirstPerson) {
+        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.enabled) {
+            if (SpatialGUIClient.getEffectiveFirstPersonMode()) {
                 ci.cancel();
             }
         }
