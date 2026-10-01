@@ -299,11 +299,6 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
 
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            SpatialGUIRenderer.skipWindowOverride = false;
-            renderer.getScreenGuiRenderer().render(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
-            renderer.getScreenGuiRenderer().incrementFrameNumber();
-
-            renderer.renderInWorldPost();
             renderer.clearTarget();
 
             SpatialGUIRenderer.skipWindowOverride = true;
@@ -346,6 +341,13 @@ public class GameRendererMixin {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
             SpatialGUIRenderer.skipWindowOverride = false;
+
+            renderer.getScreenGuiRenderer().render(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
+            renderer.getScreenGuiRenderer().incrementFrameNumber();
+
+            SpatialGUIRenderer.skipWindowOverride = false;
+
+            renderer.renderInWorldPost();
         }
     }
 
@@ -353,7 +355,6 @@ public class GameRendererMixin {
     private void spatialGUI$overrideHideHand(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
-            renderer.renderInWorldPost();
             if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.hideHandsInFirstPerson) {
                 ci.cancel();
             }
@@ -417,6 +418,7 @@ public class GameRendererMixin {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
+            renderer.renderInWorldPost();
         } else {
             screen.renderWithTooltip(graphics, mouseX, mouseY, partialTick);
         }
@@ -432,6 +434,7 @@ public class GameRendererMixin {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
+            renderer.renderInWorldPost();
         } else {
             net.neoforged.neoforge.client.ClientHooks.drawScreen(screen, graphics, mouseX, mouseY, partialTick);
         }
