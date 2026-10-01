@@ -50,3 +50,4 @@ Dizabanik for tons of code fixes and improvements from GitHub contributions
 BUILDLCS for the Brazilian Portuguese translation  
 suheckii for the Russian translation  
 22SSendo for awesome feature suggestions  
+Anyone else who reported bugs or suggested features :)

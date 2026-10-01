@@ -8,15 +8,14 @@ Fix issues related to hooking all screens
  - Stops hooking when going into an options menu and back
  - Possibly just stick to only the pause menu
 
+
+Update README, try something different
+
 When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
 
 -------- MID PRIORITY ---------------
 
 Issue #17 & #18
-
-Hands rendering behind screen with vitrail, this was an issue without vitrail, but was fixed by calling renderInWorldPost() in overrideHideHand
-
-Update README, try something different
 
 Make the screen position unaffected by the bob
 
