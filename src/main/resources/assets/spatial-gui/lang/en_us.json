@@ -219,6 +219,12 @@
   "text.autoconfig.spatial-gui.option.firstPersonScreenScale": "Screen Scale",
   "text.autoconfig.spatial-gui.option.firstPersonScreenScale.@Tooltip": "Scale multiplier for the screen\nWARNING: Values too large may cause mouse tracking to fail",
 
+  "text.autoconfig.spatial-gui.option.curvedScreenEnabled": "Curved Screen (First Person)",
+  "text.autoconfig.spatial-gui.option.curvedScreenEnabled.@Tooltip": "Render the first person screen as a semi-cylinder wrapping around the camera\nEXPERIMENTAL",
+
+  "text.autoconfig.spatial-gui.option.curvedScreenArcDegrees": "Curved Screen Arc (degrees)",
+  "text.autoconfig.spatial-gui.option.curvedScreenArcDegrees.@Tooltip": "Total arc angle of the curved screen (5-150).\nHigher values wrap the screen further around the camera",
+
   "text.autoconfig.spatial-gui.option.firstPersonMouseSensitivityYaw": "Mouse Sensitivity Yaw",
   "text.autoconfig.spatial-gui.option.firstPersonMouseSensitivityYaw.@Tooltip": "Horizontal mouse sensitivity",
 
@@ -230,6 +236,9 @@
 
   "text.autoconfig.spatial-gui.option.keepFirstPersonCameraAngle": "Keep First Person Camera Angle",
   "text.autoconfig.spatial-gui.option.keepFirstPersonCameraAngle.@Tooltip": "Keep the camera angle when closing the GUI\nWARNING: This affects your server-side rotation \nand may be disallowed by servers",
+
+  "text.autoconfig.spatial-gui.option.inheritScreenOriginOnSwap": "Inherit Screen Origin on Swap",
+  "text.autoconfig.spatial-gui.option.inheritScreenOriginOnSwap.@Tooltip": "When a screen opens another screen, the new screen keeps the previous screen position instead of following your in-screen look direction",
 
   "text.autoconfig.spatial-gui.option.useCrosshairForFirstPerson": "Use Crosshair for First Person",
   "text.autoconfig.spatial-gui.option.useCrosshairForFirstPerson.@Tooltip": "Use the in-game crosshair position for mouse interaction instead of the actual mouse cursor",

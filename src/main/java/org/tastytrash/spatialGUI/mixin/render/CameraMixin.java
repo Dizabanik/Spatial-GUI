@@ -38,9 +38,9 @@ public abstract class CameraMixin {
     @Unique private static boolean wasCapturing, isTransitioning;
     @Unique private static final float MAX_YAW_OFFSET = 90f;
     @Unique private static float smoothedCameraYaw, smoothedCameraPitch;
-    @Unique private static double initialMouseX, initialMouseY;
-    @Unique private static boolean hasMouseMovedSinceScreenOpen = false;
     @Unique private static float baseXRot;
+    @Unique private static long parallaxBlendStartMs;
+    @Unique private static final float PARALLAX_BLEND_MS = 150.0f;
 
     @Unique private static double lastMouseX, lastMouseY;
     @Unique private static float freeLookYaw = 0f, freeLookPitch = 0f;
@@ -71,9 +71,7 @@ public abstract class CameraMixin {
 
             if (!wasCapturing) {
                 var mc = Minecraft.getInstance();
-                initialMouseX = ((MouseHandlerAccessor) mc.mouseHandler).getRawXpos();
-                initialMouseY = ((MouseHandlerAccessor) mc.mouseHandler).getRawYpos();
-                hasMouseMovedSinceScreenOpen = false;
+                parallaxBlendStartMs = System.currentTimeMillis();
                 baseXRot = Math.max(-SpatialGUI.config.firstPersonPitchClamp, Math.min(SpatialGUI.config.firstPersonPitchClamp, xRot));
 
                 if (SpatialGUIRenderer.isCrosshairModeActive()) {
@@ -123,16 +121,8 @@ public abstract class CameraMixin {
         double rawMouseX = ((MouseHandlerAccessor) client.mouseHandler).getRawXpos();
         double rawMouseY = ((MouseHandlerAccessor) client.mouseHandler).getRawYpos();
 
-        if (!hasMouseMovedSinceScreenOpen) {
-            double mouseDeltaX = Math.abs(rawMouseX - initialMouseX);
-            double mouseDeltaY = Math.abs(rawMouseY - initialMouseY);
-            hasMouseMovedSinceScreenOpen = mouseDeltaX > 1.0 || mouseDeltaY > 1.0;
-        }
-
-        float normX = hasMouseMovedSinceScreenOpen
-                ? Math.max(-1f, Math.min(1f, (float) rawMouseX / client.getWindow().getScreenWidth() * 2f - 1f)) : 0f;
-        float normY = hasMouseMovedSinceScreenOpen
-                ? Math.max(-1f, Math.min(1f, (float) rawMouseY / client.getWindow().getScreenHeight() * 2f - 1f)) : 0f;
+        float normX = Math.max(-1f, Math.min(1f, (float) rawMouseX / client.getWindow().getScreenWidth() * 2f - 1f));
+        float normY = Math.max(-1f, Math.min(1f, (float) rawMouseY / client.getWindow().getScreenHeight() * 2f - 1f));
 
         if (isFirstPerson) {
             float maxPitch = 90;
@@ -170,8 +160,9 @@ public abstract class CameraMixin {
                 smoothedCameraYaw = 0f;
                 smoothedCameraPitch = baseXRot;
             } else {
-                smoothedCameraYaw = normX * MAX_YAW_OFFSET * (float) SpatialGUI.config.firstPersonMouseSensitivityYaw;
-                smoothedCameraPitch = baseXRot + normY * 180f * (float) SpatialGUI.config.firstPersonMouseSensitivityPitch;
+                float blend = Math.min(1.0f, (System.currentTimeMillis() - parallaxBlendStartMs) / PARALLAX_BLEND_MS);
+                smoothedCameraYaw = normX * MAX_YAW_OFFSET * (float) SpatialGUI.config.firstPersonMouseSensitivityYaw * blend;
+                smoothedCameraPitch = baseXRot + normY * 180f * (float) SpatialGUI.config.firstPersonMouseSensitivityPitch * blend;
             }
 
             smoothedCameraPitch = Math.max(-maxPitch, Math.min(maxPitch, smoothedCameraPitch));

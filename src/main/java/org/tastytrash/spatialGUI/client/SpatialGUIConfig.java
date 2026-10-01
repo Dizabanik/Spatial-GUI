@@ -283,6 +283,15 @@ public class SpatialGUIConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public double firstPersonScreenScale = 1.8;
 
+    @ConfigEntry.Category("firstPersonScreen")
+    @ConfigEntry.Gui.Tooltip
+    public boolean curvedScreenEnabled = false;
+
+    @ConfigEntry.Category("firstPersonScreen")
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.BoundedDiscrete(min = 5, max = 150)
+    public int curvedScreenArcDegrees = 30;
+
     // thirdPersonCamera
     @ConfigEntry.Category("thirdPersonCamera")
     @ConfigEntry.Gui.Tooltip
@@ -359,6 +368,10 @@ public class SpatialGUIConfig implements ConfigData {
     @ConfigEntry.Category("firstPersonCamera")
     @ConfigEntry.Gui.Tooltip
     public boolean keepFirstPersonCameraAngle = true;
+
+    @ConfigEntry.Category("firstPersonCamera")
+    @ConfigEntry.Gui.Tooltip
+    public boolean inheritScreenOriginOnSwap = true;
 
     // animations
     @ConfigEntry.Category("animations")

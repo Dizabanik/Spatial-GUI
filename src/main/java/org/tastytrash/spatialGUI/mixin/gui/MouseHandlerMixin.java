@@ -137,8 +137,10 @@ public class MouseHandlerMixin {
         QuadBasis quadBasis = renderer.getInventoryRenderer().getQuadBasis();
         if (quadBasis == null) return MouseHandlerUtil.getLastPos(isX, original);
 
+        RenderUtil.CylinderBasis cylinderBasis = renderer.getInventoryRenderer().getCylinderBasis();
+
         Vector2d mouse = MouseHandlerUtil.getOrComputeMousePosition(
-                srcX, srcY, quadBasis, guiScale, renderer.getTargetManager().getInventoryTarget()
+                srcX, srcY, quadBasis, cylinderBasis, guiScale, renderer.getTargetManager().getInventoryTarget()
         );
 
         return MouseHandlerUtil.getLastPos(isX, original);

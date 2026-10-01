@@ -6,6 +6,7 @@ import org.joml.Vector2d;
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.mixin.gui.MouseHandlerAccessor;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
+import org.tastytrash.spatialGUI.util.RenderUtil.CylinderBasis;
 
 public class MouseHandlerUtil {
     private static boolean weGrabbedMouse = false;
@@ -14,6 +15,7 @@ public class MouseHandlerUtil {
     private static double cachedSrcX = Double.NaN;
     private static double cachedSrcY = Double.NaN;
     private static QuadBasis cachedQuadBasis = null;
+    private static CylinderBasis cachedCylinderBasis = null;
     private static Vector2d cachedMouse = null;
     private static double cachedGuiScale = Double.NaN;
 
@@ -35,14 +37,17 @@ public class MouseHandlerUtil {
         return 0.0;
     }
 
-    public static Vector2d getOrComputeMousePosition(double srcX, double srcY, QuadBasis quadBasis, double guiScale, com.mojang.blaze3d.pipeline.TextureTarget target) {
-        if (srcX == cachedSrcX && srcY == cachedSrcY && quadBasis == cachedQuadBasis && guiScale == cachedGuiScale) {
+    public static Vector2d getOrComputeMousePosition(double srcX, double srcY, QuadBasis quadBasis, CylinderBasis cylinderBasis, double guiScale, com.mojang.blaze3d.pipeline.TextureTarget target) {
+        if (srcX == cachedSrcX && srcY == cachedSrcY && quadBasis == cachedQuadBasis && cylinderBasis == cachedCylinderBasis && guiScale == cachedGuiScale) {
             return cachedMouse;
         }
-        Vector2d mouse = RenderUtil.getInventoryMousePositionRay(srcX, srcY, quadBasis, target);
+        Vector2d mouse = cylinderBasis != null
+                ? RenderUtil.getInventoryMousePositionRayCurved(srcX, srcY, cylinderBasis)
+                : RenderUtil.getInventoryMousePositionRay(srcX, srcY, quadBasis, target);
         cachedSrcX = srcX;
         cachedSrcY = srcY;
         cachedQuadBasis = quadBasis;
+        cachedCylinderBasis = cylinderBasis;
         cachedGuiScale = guiScale;
         cachedMouse = mouse;
         if (mouse != null) {
