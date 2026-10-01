@@ -57,18 +57,48 @@ public class SpatialGUIConfig implements ConfigData {
         public double autoScaleThirdPersonScreenMultiplier = 0.82;
     }
 
+    public int calculateAutoGuiScale(int windowWidth, int windowHeight) {
+        if (windowHeight <= 0 || windowWidth <= 0) return 1;
+        int scale = 1;
+        while (windowWidth / (scale + 1) >= 320 && windowHeight / (scale + 1) >= 240) {
+            scale++;
+        }
+        if (scale == 1 && windowHeight >= 430 && windowWidth >= 640) {
+            scale = 2;
+        }
+        return scale;
+    }
+
     public int calculateAutoGuiScale(int windowHeight) {
-        if (windowHeight > 800) return 4;
-        if (windowHeight >= 650) return 3;
-        if (windowHeight >= 430) return 2;
-        return 1;
+        if (windowHeight <= 0) return 1;
+        int scale = 1;
+        while (windowHeight / (scale + 1) >= 240) {
+            scale++;
+        }
+        if (scale == 1 && windowHeight >= 430) {
+            scale = 2;
+        }
+        return scale;
+    }
+
+    public int getEffectiveGuiScale(int windowWidth, int windowHeight) {
+        if (autoCalculateGuiScale) {
+            return calculateAutoGuiScale(windowWidth, windowHeight);
+        }
+        int clampedGuiScale = Math.max(1, Math.min(guiScale, 6));
+        int autoScale = calculateAutoGuiScale(windowWidth, windowHeight);
+        int relativeScale = Math.round(clampedGuiScale * (autoScale / 4.0f));
+        return Math.max(1, relativeScale);
     }
 
     public int getEffectiveGuiScale(int windowHeight) {
         if (autoCalculateGuiScale) {
             return calculateAutoGuiScale(windowHeight);
         }
-        return Math.max(1, Math.min(guiScale, 6));
+        int clampedGuiScale = Math.max(1, Math.min(guiScale, 6));
+        int autoScale = calculateAutoGuiScale(windowHeight);
+        int relativeScale = Math.round(clampedGuiScale * (autoScale / 4.0f));
+        return Math.max(1, relativeScale);
     }
 
     // screens

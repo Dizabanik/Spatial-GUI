@@ -128,7 +128,7 @@ public class ScreenExtractor {
             srcY = ((MouseHandlerAccessor) mc.mouseHandler).getRawYpos();
         }
 
-        double guiScale = SpatialGUI.config.getEffectiveGuiScale(mc.getWindow().getHeight());
+        double guiScale = SpatialGUI.config.getEffectiveGuiScale(mc.getWindow().getWidth(), mc.getWindow().getHeight());
         if (quadBasis != null) {
             MouseHandlerUtil.getOrComputeMousePosition(srcX, srcY, quadBasis, guiScale, targetManager.getInventoryTarget());
         }

@@ -120,7 +120,7 @@ public class MouseHandlerMixin {
         }
 
         Minecraft mc = Minecraft.getInstance();
-        double guiScale = SpatialGUI.config.getEffectiveGuiScale(mc.getWindow().getHeight());
+        double guiScale = SpatialGUI.config.getEffectiveGuiScale(mc.getWindow().getWidth(), mc.getWindow().getHeight());
 
         double srcX, srcY;
         if (SpatialGUIRenderer.isCrosshairModeActive()) {
