@@ -54,6 +54,10 @@ public final class AnimationUtil {
         return 1.0f - t1 * t1 * t1 * t1;
     }
 
+    public static float easeInOutSine(float t) {
+        return (float) (-(Math.cos(Math.PI * t) - 1.0) / 2.0);
+    }
+
     public static float applyEasing(SpatialGUIConfig.EasingType easingType, float t) {
         return switch (easingType) {
             case Elastic -> easeOutElastic(t);

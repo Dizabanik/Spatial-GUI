@@ -33,11 +33,77 @@
   "text.autoconfig.spatial-gui.option.allScreens": "All Screens",
   "text.autoconfig.spatial-gui.option.allScreens.@Tooltip": "Enable Spatial GUI for most screens\nWARNING: EXPERIMENTAL",
 
+  "text.autoconfig.spatial-gui.option.mostContainers": "Most Containers",
+  "text.autoconfig.spatial-gui.option.mostContainers.@Tooltip": "Enable for containers not covered by specific options",
+
+  "text.autoconfig.spatial-gui.option.books": "Books",
+  "text.autoconfig.spatial-gui.option.books.@Tooltip": "Enable for books",
+
+  "text.autoconfig.spatial-gui.option.crafting": "Crafting",
+  "text.autoconfig.spatial-gui.option.crafting.@Tooltip": "Enable for crafting table",
+
+  "text.autoconfig.spatial-gui.option.furnaces": "Furnaces",
+  "text.autoconfig.spatial-gui.option.furnaces.@Tooltip": "Enable for furnaces, smokers, and blast furnaces",
+
+  "text.autoconfig.spatial-gui.option.anvils": "Anvils",
+  "text.autoconfig.spatial-gui.option.anvils.@Tooltip": "Enable for anvils",
+
+  "text.autoconfig.spatial-gui.option.enchanting": "Enchanting",
+  "text.autoconfig.spatial-gui.option.enchanting.@Tooltip": "Enable for enchanting table",
+
+  "text.autoconfig.spatial-gui.option.beacons": "Beacons",
+  "text.autoconfig.spatial-gui.option.beacons.@Tooltip": "Enable for beacons",
+
+  "text.autoconfig.spatial-gui.option.brewing": "Brewing",
+  "text.autoconfig.spatial-gui.option.brewing.@Tooltip": "Enable for brewing stands",
+
+  "text.autoconfig.spatial-gui.option.villagerTrading": "Villager Trading",
+  "text.autoconfig.spatial-gui.option.villagerTrading.@Tooltip": "Enable for villager trading",
+
+  "text.autoconfig.spatial-gui.option.chests": "Chests",
+  "text.autoconfig.spatial-gui.option.chests.@Tooltip": "Enable for chests",
+
+  "text.autoconfig.spatial-gui.option.shulkerBoxes": "Shulker Boxes",
+  "text.autoconfig.spatial-gui.option.shulkerBoxes.@Tooltip": "Enable for shulker boxes",
+
+  "text.autoconfig.spatial-gui.option.hoppers": "Hoppers",
+  "text.autoconfig.spatial-gui.option.hoppers.@Tooltip": "Enable for hoppers",
+
+  "text.autoconfig.spatial-gui.option.dispensers": "Dispensers",
+  "text.autoconfig.spatial-gui.option.dispensers.@Tooltip": "Enable for dispensers and droppers",
+
+  "text.autoconfig.spatial-gui.option.grindstone": "Grindstone",
+  "text.autoconfig.spatial-gui.option.grindstone.@Tooltip": "Enable for grindstones",
+
+  "text.autoconfig.spatial-gui.option.smithing": "Smithing",
+  "text.autoconfig.spatial-gui.option.smithing.@Tooltip": "Enable for smithing tables",
+
+  "text.autoconfig.spatial-gui.option.cartography": "Cartography",
+  "text.autoconfig.spatial-gui.option.cartography.@Tooltip": "Enable for cartography tables",
+
+  "text.autoconfig.spatial-gui.option.loom": "Loom",
+  "text.autoconfig.spatial-gui.option.loom.@Tooltip": "Enable for looms",
+
+  "text.autoconfig.spatial-gui.option.stonecutter": "Stonecutter",
+  "text.autoconfig.spatial-gui.option.stonecutter.@Tooltip": "Enable for stonecutters",
+
+  "text.autoconfig.spatial-gui.option.lectern": "Lectern",
+  "text.autoconfig.spatial-gui.option.lectern.@Tooltip": "Enable for lecterns",
+
+  "text.autoconfig.spatial-gui.option.inventory": "Inventory",
+  "text.autoconfig.spatial-gui.option.inventory.@Tooltip": "Enable for the survival inventory",
+
+  "text.autoconfig.spatial-gui.option.creativeInventory": "Creative Inventory",
+  "text.autoconfig.spatial-gui.option.creativeInventory.@Tooltip": "Enable for the creative inventory",
+
   "text.autoconfig.spatial-gui.option.autoScaleByFov": "Auto Scale by FOV",
   "text.autoconfig.spatial-gui.option.autoScaleByFov.@Tooltip": "Automatically adjust screen scale, distance, and side offset based on your FOV setting",
 
   "text.autoconfig.spatial-gui.option.mirrorThirdPerson": "Mirror Third Person",
   "text.autoconfig.spatial-gui.option.mirrorThirdPerson.@Tooltip": "Mirror the camera and screen position/rotation in third person mode",
+
+  "text.autoconfig.spatial-gui.option.hideHotbar": "Hide Hotbar",
+  "text.autoconfig.spatial-gui.option.hideHotbar.@Tooltip": "Hide the hotbar when a screen is open",
 
   "text.autoconfig.spatial-gui.option.autoFovTuning": "Auto FOV Tuning",
   "text.autoconfig.spatial-gui.option.autoFovTuning.@Tooltip": "FOV auto-scaling tuning options",
@@ -131,6 +197,9 @@
 
   "text.autoconfig.spatial-gui.option.disableThirdPersonParallax": "Disable Parallax",
   "text.autoconfig.spatial-gui.option.disableThirdPersonParallax.@Tooltip": "Disable parallax effect",
+
+  "text.autoconfig.spatial-gui.option.lerpXRot": "Lerp X Rotation",
+  "text.autoconfig.spatial-gui.option.lerpXRot.@Tooltip": "Smoothly interpolate camera pitch during transition",
 
   "text.autoconfig.spatial-gui.option.firstPersonScreenDistance": "Screen Distance",
   "text.autoconfig.spatial-gui.option.firstPersonScreenDistance.@Tooltip": "Screen distance from the camera",

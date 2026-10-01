@@ -27,4 +27,15 @@ public class HudMixin {
             ci.cancel();
         }
     }
+
+    //? if >=26.1.2 {
+    @Inject(method = "extractItemHotbar", at = @At("HEAD"), cancellable = true)
+    //?} else {
+    /*@Inject(method = "renderItemHotbar", at = @At("HEAD"), cancellable = true)
+     *///?}
+    private void spatialGUI$hideHotbar(CallbackInfo ci) {
+        if (SpatialGUI.config.enabled && SpatialGUI.config.hideHotbar && SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().getHookedScreen() != null) {
+            ci.cancel();
+        }
+    }
 }

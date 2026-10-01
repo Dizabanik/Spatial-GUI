@@ -7,28 +7,26 @@ ___
 ### First-person Mode
 ![First-person menu crafting GIF](https://cdn.modrinth.com/data/cached_images/961b53d75867806bf45fb6f7df0e5e34b242b322.gif)
 
-*   **Most Immersive**
-*   Crosshair and mouse mode
-*   Fully configurable screen (position, distance, scale, and rotation)
-*   Parallax effect (in mouse mode)
-*   Screen opening animation (very configurable)
-*   Mostly* visually client-sided
-    *   *There is an option to keep your rotation after exiting the GUI (moves your head)
-*   And more
+*   The most immersive mode
+*   Crosshair and mouse modes
+*   Screen position, distance, scale, and rotation are all configurable
+*   Parallax effect in mouse mode
+*   Configurable screen opening animation
+*   Visual only, with one exception: a setting keeps your rotation after you close the GUI, which turns your head
 
 ### Third-person Mode
 ![third-person screenshot](https://cdn.modrinth.com/data/cached_images/74d080ca00474431a2d1fed3da972c82ef43b7c1.png)
-*   **Best for fairness & server use**
-*   Automatically switches to first-person when the camera would clip through blocks
-*   Fully configurable camera & screen (position, distance, scale, and rotation)
+
+*   The better choice for servers, since it's completely client-side
+*   Switches to first-person automatically if the camera would clip through blocks
+*   Camera and screen position, distance, scale, and rotation are all configurable
 *   Parallax effect
-*   Smooth camera transition and screen opening animation (very configurable)
-*   Completely visually client-sided
-*   And more
+*   Smooth camera transition and configurable screen opening animation
 
 ## Dependencies
 
-Fabric API, Cloth Config, Mod Menu
+Cloth Config
+Fabric API & Mod Menu (Fabric only)
 
 ## Configuration
 

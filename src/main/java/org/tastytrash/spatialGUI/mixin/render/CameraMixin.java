@@ -33,6 +33,7 @@ public abstract class CameraMixin {
 
     @Unique private static Vec3 startPos;
     @Unique private static float startYRot;
+    @Unique private static float startXRot;
     @Unique private static long transitionStartTime, TRANSITION_DURATION_MS = 1;
     @Unique private static boolean wasCapturing, isTransitioning;
     @Unique private static final float MAX_YAW_OFFSET = 90f;
@@ -211,6 +212,7 @@ public abstract class CameraMixin {
             startPos = new Vec3(position.x, position.y, position.z);
             startYRot = yRot;
         }
+        startXRot = xRot;
         transitionStartTime = System.currentTimeMillis();
         isTransitioning = true;
 
@@ -228,18 +230,18 @@ public abstract class CameraMixin {
         if (isFirstPerson) {
             position = newTargetPos;
             yRot = newTargetYRot;
+            xRot = newTargetXRot;
         } else {
             long elapsed = System.currentTimeMillis() - transitionStartTime;
             float skipPercentage = SpatialGUI.config.transitionSkipPercentage / 100.0f;
             float adjustedElapsed = elapsed + (skipPercentage * TRANSITION_DURATION_MS);
             float progress = Math.min(adjustedElapsed / TRANSITION_DURATION_MS, 1.0f);
-            float easedProgress = AnimationUtil.easeOutCubic(progress);
+            float easedProgress = AnimationUtil.easeInOutSine(progress);
 
             position = new Vec3(MathUtil.lerp(startPos.x, newTargetPos.x, easedProgress), MathUtil.lerp(startPos.y, newTargetPos.y, easedProgress), MathUtil.lerp(startPos.z, newTargetPos.z, easedProgress));
             yRot = progress >= 1.0f ? newTargetYRot : MathUtil.lerp(startYRot, newTargetYRot, easedProgress);
-
+            xRot = SpatialGUI.config.lerpXRot ? (progress >= 1.0f ? newTargetXRot : MathUtil.lerp(startXRot, newTargetXRot, easedProgress)) : newTargetXRot;
         }
-        xRot = newTargetXRot;
     }
 
     @Unique

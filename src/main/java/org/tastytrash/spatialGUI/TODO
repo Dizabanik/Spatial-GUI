@@ -8,12 +8,15 @@ Fix issues related to hooking all screens
  - Stops hooking when going into an options menu and back
  - Possibly just stick to only the pause menu
 
-
 Update README, try something different
 
 When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
 
+Special transition case for third person front
+
 -------- MID PRIORITY ---------------
+
+A consequence of setting the hand velocity to 0 is it looks strange in first person while looking around
 
 Issue #17 & #18
 

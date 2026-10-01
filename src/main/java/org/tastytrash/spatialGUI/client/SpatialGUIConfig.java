@@ -37,6 +37,10 @@ public class SpatialGUIConfig implements ConfigData {
     public boolean mirrorThirdPerson = false;
 
     @ConfigEntry.Category("general")
+    @ConfigEntry.Gui.Tooltip
+    public boolean hideHotbar = false;
+
+    @ConfigEntry.Category("general")
     @ConfigEntry.Gui.CollapsibleObject
     public AutoFovTuning autoFovTuning = new AutoFovTuning();
 
@@ -104,11 +108,95 @@ public class SpatialGUIConfig implements ConfigData {
     // screens
     @ConfigEntry.Category("screens")
     @ConfigEntry.Gui.Tooltip
+    public boolean allScreens = false;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
     public boolean pauseScreen = false;
 
     @ConfigEntry.Category("screens")
     @ConfigEntry.Gui.Tooltip
-    public boolean allScreens = false;
+    public boolean mostContainers = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean books = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean crafting = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean furnaces = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean anvils = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean enchanting = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean beacons = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean brewing = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean villagerTrading = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean chests = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean shulkerBoxes = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean hoppers = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean dispensers = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean grindstone = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean smithing = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean cartography = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean loom = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean stonecutter = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean lectern = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean inventory = true;
+
+    @ConfigEntry.Category("screens")
+    @ConfigEntry.Gui.Tooltip
+    public boolean creativeInventory = true;
 
     // rendering
     @ConfigEntry.Category("rendering")
@@ -241,6 +329,10 @@ public class SpatialGUIConfig implements ConfigData {
     @ConfigEntry.Category("thirdPersonCamera")
     @ConfigEntry.Gui.Tooltip
     public boolean disableThirdPersonParallax = false;
+
+    @ConfigEntry.Category("thirdPersonCamera")
+    @ConfigEntry.Gui.Tooltip
+    public boolean lerpXRot = false;
 
     // firstPersonCamera
     @ConfigEntry.Category("firstPersonCamera")

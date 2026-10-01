@@ -1,6 +1,6 @@
 package org.tastytrash.spatialGUI.mixin.render;
 
-import net.minecraft.client.gui.screens.Screen;
+import com.mojang.blaze3d.platform.Lighting;import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Final;
@@ -17,6 +17,7 @@ import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 
 //? if >1.21.1 {
 import net.minecraft.client.renderer.fog.FogRenderer;
+import static com.mojang.blaze3d.platform.Lighting.Entry.LEVEL;
  //?}
 
 //? if <26.1.2 {
@@ -35,6 +36,7 @@ public abstract class GameRendererMixin {
     @Shadow private net.minecraft.client.renderer.Projection hudProjection;
     @Shadow private net.minecraft.client.renderer.ProjectionMatrixBuffer hud3dProjectionMatrixBuffer;
     @Shadow @Final private net.minecraft.client.renderer.feature.FeatureRenderDispatcher featureRenderDispatcher;
+    @Shadow private boolean useUiLightmap;
     //? if >=26.2 {
     /*@Shadow @Final private net.minecraft.client.renderer.SubmitNodeStorage handAndScreenSubmitNodeStorage;
     *///?} else {
@@ -70,7 +72,7 @@ public abstract class GameRendererMixin {
         );
         var encoder = com.mojang.blaze3d.systems.RenderSystem.getDevice().createCommandEncoder();
         encoder.clearDepthTexture(((GameRenderer) (Object) this).mainRenderTarget().getDepthTexture(), 0.0);
-        ((GameRenderer) (Object) this).lighting().setupFor(com.mojang.blaze3d.platform.Lighting.Entry.ITEMS_3D);
+        ((GameRenderer) (Object) this).lighting().setupFor(com.mojang.blaze3d.platform.Lighting.Entry.LEVEL);
         *///?} else {
         com.mojang.blaze3d.systems.RenderSystem.setProjectionMatrix(
                 this.hud3dProjectionMatrixBuffer.getBuffer(this.hudProjection),
@@ -78,8 +80,13 @@ public abstract class GameRendererMixin {
         );
         var encoder = com.mojang.blaze3d.systems.RenderSystem.getDevice().createCommandEncoder();
         encoder.clearDepthTexture(mc.getMainRenderTarget().getDepthTexture(), 1.0);
+        ((GameRenderer) (Object) this).getLighting().setupFor(com.mojang.blaze3d.platform.Lighting.Entry.LEVEL);
         //?}
         float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+
+        boolean spatialGUI$prevUiLightmap = this.useUiLightmap;
+        this.useUiLightmap = false;
+
         spatialGUI$isRedrawingHand = true;
         try {
             this.renderItemInHand(cameraRenderState, partialTick, cameraRenderState.viewRotationMatrix);
@@ -90,6 +97,9 @@ public abstract class GameRendererMixin {
             this.renderBuffers.bufferSource().endBatch();
             //?}
         } finally {
+
+            this.useUiLightmap = spatialGUI$prevUiLightmap;
+
             spatialGUI$isRedrawingHand = false;
         }
         //?} else {
@@ -97,6 +107,9 @@ public abstract class GameRendererMixin {
         if (!playerState.hasPlayer || playerState.firstPersonHandsAndItems == null) {
             return;
         }
+
+        boolean spatialGUI$prevUiLightmap = this.useUiLightmap;
+        this.useUiLightmap = false;
 
         spatialGUI$isRedrawingHand = true;
         try {
@@ -112,7 +125,7 @@ public abstract class GameRendererMixin {
             encoder.clearDepthTexture(((GameRenderer) (Object) this).mainRenderTarget().getDepthTexture(), 0.0);
 
             com.mojang.blaze3d.systems.RenderSystem.setShaderFog(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
-            ((GameRenderer) (Object) this).lighting().setupFor(com.mojang.blaze3d.platform.Lighting.Entry.ITEMS_3D);
+            ((GameRenderer) (Object) this).lighting().setupFor(com.mojang.blaze3d.platform.Lighting.Entry.LEVEL);
 
             var poseStack = new com.mojang.blaze3d.vertex.PoseStack();
             poseStack.pushPose();
@@ -154,6 +167,7 @@ public abstract class GameRendererMixin {
             modelViewStack.popMatrix();
             poseStack.popPose();
         } finally {
+            this.useUiLightmap = spatialGUI$prevUiLightmap;
             spatialGUI$isRedrawingHand = false;
         }
         *///?}
@@ -280,6 +294,7 @@ public abstract class GameRendererMixin {
     @Final @Shadow private net.minecraft.client.renderer.feature.FeatureRenderDispatcher featureRenderDispatcher;
     @Final @Shadow private net.minecraft.client.Camera mainCamera;
     @Final @Shadow private net.minecraft.client.renderer.CachedPerspectiveProjectionMatrixBuffer hud3dProjectionMatrixBuffer;
+    @Shadow @Final private Lighting lighting;
 
     @Shadow protected abstract float getFov(net.minecraft.client.Camera camera, float partialTick, boolean useFovSetting);
     @Shadow protected abstract void renderItemInHand(float partialTick, boolean flag, org.joml.Matrix4f matrix4f);
@@ -306,6 +321,7 @@ public abstract class GameRendererMixin {
 
         var encoder = com.mojang.blaze3d.systems.RenderSystem.getDevice().createCommandEncoder();
         encoder.clearDepthTexture(mc.getMainRenderTarget().getDepthTexture(), 1.0);
+        this.lighting.setupFor(LEVEL);
 
         org.joml.Matrix4f rotationMatrix = new org.joml.Matrix4f().rotation(
                 this.mainCamera.rotation().conjugate(new org.joml.Quaternionf())
