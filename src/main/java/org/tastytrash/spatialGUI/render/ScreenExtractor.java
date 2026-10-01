@@ -9,6 +9,7 @@ import org.tastytrash.spatialGUI.mixin.gui.MouseHandlerAccessor;
 import org.tastytrash.spatialGUI.util.MouseHandlerUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
+import org.tastytrash.spatialGUI.util.RenderUtil.CylinderBasis;
 
 //? if >=26.1.2 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -115,7 +116,7 @@ public class ScreenExtractor {
     }
     //?}
 
-    public void extractIsolatedScreen(Screen screen, float partialTick, QuadBasis quadBasis, TextureTargetManager targetManager) {
+    public void extractIsolatedScreen(Screen screen, float partialTick, QuadBasis quadBasis, CylinderBasis cylinderBasis, TextureTargetManager targetManager) {
         ensureScreenGuiRenderer();
         Minecraft mc = Minecraft.getInstance();
 
@@ -130,7 +131,7 @@ public class ScreenExtractor {
 
         double guiScale = SpatialGUI.config.getEffectiveGuiScale(mc.getWindow().getWidth(), mc.getWindow().getHeight());
         if (quadBasis != null) {
-            MouseHandlerUtil.getOrComputeMousePosition(srcX, srcY, quadBasis, guiScale, targetManager.getInventoryTarget());
+            MouseHandlerUtil.getOrComputeMousePosition(srcX, srcY, quadBasis, cylinderBasis, guiScale, targetManager.getInventoryTarget());
         }
 
         int mouseX = (int) MouseHandlerUtil.getLastPos(true);

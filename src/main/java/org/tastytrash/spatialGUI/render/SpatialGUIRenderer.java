@@ -94,7 +94,7 @@ public class SpatialGUIRenderer {
         if (event.getScreen() == hookedScreen) {
             event.setCanceled(true);
             SpatialGUIRenderer.skipWindowOverride = false;
-            screenExtractor.extractIsolatedScreen(hookedScreen, event.getPartialTick(), inventoryRenderer.getQuadBasis(), targetManager);
+            screenExtractor.extractIsolatedScreen(hookedScreen, event.getPartialTick(), inventoryRenderer.getQuadBasis(), inventoryRenderer.getCylinderBasis(), targetManager);
             SpatialGUIRenderer.skipWindowOverride = true;
         }
     }
@@ -244,7 +244,7 @@ public class SpatialGUIRenderer {
     //?}
 
     public void extractIsolatedScreen(Screen screen, float partialTick) {
-        screenExtractor.extractIsolatedScreen(screen, partialTick, inventoryRenderer.getQuadBasis(), targetManager);
+        screenExtractor.extractIsolatedScreen(screen, partialTick, inventoryRenderer.getQuadBasis(), inventoryRenderer.getCylinderBasis(), targetManager);
     }
 
 }

@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import org.joml.Matrix4f;
 import org.tastytrash.spatialGUI.util.RenderUtil.QuadBasis;
+import org.tastytrash.spatialGUI.util.RenderUtil.CylinderBasis;
 //? if >1.21.1 {
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -81,6 +82,9 @@ public class InventoryRenderer {
 
     private final TextureTargetManager targetManager;
     private QuadBasis quadBasis;
+    private CylinderBasis cylinderBasis;
+    private int meshQuadCount = 1;
+    private static final int CURVED_SEGMENTS = 32;
     private long screenOpenTime = 0;
     private static boolean isRecipeBookOpen = false;
     private static int recipeBookCloseDelay = 0;
@@ -138,11 +142,36 @@ public class InventoryRenderer {
                 : 1.0f;
 
         quadBasis = RenderUtil.computeQuadBasis(worldPose, aspect, scale);
+        cylinderBasis = isCurvedScreenActive(isFirstPerson)
+                ? RenderUtil.computeCylinderBasis(worldPose, aspect, scale, (float) Math.toRadians(SpatialGUI.config.curvedScreenArcDegrees))
+                : null;
     }
 
     public QuadBasis getQuadBasis() {
         updateQuadBasis();
         return quadBasis;
+    }
+
+    public CylinderBasis getCylinderBasis() {
+        updateQuadBasis();
+        return cylinderBasis;
+    }
+
+    private static boolean isCurvedScreenActive(boolean isFirstPerson) {
+        return SpatialGUI.config.curvedScreenEnabled && isFirstPerson
+                && SpatialGUI.config.curvedScreenArcDegrees >= 5.0
+                && SpatialGUI.config.curvedScreenArcDegrees <= 150.0;
+    }
+
+    private void addScreenQuadMesh(VertexConsumer buffer, Matrix4f pose, float aspect, boolean isFirstPerson) {
+        if (isCurvedScreenActive(isFirstPerson)) {
+            float arcRadians = (float) Math.toRadians(SpatialGUI.config.curvedScreenArcDegrees);
+            RenderUtil.addCurvedScreenQuad(buffer, pose, aspect, arcRadians, CURVED_SEGMENTS);
+            meshQuadCount = CURVED_SEGMENTS;
+        } else {
+            RenderUtil.addScreenQuad(buffer, pose, aspect);
+            meshQuadCount = 1;
+        }
     }
 
     //? if >1.21.1 {
@@ -245,7 +274,7 @@ public class InventoryRenderer {
         VertexConsumer buffer = INVENTORY_BUFFER.getVertexBuilder(draw);
 
         float aspect = (float) targetManager.getInventoryTarget().width / (float) targetManager.getInventoryTarget().height;
-        RenderUtil.addScreenQuad(buffer, pose, aspect);
+        addScreenQuadMesh(buffer, pose, aspect, isFirstPerson);
 
         WORLD_POSE_STACK.setIdentity();
         RenderUtil.applyScreenTransform(WORLD_POSE_STACK, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
@@ -253,6 +282,9 @@ public class InventoryRenderer {
         Matrix4f worldPose = WORLD_POSE_STACK.last().pose();
 
         quadBasis = RenderUtil.computeQuadBasis(worldPose, aspect, scale);
+        cylinderBasis = isCurvedScreenActive(isFirstPerson)
+                ? RenderUtil.computeCylinderBasis(worldPose, aspect, scale, (float) Math.toRadians(SpatialGUI.config.curvedScreenArcDegrees))
+                : null;
 
         matrices.popPose();
 
@@ -385,7 +417,7 @@ public class InventoryRenderer {
         BufferBuilder buffer = new BufferBuilder(INVENTORY_BYTE_BUFFER, VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
         float aspect = (float) targetManager.getInventoryTarget().width / (float) targetManager.getInventoryTarget().height;
-        RenderUtil.addScreenQuad(buffer, pose, aspect);
+        addScreenQuadMesh(buffer, pose, aspect, isFirstPerson);
 
         MeshData meshData = buffer.build();
 
@@ -395,6 +427,9 @@ public class InventoryRenderer {
         Matrix4f worldPose = WORLD_POSE_STACK.last().pose();
 
         quadBasis = RenderUtil.computeQuadBasis(worldPose, aspect, scale);
+        cylinderBasis = isCurvedScreenActive(isFirstPerson)
+                ? RenderUtil.computeCylinderBasis(worldPose, aspect, scale, (float) Math.toRadians(SpatialGUI.config.curvedScreenArcDegrees))
+                : null;
 
         matrices.popPose();
 
@@ -429,7 +464,7 @@ public class InventoryRenderer {
         FilterMode filterMode = SpatialGUI.config.useLinearFiltering ? FilterMode.LINEAR : FilterMode.NEAREST;
 
         var sequentialBuffer = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
-        GpuBuffer indexBuffer = sequentialBuffer.getBuffer(6);
+        GpuBuffer indexBuffer = sequentialBuffer.getBuffer(meshQuadCount * 6);
         VertexFormat.IndexType indexType = sequentialBuffer.type();
 
         try (GpuBuffer vertexBuffer = RenderSystem.getDevice().createBuffer(
@@ -451,7 +486,7 @@ public class InventoryRenderer {
                 ));
                 renderPass.setVertexBuffer(0, vertexBuffer);
                 renderPass.setIndexBuffer(indexBuffer, indexType);
-                renderPass.drawIndexed(0, 0, 6, 1);
+                renderPass.drawIndexed(0, 0, meshQuadCount * 6, 1);
             }
         }
     }
@@ -530,7 +565,7 @@ public class InventoryRenderer {
         //?}
 
         float aspect = (float) target.width / (float) target.height;
-        RenderUtil.addScreenQuad(buffer, pose, aspect);
+        addScreenQuadMesh(buffer, pose, aspect, isFirstPerson);
 
         WORLD_POSE_STACK.setIdentity();
         RenderUtil.applyScreenTransform(WORLD_POSE_STACK, isFirstPerson, yawRadians, pitchRadians, config, lookX, lookY, lookZ);
@@ -538,6 +573,9 @@ public class InventoryRenderer {
         Matrix4f worldPose = WORLD_POSE_STACK.last().pose();
 
         quadBasis = RenderUtil.computeQuadBasis(worldPose, aspect, scale);
+        cylinderBasis = isCurvedScreenActive(isFirstPerson)
+                ? RenderUtil.computeCylinderBasis(worldPose, aspect, scale, (float) Math.toRadians(SpatialGUI.config.curvedScreenArcDegrees))
+                : null;
 
         matrices.popPose();
 
