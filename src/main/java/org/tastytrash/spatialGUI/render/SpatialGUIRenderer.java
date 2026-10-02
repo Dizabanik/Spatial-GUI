@@ -268,6 +268,16 @@ public class SpatialGUIRenderer {
     }
     //?}
 
+    //? if >=26.1.2 {
+    public net.minecraft.client.gui.GuiGraphicsExtractor createIsolatedGraphics() {
+        return screenExtractor.createIsolatedGraphics();
+    }
+    //?} else if >1.21.1 {
+    /*public net.minecraft.client.gui.GuiGraphics createIsolatedGraphics() {
+        return screenExtractor.createIsolatedGraphics();
+    }
+    *///?}
+
     public void extractIsolatedScreen(Screen screen, float partialTick) {
         screenExtractor.extractIsolatedScreen(screen, partialTick, inventoryRenderer.getQuadBasis(), inventoryRenderer.getCylinderBasis(), targetManager);
     }
