@@ -11,6 +11,7 @@ import org.tastytrash.spatialGUI.SpatialGUI;
  import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 //? } else if neoforge {
 /*import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -28,10 +29,12 @@ public class SpatialGUIClient {
     private static SpatialGUIRenderer renderer;
     private static boolean effectiveFirstPersonMode = false;
     private static boolean switchedToFirstPersonDueToBlock = false;
+
     //? if fabric {
     @Override
     public void onInitializeClient() {
         renderer = new SpatialGUIRenderer();
+        SpatialGUIKeybinds.register();
 
         ScreenEvents.BEFORE_INIT.register((clientArg, screen, scaledWidth, scaledHeight) -> {
             if (SpatialGUIClient.shouldHookScreen(screen)) {
@@ -40,8 +43,10 @@ public class SpatialGUIClient {
         });
     }
     //? } else if neoforge {
-    /*public SpatialGUIClient() {
+    /*public SpatialGUIClient(net.neoforged.bus.api.IEventBus modBus) {
         renderer = new SpatialGUIRenderer();
+
+        modBus.addListener((RegisterKeyMappingsEvent e) -> SpatialGUIKeybinds.register(e));
 
         NeoForge.EVENT_BUS.addListener(this::onScreenInit);
     }

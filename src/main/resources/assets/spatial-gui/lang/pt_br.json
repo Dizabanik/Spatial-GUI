@@ -133,10 +133,8 @@
   "text.autoconfig.spatial-gui.option.thirdPersonMouseSensitivityPitch.@Tooltip": "Sensibilidade vertical do mouse",
   "text.autoconfig.spatial-gui.option.disableThirdPersonParallax": "Desativar Paralaxe",
   "text.autoconfig.spatial-gui.option.disableThirdPersonParallax.@Tooltip": "Desativa o efeito de paralaxe",
-
   "text.autoconfig.spatial-gui.option.lerpXRot": "Interpolação de Rotação X",
   "text.autoconfig.spatial-gui.option.lerpXRot.@Tooltip": "Interpola suavemente o pitch da câmera durante a transição",
-
   "text.autoconfig.spatial-gui.option.firstPersonScreenDistance": "Distância da Tela",
   "text.autoconfig.spatial-gui.option.firstPersonScreenDistance.@Tooltip": "Distância da tela em relação à câmera",
   "text.autoconfig.spatial-gui.option.firstPersonScreenSideOffset": "Deslocamento Lateral da Tela",
@@ -149,6 +147,10 @@
   "text.autoconfig.spatial-gui.option.firstPersonScreenPitchOffset.@Tooltip": "Ângulo de rotação vertical da tela",
   "text.autoconfig.spatial-gui.option.firstPersonScreenScale": "Escala da Tela",
   "text.autoconfig.spatial-gui.option.firstPersonScreenScale.@Tooltip": "Multiplicador de escala da tela\nAVISO: Valores muito altos podem fazer o rastreamento do mouse falhar",
+  "text.autoconfig.spatial-gui.option.curvedScreenEnabled": "Tela Curva (Primeira Pessoa)",
+  "text.autoconfig.spatial-gui.option.curvedScreenEnabled.@Tooltip": "Renderizar a tela em primeira pessoa como um semicilindro que envolve a câmera\nEXPERIMENTAL",
+  "text.autoconfig.spatial-gui.option.curvedScreenArcDegrees": "Curvatura da tela (graus)",
+  "text.autoconfig.spatial-gui.option.curvedScreenArcDegrees.@Tooltip": "Ângulo total do arco da tela curva (5-150).\nValores mais altos envolvem a câmera com a tela em maior extensão.",
   "text.autoconfig.spatial-gui.option.firstPersonMouseSensitivityYaw": "Sensibilidade Horizontal do Mouse",
   "text.autoconfig.spatial-gui.option.firstPersonMouseSensitivityYaw.@Tooltip": "Sensibilidade horizontal do mouse",
   "text.autoconfig.spatial-gui.option.firstPersonMouseSensitivityPitch": "Sensibilidade Vertical do Mouse",
@@ -157,6 +159,8 @@
   "text.autoconfig.spatial-gui.option.disableFirstPersonParallax.@Tooltip": "Desativa o efeito de paralaxe",
   "text.autoconfig.spatial-gui.option.keepFirstPersonCameraAngle": "Manter Ângulo da Câmera em Primeira Pessoa",
   "text.autoconfig.spatial-gui.option.keepFirstPersonCameraAngle.@Tooltip": "Mantém o ângulo da câmera ao fechar a interface\nAVISO: Isso afeta sua rotação no servidor\ne pode não ser permitido pelos servidores",
+  "text.autoconfig.spatial-gui.option.inheritScreenOriginOnSwap": "Herdar origem da tela na troca",
+  "text.autoconfig.spatial-gui.option.inheritScreenOriginOnSwap.@Tooltip": "Quando uma tela abre outra, a nova tela mantém a posição da tela anterior em vez de seguir a direção do seu olhar dentro da tela.",
   "text.autoconfig.spatial-gui.option.useCrosshairForFirstPerson": "Usar Mira em Primeira Pessoa",
   "text.autoconfig.spatial-gui.option.useCrosshairForFirstPerson.@Tooltip": "Usa a posição da mira no jogo para interação com o mouse em vez do cursor real do mouse",
   "text.autoconfig.spatial-gui.option.firstPersonPitchClamp": "Limite de Pitch em Primeira Pessoa",
@@ -172,5 +176,7 @@
   "text.autoconfig.spatial-gui.option.animationEasing": "Suavização da Escala",
   "text.autoconfig.spatial-gui.option.animationEasing.@Tooltip": "Função de suavização da animação",
   "text.autoconfig.spatial-gui.option.animationStartScalePercent": "Escala Inicial (%)",
-  "text.autoconfig.spatial-gui.option.animationStartScalePercent.@Tooltip": "Escala inicial como porcentagem da escala final"
+  "text.autoconfig.spatial-gui.option.animationStartScalePercent.@Tooltip": "Escala inicial como porcentagem da escala final",
+  "key.spatial-gui.open_config": "Abrir Configuração do Spatial GUI",
+  "key.category.spatial-gui.main_category": "Spatial GUI"
 }

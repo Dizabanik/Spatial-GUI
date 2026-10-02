@@ -262,5 +262,8 @@
   "text.autoconfig.spatial-gui.option.animationEasing.@Tooltip": "Easing function for the animation",
 
   "text.autoconfig.spatial-gui.option.animationStartScalePercent": "Start Scale (%)",
-  "text.autoconfig.spatial-gui.option.animationStartScalePercent.@Tooltip": "Starting scale as percentage of final scale"
+  "text.autoconfig.spatial-gui.option.animationStartScalePercent.@Tooltip": "Starting scale as percentage of final scale",
+
+  "key.spatial-gui.open_config": "Open Spatial GUI Config",
+  "key.category.spatial-gui.main_category": "Spatial GUI"
 }

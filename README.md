@@ -13,6 +13,7 @@ ___
 *   Parallax effect in mouse mode
 *   Configurable screen opening animation
 *   Visual only, with one exception: a setting keeps your rotation after you close the GUI, which turns your head
+*   Curved screen option, especially good w/ mods that add large GUI extensions, such as JEI
 
 ### Third-person Mode
 ![third-person screenshot](https://cdn.modrinth.com/data/cached_images/74d080ca00474431a2d1fed3da972c82ef43b7c1.png)
@@ -30,7 +31,7 @@ Fabric API & Mod Menu (Fabric only)
 
 ## Configuration
 
-Access config via Mod Menu or edit the config file.
+Access config via the keybind (default unbound), Mod Menu, or edit the config file.
 It is highly recommended to check the config to tailor the mod to your liking, and there are tons of options.
 
 ## Fairness
@@ -43,9 +44,10 @@ This mod is mainly visual and tries not provide any gameplay advantages.
 *   Feel free to suggest features or report bugs on the GitHub
 *   This mod is absolutely welcome to be used in modpacks, just be careful about it's compatilbility with certain mods
 
-*Special thanks to:*  
-Dizabanik for tons of code fixes and improvements from GitHub contributions  
+### Special thanks to:
+Dizabanik for tons of code fixes and improvements  
+vibing for the curved first-person screen feature  
 BUILDLCS for the Brazilian Portuguese translation  
 suheckii for the Russian translation  
-22SSendo for awesome feature suggestions  
+22SSendo & jankeverse for particularly awesome feature suggestions  
 Anyone else who reported bugs or suggested features :)
