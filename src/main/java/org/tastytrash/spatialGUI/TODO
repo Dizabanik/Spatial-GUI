@@ -24,6 +24,10 @@ Make the screen position unaffected by the bob
 
 -------- LOW PRIORITY ---------------
 
+The EMI compat causes:
+[17:24:52] [main/WARN]: Error loading class: dev/emi/emi/screen/EmiScreenManager (java.lang.ClassNotFoundException: dev/emi/emi/screen/EmiScreenManager)
+to be printed in consoles, it would be better if it didn't, may need to use IMixinConfigPlugin instead of doing @Pseudo
+
 Parallax magnitude config
 
 Replace accessor with accesswidener (maybe not?)
@@ -36,9 +40,3 @@ Minecraft's water effects not applying properly when in the menu with velocity u
 
 Fixed REI tooltips and late-rendered widgets rendering flat on the screen instead of on the spatial GUI (fabric)
 Fixed a black flash when opening screens such as REI recipe views on 26.x
-Added a 'Screens' category where you can choose which screens Spatial GUI affects
-Fixed compatibility issues with shaders, EMI, Inventory Interactions, and high resolution displays (with help from Dizabanik)
-Added a curved first person screen option (thanks to Vibing)
-Added a config to interpolate the x rotation when opening the third person GUI
-Added a keybind in Minecraft's controls to open the Spatial GUI config, to help tune your settings (unbound by default)
-Several other bugs were fixed along the way

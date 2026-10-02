@@ -10,7 +10,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector2d;
 import org.joml.Vector3f;
 import org.tastytrash.spatialGUI.SpatialGUI;
-import org.tastytrash.spatialGUI.mixin.render.GameRendererInvoker;
+import org.tastytrash.spatialGUI.compat.VulkanModCompat;
 
 public final class RenderUtil {
     private RenderUtil() {}
@@ -118,10 +118,17 @@ public final class RenderUtil {
     public static void addScreenQuad(VertexConsumer buffer, Matrix4f pose, float aspect) {
         float halfWidth = aspect * 0.5F;
         float halfHeight = 0.5F;
-        addQuadVertex(buffer, pose, -halfWidth, -halfHeight, 0.0F, 0.0F, 0.0F);
-        addQuadVertex(buffer, pose, halfWidth, -halfHeight, 0.0F, 1.0F, 0.0F);
-        addQuadVertex(buffer, pose, halfWidth, halfHeight, 0.0F, 1.0F, 1.0F);
-        addQuadVertex(buffer, pose, -halfWidth, halfHeight, 0.0F, 0.0F, 1.0F);
+        if (VulkanModCompat.isVulkanModLoaded()) {
+            addQuadVertex(buffer, pose, -halfWidth, halfHeight, 0.0F, 0.0F, 0.0F);
+            addQuadVertex(buffer, pose, halfWidth, halfHeight, 0.0F, 1.0F, 0.0F);
+            addQuadVertex(buffer, pose, halfWidth, -halfHeight, 0.0F, 1.0F, 1.0F);
+            addQuadVertex(buffer, pose, -halfWidth, -halfHeight, 0.0F, 0.0F, 1.0F);
+        } else {
+            addQuadVertex(buffer, pose, -halfWidth, -halfHeight, 0.0F, 0.0F, 0.0F);
+            addQuadVertex(buffer, pose, halfWidth, -halfHeight, 0.0F, 1.0F, 0.0F);
+            addQuadVertex(buffer, pose, halfWidth, halfHeight, 0.0F, 1.0F, 1.0F);
+            addQuadVertex(buffer, pose, -halfWidth, halfHeight, 0.0F, 0.0F, 1.0F);
+        }
     }
 
     public record QuadBasis(Vector3f centerOffset, Vector3f right, Vector3f up, Vector3f normal, float halfWidth, float halfHeight) {}
@@ -280,10 +287,17 @@ public final class RenderUtil {
             float z = radius * (1.0F - (float) Math.cos(angle));
             float u = i / (float) segments;
 
-            addQuadVertex(buffer, pose, prevX, -0.5F, prevZ, prevU, 0.0F);
-            addQuadVertex(buffer, pose, x, -0.5F, z, u, 0.0F);
-            addQuadVertex(buffer, pose, x, 0.5F, z, u, 1.0F);
-            addQuadVertex(buffer, pose, prevX, 0.5F, prevZ, prevU, 1.0F);
+            if (VulkanModCompat.isVulkanModLoaded()) {
+                addQuadVertex(buffer, pose, prevX, 0.5F, prevZ, prevU, 0.0F);
+                addQuadVertex(buffer, pose, x, 0.5F, z, u, 0.0F);
+                addQuadVertex(buffer, pose, x, -0.5F, z, u, 1.0F);
+                addQuadVertex(buffer, pose, prevX, -0.5F, prevZ, prevU, 1.0F);
+            } else {
+                addQuadVertex(buffer, pose, prevX, -0.5F, prevZ, prevU, 0.0F);
+                addQuadVertex(buffer, pose, x, -0.5F, z, u, 0.0F);
+                addQuadVertex(buffer, pose, x, 0.5F, z, u, 1.0F);
+                addQuadVertex(buffer, pose, prevX, 0.5F, prevZ, prevU, 1.0F);
+            }
 
             prevX = x;
             prevZ = z;
