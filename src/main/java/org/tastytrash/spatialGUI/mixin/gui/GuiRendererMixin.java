@@ -28,7 +28,7 @@ public class GuiRendererMixin {
         // makes Minecraft render to the framebuffer instead of the normal GUI
         SpatialGUIRenderer renderer = SpatialGUIClient.renderer();
 
-        if (!SpatialGUI.config.enabled) {
+        if (!SpatialGUI.config.isEnabled()) {
             return original;
         }
 

@@ -17,49 +17,49 @@ public class ScreenMixin {
     //? if >=26.1.2 {
     @Inject(method = "extractBackground", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$removeBackground(CallbackInfo ci) {
-        if (SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.enabled) {
+        if (SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.isEnabled()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "extractTransparentBackground", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$removeTransparentBackground(CallbackInfo ci) {
-        if (SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.enabled) {
+        if (SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.isEnabled()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "extractBlurredBackground", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$removeBlur(GuiGraphicsExtractor graphics, CallbackInfo ci) {
-        if (SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.enabled && SpatialGUI.config.allScreens) {
+        if (SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.isEnabled() && SpatialGUI.config.allScreens) {
             ci.cancel();
         }
     }
 
     @Inject(method = "extractMenuBackground", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$removeMenuBackground(GuiGraphicsExtractor graphics, CallbackInfo ci) {
-        if (SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.enabled && SpatialGUI.config.allScreens) {
+        if (SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.isEnabled() && SpatialGUI.config.allScreens) {
             ci.cancel();
         }
     }
     //?} else if >1.20.1 {
     /*@Inject(method = "renderBackground(Lnet/minecraft/client/gui/GuiGraphics;IIF)V", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$removeBackground(CallbackInfo ci) {
-        if (SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.enabled) {
+        if (SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.isEnabled()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "renderTransparentBackground", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$removeTransparentBackground(CallbackInfo ci) {
-        if (SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.enabled) {
+        if (SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.isEnabled()) {
             ci.cancel();
         }
     }
     *///?} else {
     /*@Inject(method = "renderBackground(Lnet/minecraft/client/gui/GuiGraphics;)V", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$removeBackgroundOverlay(CallbackInfo ci) {
-        if (SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.enabled) {
+        if (SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().shouldCapture() && SpatialGUI.config.isEnabled()) {
             if (Minecraft.getInstance().level == null) return;
             ci.cancel();
         }

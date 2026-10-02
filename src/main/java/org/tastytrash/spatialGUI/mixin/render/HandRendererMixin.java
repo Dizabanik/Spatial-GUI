@@ -34,7 +34,7 @@ public class HandRendererMixin {
     private void spatialGUI$hideShield(PlayerRenderState playerState, FirstPersonHandsAndItemsRenderState state, float partialTicks, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
         if (itemStack.getItem() == Items.SHIELD) {
             var renderer = SpatialGUIClient.renderer();
-            if (renderer.shouldCapture() && SpatialGUI.config.enabled && SpatialGUI.config.hideShieldInFirstPerson) {
+            if (renderer.shouldCapture() && SpatialGUI.config.isEnabled() && SpatialGUI.config.hideShieldInFirstPerson) {
                 ci.cancel();
             }
         }
@@ -49,7 +49,7 @@ public class HandRendererMixin {
     private void spatialGUI$hideShield(AbstractClientPlayer player, float frameInterp, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
         if (itemStack.getItem() == Items.SHIELD) {
             var renderer = SpatialGUIClient.renderer();
-            if (renderer.shouldCapture() && SpatialGUI.config.enabled && SpatialGUI.config.hideShieldInFirstPerson) {
+            if (renderer.shouldCapture() && SpatialGUI.config.isEnabled() && SpatialGUI.config.hideShieldInFirstPerson) {
                 ci.cancel();
             }
         }
@@ -59,7 +59,7 @@ public class HandRendererMixin {
     private void spatialGUI$hideShield(AbstractClientPlayer player, float frameInterp, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
         if (itemStack.getItem() == Items.SHIELD) {
             var renderer = SpatialGUIClient.renderer();
-            if (renderer.shouldCapture() && SpatialGUI.config.enabled && SpatialGUI.config.hideShieldInFirstPerson) {
+            if (renderer.shouldCapture() && SpatialGUI.config.isEnabled() && SpatialGUI.config.hideShieldInFirstPerson) {
                 ci.cancel();
             }
         }
@@ -69,7 +69,7 @@ public class HandRendererMixin {
     private void spatialGUI$hideShield(AbstractClientPlayer player, float frameInterp, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, MultiBufferSource buffer, int lightCoords, CallbackInfo ci) {
         if (itemStack.getItem() == Items.SHIELD) {
             var renderer = SpatialGUIClient.renderer();
-            if (renderer.shouldCapture() && SpatialGUI.config.enabled && SpatialGUI.config.hideShieldInFirstPerson) {
+            if (renderer.shouldCapture() && SpatialGUI.config.isEnabled() && SpatialGUI.config.hideShieldInFirstPerson) {
                 ci.cancel();
             }
         }

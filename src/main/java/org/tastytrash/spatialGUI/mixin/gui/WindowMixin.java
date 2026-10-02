@@ -52,7 +52,7 @@ public class WindowMixin {
 
     @Unique
     private static boolean shouldOverride() {
-        if (!SpatialGUI.config.enabled || SpatialGUIRenderer.skipWindowOverride) return false;
+        if (!SpatialGUI.config.isEnabled() || SpatialGUIRenderer.skipWindowOverride) return false;
         Minecraft mc = Minecraft.getInstance();
         if (mc.gui == null) return false;
         //? if >=26.2 {

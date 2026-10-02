@@ -84,7 +84,7 @@ public class EMIScreenManagerMixin {
 
     private static double spatialGUI$mapX(double original) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && SpatialGUI.config.enabled && renderer.shouldCapture()) {
+        if (renderer != null && SpatialGUI.config.isEnabled() && renderer.shouldCapture()) {
             return MouseHandlerUtil.getLastPos(true);
         }
         return original;
@@ -92,7 +92,7 @@ public class EMIScreenManagerMixin {
 
     private static double spatialGUI$mapY(double original) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && SpatialGUI.config.enabled && renderer.shouldCapture()) {
+        if (renderer != null && SpatialGUI.config.isEnabled() && renderer.shouldCapture()) {
             return MouseHandlerUtil.getLastPos(false);
         }
         return original;

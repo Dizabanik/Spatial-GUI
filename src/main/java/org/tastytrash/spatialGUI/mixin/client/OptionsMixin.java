@@ -16,7 +16,7 @@ public class OptionsMixin {
     @Inject(method = "getCameraType", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$forceCameraMode(CallbackInfoReturnable<CameraType> cir) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.enabled) {
+        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
             boolean isFirstPerson = (SpatialGUIRenderer.isInventoryScreen() ? SpatialGUI.config.firstPersonModeInventory : SpatialGUI.config.firstPersonModeContainers)
                     || SpatialGUIClient.getSwitchedToFirstPersonDueToBlock();
             if (isFirstPerson) {

@@ -19,7 +19,7 @@ public class HudMixin {
     /*@Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
      *///?}
     private void spatialGUI$hideCrosshair(CallbackInfo ci) {
-        if (SpatialGUI.config.enabled
+        if (SpatialGUI.config.isEnabled()
                 && SpatialGUIClient.getEffectiveFirstPersonMode()
                 && !SpatialGUI.config.useCrosshairForFirstPerson
                 && SpatialGUIClient.renderer() != null
@@ -34,7 +34,7 @@ public class HudMixin {
     /*@Inject(method = "renderItemHotbar", at = @At("HEAD"), cancellable = true)
      *///?}
     private void spatialGUI$hideHotbar(CallbackInfo ci) {
-        if (SpatialGUI.config.enabled && SpatialGUI.config.hideHotbar && SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().getHookedScreen() != null) {
+        if (SpatialGUI.config.isEnabled() && SpatialGUI.config.hideHotbar && SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().getHookedScreen() != null) {
             ci.cancel();
         }
     }

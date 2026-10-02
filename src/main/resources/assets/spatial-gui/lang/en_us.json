@@ -15,6 +15,9 @@
   "text.autoconfig.spatial-gui.option.enabled": "Enabled",
   "text.autoconfig.spatial-gui.option.enabled.@Tooltip": "Enable or disable the mod",
 
+  "text.autoconfig.spatial-gui.option.disableWithVisor": "Disable with Visor",
+  "text.autoconfig.spatial-gui.option.disableWithVisor.@Tooltip": "Automatically disables the mod when Visor is active",
+
   "text.autoconfig.spatial-gui.option.firstPersonModeInventory": "First Person Mode (Inventory)",
   "text.autoconfig.spatial-gui.option.firstPersonModeInventory.@Tooltip": "Use first person camera mode for the inventory screen",
 

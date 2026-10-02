@@ -35,7 +35,7 @@ public class GuiMixin {
     ))
     private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
-        if (SpatialGUI.config.enabled && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
+        if (SpatialGUI.config.isEnabled() && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
