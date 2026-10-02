@@ -1,5 +1,7 @@
 package org.tastytrash.spatialGUI.client;
 
+import org.tastytrash.spatialGUI.compat.VisorCompat;
+
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
@@ -10,6 +12,17 @@ public class SpatialGUIConfig implements ConfigData {
     @ConfigEntry.Category("general")
     @ConfigEntry.Gui.Tooltip
     public boolean enabled = true;
+
+    @ConfigEntry.Category("general")
+    @ConfigEntry.Gui.Tooltip
+    public boolean disableWithVisor = true;
+
+    public boolean isEnabled() {
+        if(disableWithVisor && VisorCompat.isActive()){
+            return false;
+        }
+        return enabled;
+    }
 
     @ConfigEntry.Category("general")
     @ConfigEntry.Gui.Tooltip

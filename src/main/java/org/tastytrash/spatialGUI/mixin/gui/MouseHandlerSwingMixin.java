@@ -33,7 +33,7 @@ public class MouseHandlerSwingMixin {
 
     @Unique
     private static void spatialGUI$trySwing(int action) {
-        if (!SpatialGUI.config.enabled || !SpatialGUI.config.swingArmOnFirstPersonClick) return;
+        if (!SpatialGUI.config.isEnabled() || !SpatialGUI.config.swingArmOnFirstPersonClick) return;
         if (action != 1) return;
 
         var renderer = SpatialGUIClient.renderer();

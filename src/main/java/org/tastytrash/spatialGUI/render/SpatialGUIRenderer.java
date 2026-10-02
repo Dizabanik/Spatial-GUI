@@ -57,7 +57,7 @@ public class SpatialGUIRenderer {
             return;
         }
 
-        if (!SpatialGUI.config.enabled) {
+        if (!SpatialGUI.config.isEnabled()) {
             return;
         }
 

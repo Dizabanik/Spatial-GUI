@@ -37,7 +37,7 @@ public class GuiMixin {
     ), index = 0)
     private GuiGraphicsExtractor spatialGUI$extractScreenIntoIsolatedState(GuiGraphicsExtractor graphics) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && SpatialGUI.config.enabled && renderer.shouldCapture()) {
+        if (renderer != null && SpatialGUI.config.isEnabled() && renderer.shouldCapture()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             SpatialGUIRenderer.isExtractingScreen = true;
             InventoryParticlesCompat.updateCursor(MouseHandlerUtil.getLastPos(true), MouseHandlerUtil.getLastPos(false));

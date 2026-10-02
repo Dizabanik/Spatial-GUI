@@ -61,7 +61,7 @@ public abstract class CameraMixin {
         var renderer = SpatialGUIClient.renderer();
         boolean isCapturing = renderer.shouldCapture();
 
-        if (isCapturing && this.entity != null && SpatialGUI.config.enabled) {
+        if (isCapturing && this.entity != null && SpatialGUI.config.isEnabled()) {
             TRANSITION_DURATION_MS = SpatialGUI.config.transitionDurationMs;
             boolean isFirstPerson = (SpatialGUIRenderer.isInventoryScreen()
                 ? SpatialGUI.config.firstPersonModeInventory
