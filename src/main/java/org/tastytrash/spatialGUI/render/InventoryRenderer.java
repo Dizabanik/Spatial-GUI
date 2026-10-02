@@ -185,6 +185,14 @@ public class InventoryRenderer {
         }
         this.hasCapturedPerspective = true;
     }
+
+    public GpuBufferSlice getCapturedProjectionBuffer() {
+        return capturedProjectionBuffer;
+    }
+
+    public com.mojang.blaze3d.ProjectionType getCapturedProjectionType() {
+        return capturedProjectionType;
+    }
     //?} else {
     /*public void capturePerspectiveState(Matrix4f projectionMatrix, VertexSorting vertexSorting, PoseStack poseStack) {
         if (projectionMatrix != null) {

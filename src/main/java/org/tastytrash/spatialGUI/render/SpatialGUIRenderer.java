@@ -266,6 +266,14 @@ public class SpatialGUIRenderer {
     public net.minecraft.client.gui.render.GuiRenderer getScreenGuiRenderer() {
         return screenExtractor.getScreenGuiRenderer();
     }
+
+    public GpuBufferSlice getCapturedProjectionBuffer() {
+        return inventoryRenderer.getCapturedProjectionBuffer();
+    }
+
+    public com.mojang.blaze3d.ProjectionType getCapturedProjectionType() {
+        return inventoryRenderer.getCapturedProjectionType();
+    }
     //?}
 
     //? if >=26.1.2 {

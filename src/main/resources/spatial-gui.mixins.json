@@ -23,6 +23,7 @@
     "gui.WindowMixin",
     "render.AvatarRendererMixin",
     "render.CameraMixin",
+    "render.EntityRenderDispatcherMixin",
     "render.GameRendererInvoker",
     "render.GameRendererMixin",
     "render.HandRendererMixin",

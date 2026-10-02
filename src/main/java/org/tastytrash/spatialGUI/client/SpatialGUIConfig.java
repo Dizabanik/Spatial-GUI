@@ -233,6 +233,17 @@ public class SpatialGUIConfig implements ConfigData {
     @ConfigEntry.BoundedDiscrete(min = 0, max = 255)
     public int screenAlpha = 255;
 
+    //? if >=26.1.2 {
+    @ConfigEntry.Category("rendering")
+    @ConfigEntry.Gui.Tooltip
+    public boolean blurWorldBackground = false;
+
+    @ConfigEntry.Category("rendering")
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.BoundedDiscrete(min = 1, max = 10)
+    public int worldBlurStrength = 5;
+    //?}
+
     // thirdPersonScreen
     @ConfigEntry.Category("thirdPersonScreen")
     @ConfigEntry.Gui.Tooltip
