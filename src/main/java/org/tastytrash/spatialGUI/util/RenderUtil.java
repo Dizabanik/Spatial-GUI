@@ -11,6 +11,7 @@ import org.joml.Vector2d;
 import org.joml.Vector3f;
 import org.tastytrash.spatialGUI.SpatialGUI;
 import org.tastytrash.spatialGUI.compat.VulkanModCompat;
+import org.tastytrash.spatialGUI.mixin.render.GameRendererInvoker;
 
 public final class RenderUtil {
     private RenderUtil() {}

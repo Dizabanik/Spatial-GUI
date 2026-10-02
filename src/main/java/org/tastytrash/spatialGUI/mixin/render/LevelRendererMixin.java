@@ -30,7 +30,7 @@ public class LevelRendererMixin {
              *///?}
     ) {
         var renderer = SpatialGUIClient.renderer();
-        if (!SpatialGUI.config.isEnabled() || renderer == null || !renderer.shouldCapture()) {
+        if (!SpatialGUIClient.isEnabled() || renderer == null || !renderer.shouldCapture()) {
             return;
         }
 

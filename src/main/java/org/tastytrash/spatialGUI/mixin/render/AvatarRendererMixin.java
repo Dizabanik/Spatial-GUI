@@ -30,7 +30,7 @@ public class AvatarRendererMixin {
         Minecraft client = Minecraft.getInstance();
         var renderer = SpatialGUIClient.renderer();
 
-        if (entity != client.player || !renderer.shouldCapture() || !SpatialGUI.config.isEnabled()) {
+        if (entity != client.player || !renderer.shouldCapture() || !SpatialGUIClient.isEnabled()) {
             renderer.headLockInitialized = false;
             return;
         }
@@ -95,7 +95,7 @@ public class AvatarRendererMixin {
         Minecraft client = Minecraft.getInstance();
         var renderer = SpatialGUIClient.renderer();
 
-        if (entity != client.player || !renderer.shouldCapture() || !SpatialGUI.config.isEnabled()) {
+        if (entity != client.player || !renderer.shouldCapture() || !SpatialGUIClient.isEnabled()) {
             renderer.headLockInitialized = false;
             original.call(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
             return;

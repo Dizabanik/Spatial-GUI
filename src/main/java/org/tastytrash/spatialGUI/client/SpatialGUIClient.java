@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.*;
+import org.tastytrash.spatialGUI.compat.VisorCompat;
 import org.tastytrash.spatialGUI.render.SpatialGUIRenderer;
 import org.tastytrash.spatialGUI.SpatialGUI;
 //? if fabric {
@@ -59,6 +60,13 @@ public class SpatialGUIClient {
         }
     }
     *///?}
+
+    public static boolean isEnabled() {
+        if (VisorCompat.isActive()) {
+            return false;
+        }
+        return SpatialGUI.config.enabled;
+    }
 
     public static boolean shouldHookScreen(Screen screen) {
         if (screen == null) return false;

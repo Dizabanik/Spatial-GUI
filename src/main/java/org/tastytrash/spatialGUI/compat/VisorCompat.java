@@ -22,7 +22,6 @@ public class VisorCompat{
             available = true;
         }
         catch (Throwable t) {
-            t.printStackTrace();
             available = false;
         }
     }
@@ -36,7 +35,6 @@ public class VisorCompat{
                 Object stateInstance = getMethod.invoke(null);
                 return (boolean) isActiveMethod.invoke(stateInstance);
             } catch (Throwable t) {
-                t.printStackTrace();
                 return false;
             }
         }

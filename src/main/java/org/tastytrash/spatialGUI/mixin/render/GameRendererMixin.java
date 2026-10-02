@@ -179,7 +179,7 @@ public abstract class GameRendererMixin {
     @Inject(method = "render", at = @At("HEAD"))
     private void spatialGUI$prepareTargetEarly(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             renderer.prepareTarget();
             renderer.onFrameStart();
         }
@@ -188,7 +188,7 @@ public abstract class GameRendererMixin {
     @Inject(method = "processBlurEffect()V", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$cancelBlurEffect(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer != null && renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             ci.cancel();
         }
     }
@@ -201,7 +201,7 @@ public abstract class GameRendererMixin {
     private void spatialGUI$beforeGuiRender(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
 
-        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             this.gameRenderState.windowRenderState.guiScale = Minecraft.getInstance().getWindow().getGuiScale();
 
@@ -237,7 +237,7 @@ public abstract class GameRendererMixin {
     private GuiGraphicsExtractor spatialGUI$extractScreenIntoIsolatedState(GuiGraphicsExtractor graphics) {
         var renderer = SpatialGUIClient.renderer();
 
-        if (renderer != null && SpatialGUI.config.isEnabled() && renderer.shouldCapture()) {
+        if (renderer != null && SpatialGUIClient.isEnabled() && renderer.shouldCapture()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             SpatialGUIRenderer.isExtractingScreen = true;
             InventoryParticlesCompat.updateCursor(MouseHandlerUtil.getLastPos(true), MouseHandlerUtil.getLastPos(false));
@@ -263,7 +263,7 @@ public abstract class GameRendererMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void spatialGUI$renderIsolatedScreen(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             this.gameRenderState.windowRenderState.guiScale = Minecraft.getInstance().getWindow().getGuiScale();
         }
@@ -276,7 +276,7 @@ public abstract class GameRendererMixin {
             return;
         }
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer != null && renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             //? if >=26.2 {
             /*this.gameRenderState.guiRenderState.isHudHidden = false;
              *///?}
@@ -293,7 +293,7 @@ public abstract class GameRendererMixin {
             return;
         }
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer != null && renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             this.gameRenderState.guiRenderState.isHudHidden = false;
 
             if (SpatialGUIClient.getEffectiveFirstPersonMode()) {
@@ -357,7 +357,7 @@ public abstract class GameRendererMixin {
     @Inject(method = "render", at = @At("HEAD"))
     private void spatialGUI$prepareTargetEarly(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             renderer.prepareTarget();
             renderer.onFrameStart();
         }
@@ -366,7 +366,7 @@ public abstract class GameRendererMixin {
     @Inject(method = "processBlurEffect()V", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$cancelBlurEffect(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer != null && renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             ci.cancel();
         }
     }
@@ -375,7 +375,7 @@ public abstract class GameRendererMixin {
     private void spatialGUI$beforeGuiRender(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
 
-        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             SpatialGUIRenderer.skipWindowOverride = false;
 
             com.mojang.blaze3d.systems.RenderSystem.setShaderFog(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
@@ -399,7 +399,7 @@ public abstract class GameRendererMixin {
     ), index = 0)
     private GuiGraphics spatialGUI$extractScreenIntoIsolatedState(GuiGraphics graphics) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && SpatialGUI.config.isEnabled() && renderer.shouldCapture()) {
+        if (renderer != null && SpatialGUIClient.isEnabled() && renderer.shouldCapture()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             SpatialGUIRenderer.isExtractingScreen = true;
             InventoryParticlesCompat.updateCursor(MouseHandlerUtil.getLastPos(true), MouseHandlerUtil.getLastPos(false));
@@ -427,7 +427,7 @@ public abstract class GameRendererMixin {
     ))
     private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
-        if (SpatialGUI.config.isEnabled() && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
+        if (SpatialGUIClient.isEnabled() && screen instanceof AbstractContainerScreen<?> && screen == renderer.getHookedScreen()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
@@ -440,7 +440,7 @@ public abstract class GameRendererMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void spatialGUI$renderIsolatedScreen(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             SpatialGUIRenderer.skipWindowOverride = false;
         }
     }
@@ -451,7 +451,7 @@ public abstract class GameRendererMixin {
             return;
         }
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer != null && renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             if (SpatialGUIClient.getEffectiveFirstPersonMode()) {
                 ci.cancel();
             }
@@ -464,7 +464,7 @@ public class GameRendererMixin {
     @Inject(method = "render", at = @At("HEAD"))
     private void spatialGUI$prepareTargetEarly(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             renderer.prepareTarget();
             renderer.onFrameStart();
         }
@@ -475,7 +475,7 @@ public class GameRendererMixin {
     /^@Inject(method = "processBlurEffect(F)V", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$cancelBlurEffect(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer != null && renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             ci.cancel();
         }
     }
@@ -490,7 +490,7 @@ public class GameRendererMixin {
     //?}
     private void spatialGUI$drawBeforeHud(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             renderer.renderInWorldPost();
         }
     }
@@ -498,7 +498,7 @@ public class GameRendererMixin {
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/PostChain;process(F)V"))
     private void spatialGUI$suppressPostEffect(net.minecraft.client.renderer.PostChain postChain, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer != null && renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer != null && renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             return;
         }
         postChain.process(partialTick);
@@ -511,7 +511,7 @@ public class GameRendererMixin {
     ))
     private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
-        if (SpatialGUI.config.isEnabled() && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
+        if (SpatialGUIClient.isEnabled() && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
@@ -527,7 +527,7 @@ public class GameRendererMixin {
     ))
     private void spatialGUI$redirectScreenExtraction(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         var renderer = SpatialGUIClient.renderer();
-        if (SpatialGUI.config.isEnabled() && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
+        if (SpatialGUIClient.isEnabled() && SpatialGUIClient.shouldHookScreen(screen) && screen == renderer.getHookedScreen()) {
             SpatialGUIRenderer.skipWindowOverride = false;
             renderer.extractIsolatedScreen(screen, partialTick);
             SpatialGUIRenderer.skipWindowOverride = true;
@@ -541,7 +541,7 @@ public class GameRendererMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void spatialGUI$endRender(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             SpatialGUIRenderer.skipWindowOverride = true;
         }
     }
@@ -549,7 +549,7 @@ public class GameRendererMixin {
     @Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
     private void spatialGUI$overrideHideHand(CallbackInfo ci) {
         var renderer = SpatialGUIClient.renderer();
-        if (renderer.shouldCapture() && SpatialGUI.config.isEnabled()) {
+        if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
             renderer.renderInWorldPost();
             if (SpatialGUIClient.getEffectiveFirstPersonMode() && SpatialGUI.config.hideHandsInFirstPerson) {
                 ci.cancel();
