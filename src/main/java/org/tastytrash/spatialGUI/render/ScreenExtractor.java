@@ -116,6 +116,22 @@ public class ScreenExtractor {
     }
     //?}
 
+    //? if >=26.1.2 {
+    public GuiGraphicsExtractor createIsolatedGraphics() {
+        ensureScreenGuiRenderer();
+        int mouseX = (int) MouseHandlerUtil.getLastPos(true);
+        int mouseY = (int) MouseHandlerUtil.getLastPos(false);
+        return new GuiGraphicsExtractor(Minecraft.getInstance(), screenRenderState, mouseX, mouseY);
+    }
+    //?} else if >1.21.1 {
+    /*public GuiGraphics createIsolatedGraphics() {
+        ensureScreenGuiRenderer();
+        int mouseX = (int) MouseHandlerUtil.getLastPos(true);
+        int mouseY = (int) MouseHandlerUtil.getLastPos(false);
+        return new GuiGraphics(Minecraft.getInstance(), screenRenderState, mouseX, mouseY);
+    }
+    *///?}
+
     public void extractIsolatedScreen(Screen screen, float partialTick, QuadBasis quadBasis, CylinderBasis cylinderBasis, TextureTargetManager targetManager) {
         ensureScreenGuiRenderer();
         Minecraft mc = Minecraft.getInstance();
