@@ -44,10 +44,20 @@ public class ScreenExtractor {
     //? if >1.21.1 {
     private GuiRenderState screenRenderState;
     private GuiRenderer screenGuiRenderer;
+    //? if fabric {
+    private static List<PictureInPictureRenderer<?>> vanillaPipRenderers(Minecraft mc) {
+        GuiRenderer main = ((org.tastytrash.spatialGUI.mixin.render.GameRendererAccessor) mc.gameRenderer).spatialGUI$getGuiRenderer();
+        return List.copyOf(((org.tastytrash.spatialGUI.mixin.gui.GuiRendererAccessor) main).spatialGUI$getPictureInPictureRenderers().values());
+    }
+    //?}
+    //? if neoforge {
+    /*public static List<PictureInPictureRendererRegistration<?>> capturedPipRegistrations;
+    *///?}
     //?}
 
     public void ensureScreenGuiRenderer() {
         //? if >1.21.1 {
+
         if (screenGuiRenderer == null) {
             Minecraft mc = Minecraft.getInstance();
             screenRenderState = new GuiRenderState();
@@ -55,25 +65,13 @@ public class ScreenExtractor {
             /*screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.gameRenderer.featureRenderDispatcher(),
-                    List.of(
-                            new GuiEntityRenderer(mc.getEntityRenderDispatcher()),
-                            new GuiSkinRenderer(),
-                            new GuiBookModelRenderer(),
-                            new GuiBannerResultRenderer(mc.getAtlasManager()),
-                            new GuiProfilerChartRenderer()
-                    )
+                    vanillaPipRenderers(mc)
             );
             *///?} else if neoforge && >=26.2 {
             /*screenGuiRenderer = new GuiRenderer(
                     screenRenderState,
                     mc.gameRenderer.featureRenderDispatcher(),
-                    List.of(
-                            new PictureInPictureRendererRegistration<>(GuiEntityRenderState.class, () -> new GuiEntityRenderer(mc.getEntityRenderDispatcher())),
-                            new PictureInPictureRendererRegistration<>(GuiSkinRenderState.class, GuiSkinRenderer::new),
-                            new PictureInPictureRendererRegistration<>(GuiBookModelRenderState.class, GuiBookModelRenderer::new),
-                            new PictureInPictureRendererRegistration<>(GuiBannerResultRenderState.class, () -> new GuiBannerResultRenderer(mc.getAtlasManager())),
-                            new PictureInPictureRendererRegistration<>(GuiProfilerChartRenderState.class, GuiProfilerChartRenderer::new)
-                    )
+                    capturedPipRegistrations == null ? List.of() : capturedPipRegistrations
             );
             *///?} else if fabric {
             screenGuiRenderer = new GuiRenderer(
@@ -81,14 +79,7 @@ public class ScreenExtractor {
                     mc.renderBuffers().bufferSource(),
                     mc.gameRenderer.getSubmitNodeStorage(),
                     mc.gameRenderer.getFeatureRenderDispatcher(),
-                    List.of(
-                            new GuiEntityRenderer(mc.renderBuffers().bufferSource(), mc.getEntityRenderDispatcher()),
-                            new GuiSkinRenderer(mc.renderBuffers().bufferSource()),
-                            new GuiBookModelRenderer(mc.renderBuffers().bufferSource()),
-                            new GuiBannerResultRenderer(mc.renderBuffers().bufferSource(), mc.getAtlasManager()),
-                            new GuiSignRenderer(mc.renderBuffers().bufferSource(), mc.getAtlasManager()),
-                            new GuiProfilerChartRenderer(mc.renderBuffers().bufferSource())
-                    )
+                    vanillaPipRenderers(mc)
             );
             //?} else if neoforge {
             /*screenGuiRenderer = new GuiRenderer(
@@ -96,13 +87,7 @@ public class ScreenExtractor {
                     mc.renderBuffers().bufferSource(),
                     mc.gameRenderer.getSubmitNodeStorage(),
                     mc.gameRenderer.getFeatureRenderDispatcher(),
-                    List.of(
-                            new PictureInPictureRendererRegistration<>(GuiEntityRenderState.class, bufferSource -> new GuiEntityRenderer(bufferSource, mc.getEntityRenderDispatcher())),
-                            new PictureInPictureRendererRegistration<>(GuiSkinRenderState.class, GuiSkinRenderer::new),
-                            new PictureInPictureRendererRegistration<>(GuiBookModelRenderState.class, GuiBookModelRenderer::new),
-                            new PictureInPictureRendererRegistration<>(GuiBannerResultRenderState.class, bufferSource -> new GuiBannerResultRenderer(bufferSource, mc.getAtlasManager())),
-                            new PictureInPictureRendererRegistration<>(GuiProfilerChartRenderState.class, GuiProfilerChartRenderer::new)
-                    )
+                    capturedPipRegistrations == null ? List.of() : capturedPipRegistrations
             );
             *///?}
         }

@@ -30,9 +30,11 @@ public class HudMixin {
 
     //? if >=26.1.2 {
     @Inject(method = "extractItemHotbar", at = @At("HEAD"), cancellable = true)
+    //?} else if >1.20.1 {
+//    @Inject(method = "renderItemHotbar", at = @At("HEAD"), cancellable = true)
     //?} else {
-    /*@Inject(method = "renderItemHotbar", at = @At("HEAD"), cancellable = true)
-     *///?}
+    /*@Inject(method = "renderHotbar", at = @At("HEAD"), cancellable = true)
+    *///?}
     private void spatialGUI$hideHotbar(CallbackInfo ci) {
         if (SpatialGUIClient.isEnabled() && SpatialGUI.config.hideHotbar && SpatialGUIClient.renderer() != null && SpatialGUIClient.renderer().getHookedScreen() != null) {
             ci.cancel();
