@@ -1,20 +1,16 @@
+__________ FIXES _________________
+================================
 -------- HIGH PRIORITY ---------------
 
 Sort mixin files into more different packages (when a PR isn't currently open)
 
 Add forge 1.20.1
 
-Fix issues related to hooking all screens
- - Test all versions
- - Doesn't work well in first person, likely also an issue when opening screens within screens (like shops)
- - Stops hooking when going into an options menu and back
- - Possibly just stick to only the pause menu
+Test hooking all screens more
 
 When forced into first person mode after having moved your mouse in third person, your camera snaps to that position, doesn't reset
 
-Special transition case for third person front
-
-Still some issues relating to screens within screens
+Still some issues relating to screens within screens (is this still true?)
 
 -------- MID PRIORITY ---------------
 
@@ -22,21 +18,26 @@ A consequence of setting the hand velocity to 0 is it looks strange in first per
 
 Issue #17 & #18
 
-Make the screen position unaffected by the bob
-
 -------- LOW PRIORITY ---------------
 
 The EMI compat causes:
 [17:24:52] [main/WARN]: Error loading class: dev/emi/emi/screen/EmiScreenManager (java.lang.ClassNotFoundException: dev/emi/emi/screen/EmiScreenManager)
 to be printed in consoles, it would be better if it didn't, may need to use IMixinConfigPlugin instead of doing @Pseudo
 
-Parallax magnitude config
-
-Replace accessor with accesswidener (maybe not?)
-
 Minecraft's water effects not applying properly when in the menu with velocity underwater (is this solvable?) (affects all versions, could be a minecraft issue)
 
------ POSSIBLY SOLVED/NOT NEEDED ------
+__________ SUGGESTIONS/FEATURES _________________
+================================================
+
+#52 - Remove the 180 degree first person limit, make it a config, off by default
+
+#38 - Move or mirror third person camera to avoid blocks so first person doesnt activate as often
+
+Make the screen position unaffected by the bob (?)
+
+Parallax magnitude config
+
+Special transition case for third person front
 
 ----- CHANGELOG ------
 
