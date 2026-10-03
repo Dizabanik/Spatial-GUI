@@ -44,6 +44,7 @@ public abstract class CameraMixin {
 
     @Unique private static double lastMouseX, lastMouseY;
     @Unique private static float freeLookYaw = 0f, freeLookPitch = 0f;
+    @Unique private static boolean wasCrosshairMode;
 
     @Unique
     private record CameraTransform(Vec3 pos, float yaw, float pitch) {}
@@ -73,14 +74,17 @@ public abstract class CameraMixin {
                 var mc = Minecraft.getInstance();
                 parallaxBlendStartMs = System.currentTimeMillis();
                 baseXRot = Math.max(-SpatialGUI.config.firstPersonPitchClamp, Math.min(SpatialGUI.config.firstPersonPitchClamp, xRot));
-
-                if (SpatialGUIRenderer.isCrosshairModeActive()) {
-                    lastMouseX = ((MouseHandlerAccessor) mc.mouseHandler).getRawXpos();
-                    lastMouseY = ((MouseHandlerAccessor) mc.mouseHandler).getRawYpos();
-                    freeLookYaw = 0f;
-                    freeLookPitch = 0f;
-                }
             }
+
+            boolean crosshairActive = SpatialGUIRenderer.isCrosshairModeActive();
+            if (crosshairActive && !wasCrosshairMode) {
+                var mc = Minecraft.getInstance();
+                lastMouseX = ((MouseHandlerAccessor) mc.mouseHandler).getRawXpos();
+                lastMouseY = ((MouseHandlerAccessor) mc.mouseHandler).getRawYpos();
+                freeLookYaw = 0f;
+                freeLookPitch = 0f;
+            }
+            wasCrosshairMode = crosshairActive;
 
             if (!isFirstPerson && !SpatialGUIClient.getSwitchedToFirstPersonDueToBlock()) {
                 CameraUtil.checkBlockCollision(this.entity);
@@ -190,7 +194,13 @@ public abstract class CameraMixin {
         double camY = entityPos.y + heightOffset;
         double camZ = entityPos.z - Math.cos(yawRadians) * distance + Math.sin(yawRadians) * sideOffset;
 
-        return new CameraTransform(new Vec3(camX, camY, camZ), yaw, pitch);
+        Vec3 targetCamPos = new Vec3(camX, camY, camZ);
+        if (!isFirstPerson) {
+            Vec3 playerEyePos = new Vec3(entityPos.x, entityPos.y + entity.getEyeHeight(), entityPos.z);
+            targetCamPos = CameraUtil.adjustCameraPositionForCollision(entity, playerEyePos, targetCamPos);
+        }
+
+        return new CameraTransform(targetCamPos, yaw, pitch);
     }
 
     @Unique
@@ -230,7 +240,7 @@ public abstract class CameraMixin {
             float easedProgress = AnimationUtil.easeInOutSine(progress);
 
             position = new Vec3(MathUtil.lerp(startPos.x, newTargetPos.x, easedProgress), MathUtil.lerp(startPos.y, newTargetPos.y, easedProgress), MathUtil.lerp(startPos.z, newTargetPos.z, easedProgress));
-            yRot = progress >= 1.0f ? newTargetYRot : MathUtil.lerp(startYRot, newTargetYRot, easedProgress);
+            yRot = progress >= 1.0f ? newTargetYRot : MathUtil.rotLerp(startYRot, newTargetYRot, easedProgress);
             xRot = SpatialGUI.config.lerpXRot ? (progress >= 1.0f ? newTargetXRot : MathUtil.lerp(startXRot, newTargetXRot, easedProgress)) : newTargetXRot;
         }
     }
@@ -245,6 +255,7 @@ public abstract class CameraMixin {
         freeLookYaw = 0f;
         freeLookPitch = 0f;
         baseXRot = 0f;
+        wasCrosshairMode = false;
         SpatialGUIClient.setSwitchedToFirstPersonDueToBlock(false);
         SpatialGUIClient.setEffectiveFirstPersonMode(false);
         MouseHandlerUtil.updateMouseGrabForFirstPerson(false);

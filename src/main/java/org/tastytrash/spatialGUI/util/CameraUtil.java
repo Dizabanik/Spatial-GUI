@@ -11,7 +11,10 @@ import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 
 public class CameraUtil {
     public static void checkBlockCollision(Entity entity) {
-        if (Minecraft.getInstance().level == null) return;
+        if (Minecraft.getInstance().level == null || !SpatialGUI.config.fallbackToFirstPersonOnBlockCollision) {
+            SpatialGUIClient.setSwitchedToFirstPersonDueToBlock(false);
+            return;
+        }
 
         float yawRadians = (float) Math.toRadians(entity.getYRot());
         double sideOffset = SpatialGUI.config.cameraSideOffset;
@@ -33,9 +36,24 @@ public class CameraUtil {
         var clipContext = new ClipContext(playerEyePos, targetCamPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity);
         boolean pathBlocked = Minecraft.getInstance().level.clip(clipContext).getType() != HitResult.Type.MISS;
 
-        if (isInsideBlock || pathBlocked) {
-            SpatialGUIClient.setSwitchedToFirstPersonDueToBlock(true);
+        SpatialGUIClient.setSwitchedToFirstPersonDueToBlock(isInsideBlock || pathBlocked);
+    }
+
+    public static Vec3 adjustCameraPositionForCollision(Entity entity, Vec3 playerEyePos, Vec3 targetCamPos) {
+        if (Minecraft.getInstance().level == null) return targetCamPos;
+
+        var clipContext = new ClipContext(playerEyePos, targetCamPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity);
+        HitResult hit = Minecraft.getInstance().level.clip(clipContext);
+        if (hit.getType() != HitResult.Type.MISS) {
+            Vec3 hitVec = hit.getLocation();
+            Vec3 dir = playerEyePos.subtract(targetCamPos);
+            double len = dir.length();
+            if (len > 0.0001) {
+                dir = dir.normalize();
+                return hitVec.add(dir.scale(0.1));
+            }
         }
+        return targetCamPos;
     }
 
     public static float calculateFovMultiplier() {

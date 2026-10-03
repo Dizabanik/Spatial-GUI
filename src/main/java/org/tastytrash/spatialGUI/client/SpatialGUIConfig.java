@@ -354,6 +354,10 @@ public class SpatialGUIConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public boolean lerpXRot = false;
 
+    @ConfigEntry.Category("thirdPersonCamera")
+    @ConfigEntry.Gui.Tooltip
+    public boolean fallbackToFirstPersonOnBlockCollision = false;
+
     // firstPersonCamera
     @ConfigEntry.Category("firstPersonCamera")
     @ConfigEntry.Gui.Tooltip

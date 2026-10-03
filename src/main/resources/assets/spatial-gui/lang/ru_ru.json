@@ -135,6 +135,8 @@
   "text.autoconfig.spatial-gui.option.disableThirdPersonParallax.@Tooltip": "Отключить эффект параллакса",
   "text.autoconfig.spatial-gui.option.lerpXRot": "Интерполяция вращения X",
   "text.autoconfig.spatial-gui.option.lerpXRot.@Tooltip": "Плавно интерполировать тангаж камеры во время перехода",
+  "text.autoconfig.spatial-gui.option.fallbackToFirstPersonOnBlockCollision": "Переход в режим от первого лица при столкновении с блоками",
+  "text.autoconfig.spatial-gui.option.fallbackToFirstPersonOnBlockCollision.@Tooltip": "Переключаться в режим от первого лица, если камера третьего лица заблокирована блоками.\nЕсли выключено, расстояние камеры адаптируется, чтобы избежать проникновения в блоки.",
   "text.autoconfig.spatial-gui.option.firstPersonScreenDistance": "Расстояние до экрана",
   "text.autoconfig.spatial-gui.option.firstPersonScreenDistance.@Tooltip": "Расстояние от экрана до камеры",
   "text.autoconfig.spatial-gui.option.firstPersonScreenSideOffset": "Боковое смещение экрана",

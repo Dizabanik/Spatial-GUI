@@ -10,6 +10,11 @@ public final class MathUtil {
         return start + (end - start) * t;
     }
 
+    public static float rotLerp(float start, float end, float t) {
+        float diff = ((end - start) % 360f + 540f) % 360f - 180f;
+        return start + diff * t;
+    }
+
     public static double lerp(double start, double end, float t) {
         return start + (end - start) * t;
     }

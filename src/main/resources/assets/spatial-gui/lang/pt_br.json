@@ -135,6 +135,8 @@
   "text.autoconfig.spatial-gui.option.disableThirdPersonParallax.@Tooltip": "Desativa o efeito de paralaxe",
   "text.autoconfig.spatial-gui.option.lerpXRot": "Interpolação de Rotação X",
   "text.autoconfig.spatial-gui.option.lerpXRot.@Tooltip": "Interpola suavemente o pitch da câmera durante a transição",
+  "text.autoconfig.spatial-gui.option.fallbackToFirstPersonOnBlockCollision": "Alternar para primeira pessoa em colisão de blocos",
+  "text.autoconfig.spatial-gui.option.fallbackToFirstPersonOnBlockCollision.@Tooltip": "Alterna para o modo em primeira pessoa se a câmera em terceira pessoa for obstruída por blocos.\nQuando desativado, a distância da câmera é ajustada para evitar atravessar blocos.",
   "text.autoconfig.spatial-gui.option.firstPersonScreenDistance": "Distância da Tela",
   "text.autoconfig.spatial-gui.option.firstPersonScreenDistance.@Tooltip": "Distância da tela em relação à câmera",
   "text.autoconfig.spatial-gui.option.firstPersonScreenSideOffset": "Deslocamento Lateral da Tela",
